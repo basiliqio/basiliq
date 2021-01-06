@@ -12,10 +12,9 @@ async fn main() -> Result<()> {
         .connect(db_uri.unwrap().to_str().unwrap())
         .await?;
 	println!("Connected");
-	println!("Schemas {:#?}", postgres_metadata::read_schemas(&pool).await?);
-	println!("Tables {:#?}", postgres_metadata::read_tables(&pool).await?);
-	println!("Roles {:#?}", postgres_metadata::read_roles(&pool).await?);
-	println!("Columns {:#?}", postgres_metadata::read_columns(&pool).await?);
-	println!("Types {:#?}", postgres_metadata::read_types(&pool).await?);
+	let basiliq_table = postgres_metadata::parsed::BasiliqTable::new(postgres_metadata::raw::read_schemas(&pool).await?,
+	postgres_metadata::raw::read_tables(&pool).await?,
+	postgres_metadata::raw::read_columns(&pool).await?, postgres_metadata::raw::read_types(&pool).await?)?;
+	println!("Result {:#?}", basiliq_table);
     Ok(())
 }
