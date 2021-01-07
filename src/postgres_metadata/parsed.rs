@@ -9,7 +9,7 @@ pub struct BasiliqTable {
     table: raw::PostgresTableRaw,
     columns_store: Vec<Rc<BasiliqColumns>>,
     columns_by_name: HashMap<String, Rc<BasiliqColumns>>,
-    columns_by_id: HashMap<i32, Rc<BasiliqColumns>>,
+    columns_by_id: HashMap<i16, Rc<BasiliqColumns>>,
 }
 
 #[derive(Debug, Clone, Getters)]
@@ -47,7 +47,7 @@ impl BasiliqTable {
                 .iter()
                 .map(|x| (x.column().name().clone(), x.clone()))
                 .collect();
-            let columns_by_id: HashMap<i32, Rc<BasiliqColumns>> = columns_store
+            let columns_by_id: HashMap<i16, Rc<BasiliqColumns>> = columns_store
                 .iter()
                 .map(|x| (x.column().column_number(), x.clone()))
                 .collect();

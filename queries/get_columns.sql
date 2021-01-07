@@ -1,6 +1,6 @@
 SELECT
-	pg_catalog.pg_attribute.attrelid as table,
 	pg_catalog.pg_attribute.attname as name,
+	pg_catalog.pg_attribute.attrelid as table,
 	pg_catalog.pg_attribute.attnum as column_number,
 	pg_catalog.pg_attribute.atttypid as type_,
 	pg_catalog.pg_attribute.attndims as dimensions,

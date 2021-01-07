@@ -65,11 +65,11 @@ pub struct PostgresColumnRaw {
     #[getset(get = "pub")]
     name: String,
     #[getset(get_copy = "pub")]
-    type_: u32,
-    #[getset(get_copy = "pub")]
     table: u32,
     #[getset(get_copy = "pub")]
-    column_number: i32,
+    column_number: i16,
+    #[getset(get_copy = "pub")]
+    type_: u32,
     #[getset(get_copy = "pub")]
     dimensions: u32,
     #[getset(get_copy = "pub")]
@@ -141,6 +141,22 @@ pub struct PostgresTypeRaw {
     dimensions: u32,
 }
 
+#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+pub struct PostgresPrimaryKeyRaw {
+    #[getset(get_copy = "pub")]
+    id: u32,
+    #[getset(get = "pub")]
+    name: String,
+    #[getset(get_copy = "pub")]
+    schema: u32,
+    #[getset(get_copy = "pub")]
+    table: u32,
+    #[getset(get_copy = "pub")]
+    index: u32,
+    #[getset(get = "pub")]
+    columns: Option<Vec<i16>>,
+}
+
 pub async fn read_schemas(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresSchemaRaw>> {
     Ok(
         sqlx::query_file_as_unchecked!(PostgresSchemaRaw, "queries/get_schemas.sql") // Unchecked because of COALESCE
@@ -176,6 +192,14 @@ pub async fn read_columns(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresColumnRa
 pub async fn read_types(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresTypeRaw>> {
     Ok(
         sqlx::query_file_as_unchecked!(PostgresTypeRaw, "queries/get_types.sql")
+            .fetch_all(db_conn)
+            .await?,
+    )
+}
+
+pub async fn read_primary_keys(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresPrimaryKeyRaw>> {
+    Ok(
+        sqlx::query_file_as_unchecked!(PostgresPrimaryKeyRaw, "queries/get_primary_keys.sql")
             .fetch_all(db_conn)
             .await?,
     )

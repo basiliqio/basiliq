@@ -12,6 +12,14 @@ async fn main() -> Result<()> {
         .connect(db_uri.unwrap().to_str().unwrap())
         .await?;
     println!("Connected");
+    println!(
+        "{:#?}",
+        postgres_metadata::raw::read_primary_keys(&pool).await?
+    );
+    postgres_metadata::raw::read_schemas(&pool).await?;
+    postgres_metadata::raw::read_tables(&pool).await?;
+    postgres_metadata::raw::read_columns(&pool).await?;
+    postgres_metadata::raw::read_types(&pool).await?;
     let basiliq_table = postgres_metadata::parsed::BasiliqTable::new(
         postgres_metadata::raw::read_schemas(&pool).await?,
         postgres_metadata::raw::read_tables(&pool).await?,
