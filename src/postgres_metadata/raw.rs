@@ -69,6 +69,8 @@ pub struct PostgresColumnRaw {
     #[getset(get_copy = "pub")]
     table: u32,
     #[getset(get_copy = "pub")]
+    column_number: i32,
+    #[getset(get_copy = "pub")]
     dimensions: u32,
     #[getset(get_copy = "pub")]
     non_null: bool,
