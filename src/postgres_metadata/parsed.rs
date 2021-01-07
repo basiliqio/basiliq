@@ -7,6 +7,9 @@ use std::rc::Rc;
 pub struct BasiliqTable {
     schema: raw::PostgresSchemaRaw,
     table: raw::PostgresTableRaw,
+    pkeys: Vec<raw::PostgresPrimaryKeyRaw>,
+    fkeys_child: Vec<raw::PostgresForeignKeyRaw>,
+    fkeys_parent: Vec<raw::PostgresForeignKeyRaw>,
     columns_store: Vec<Rc<BasiliqColumns>>,
     columns_by_name: HashMap<String, Rc<BasiliqColumns>>,
     columns_by_id: HashMap<i16, Rc<BasiliqColumns>>,
@@ -31,6 +34,8 @@ impl BasiliqTable {
         tables: Vec<raw::PostgresTableRaw>,
         columns: Vec<raw::PostgresColumnRaw>,
         types: Vec<raw::PostgresTypeRaw>,
+        primary_keys: Vec<raw::PostgresPrimaryKeyRaw>,
+        foreign_keys: Vec<raw::PostgresForeignKeyRaw>,
     ) -> Result<Vec<Self>> {
         let parsed_columns: Vec<BasiliqColumns> = BasiliqColumns::new(&types, &columns)?;
         let mut res: Vec<BasiliqTable> = Vec::with_capacity(tables.len());
@@ -51,15 +56,58 @@ impl BasiliqTable {
                 .iter()
                 .map(|x| (x.column().column_number(), x.clone()))
                 .collect();
+            let pkeys: Vec<raw::PostgresPrimaryKeyRaw> =
+                BasiliqTable::find_primary_keys_for_table(&table, &primary_keys);
+            let (fkeys_parent, fkeys_child): (
+                Vec<raw::PostgresForeignKeyRaw>,
+                Vec<raw::PostgresForeignKeyRaw>,
+            ) = BasiliqTable::find_foreign_keys_for_table(&table, &foreign_keys);
             res.push(BasiliqTable {
                 table: table.clone(),
                 columns_store,
                 columns_by_name,
                 columns_by_id,
+                pkeys,
+                fkeys_parent,
+                fkeys_child,
                 schema: schema_for_table,
             });
         }
         Ok(res)
+    }
+
+    fn find_primary_keys_for_table(
+        table: &raw::PostgresTableRaw,
+        primary_keys: &Vec<raw::PostgresPrimaryKeyRaw>,
+    ) -> Vec<raw::PostgresPrimaryKeyRaw> {
+        let mut res: Vec<raw::PostgresPrimaryKeyRaw> = Vec::with_capacity(1);
+
+        for pk in primary_keys.iter() {
+            if pk.table() == table.id() {
+                res.push(pk.clone());
+            }
+        }
+        res
+    }
+
+    fn find_foreign_keys_for_table(
+        table: &raw::PostgresTableRaw,
+        foreign_keys: &Vec<raw::PostgresForeignKeyRaw>,
+    ) -> (
+        Vec<raw::PostgresForeignKeyRaw>,
+        Vec<raw::PostgresForeignKeyRaw>,
+    ) {
+        let mut res_parent: Vec<raw::PostgresForeignKeyRaw> = Vec::new();
+        let mut res_child: Vec<raw::PostgresForeignKeyRaw> = Vec::new();
+
+        for fk in foreign_keys.iter() {
+            if fk.table() == table.id() {
+                res_child.push(fk.clone());
+            } else if fk.ftable() == table.id() {
+                res_parent.push(fk.clone());
+            }
+        }
+        (res_parent, res_child)
     }
 
     fn find_schema_for_table(

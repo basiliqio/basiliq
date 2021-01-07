@@ -154,7 +154,27 @@ pub struct PostgresPrimaryKeyRaw {
     #[getset(get_copy = "pub")]
     index: u32,
     #[getset(get = "pub")]
-    columns: Option<Vec<i16>>,
+    columns: Vec<i16>,
+}
+
+#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+pub struct PostgresForeignKeyRaw {
+    #[getset(get_copy = "pub")]
+    id: u32,
+    #[getset(get = "pub")]
+    name: String,
+    #[getset(get_copy = "pub")]
+    schema: u32,
+    #[getset(get_copy = "pub")]
+    table: u32,
+    #[getset(get_copy = "pub")]
+    index: u32,
+    #[getset(get_copy = "pub")]
+    ftable: u32,
+    #[getset(get = "pub")]
+    lcolumns: Option<Vec<i16>>,
+    #[getset(get = "pub")]
+    fcolumns: Option<Vec<i16>>,
 }
 
 pub async fn read_schemas(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresSchemaRaw>> {
@@ -200,6 +220,13 @@ pub async fn read_types(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresTypeRaw>> 
 pub async fn read_primary_keys(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresPrimaryKeyRaw>> {
     Ok(
         sqlx::query_file_as_unchecked!(PostgresPrimaryKeyRaw, "queries/get_primary_keys.sql")
+            .fetch_all(db_conn)
+            .await?,
+    )
+}
+pub async fn read_foreign_keys(db_conn: &sqlx::PgPool) -> Result<Vec<PostgresForeignKeyRaw>> {
+    Ok(
+        sqlx::query_file_as!(PostgresForeignKeyRaw, "queries/get_foreign_keys.sql")
             .fetch_all(db_conn)
             .await?,
     )
