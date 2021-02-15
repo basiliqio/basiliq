@@ -1,0 +1,17 @@
+[package]
+name = "basiliq"
+version = "0.1.0"
+authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
+edition = "2018"
+
+[dependencies]
+sqlx = { version = "0.4.2", features = [ "runtime-tokio-rustls", "postgres", "uuid", "macros", "json" ] }
+serde = "1"
+serde_json = "1"
+uuid = { version = "0.8", features = ["serde", "v4"] }
+tokio = { version = "0.2", features = ["rt-threaded", "macros", "blocking"] }
+anyhow = "1"
+log = "0.4.11"
+env_logger = "0.8"
+getset = "0.1.1"
+itertools = "0.10.0"
