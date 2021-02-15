@@ -1,0 +1,11 @@
+[package]
+name = "ciboulette2sql"
+version = "0.1.0"
+authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ciboulette = { path = "../../ciboulette" }
+quaint = { git = "https://github.com/prisma/quaint.git", features = ["postgresql", "uuid", "chrono"] }
