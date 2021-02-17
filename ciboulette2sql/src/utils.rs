@@ -4,7 +4,7 @@ const SELECT_ALL: &'static [Cow<'static, str>] = &[Cow::Borrowed("*")];
 
 pub fn extract_sparse<'a>(
     type_: &ciboulette::CibouletteResourceType,
-    query: Option<CibouletteQueryParameters<'a>>,
+    query: Option<&CibouletteQueryParameters<'a>>,
 ) -> Vec<String> {
     match query {
         Some(query) => query
