@@ -8,4 +8,8 @@ edition = "2018"
 
 [dependencies]
 ciboulette = { path = "../../ciboulette" }
-quaint = { git = "https://github.com/prisma/quaint.git", features = ["postgresql", "uuid", "chrono"] }
+quaint = { git = "https://github.com/prisma/quaint.git", features = ["postgresql", "uuid", "chrono", "serde-support", "bigdecimal"] }
+thiserror = "1"
+messy_json = { git = "https://gitlab.com/basiliq/messy_json.git"}
+bigdecimal = "0.2"
+petgraph = { version = "0.5.1", default-features = false }
