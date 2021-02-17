@@ -119,10 +119,19 @@ version = "0.1.0"
 dependencies = [
  "bigdecimal",
  "ciboulette",
+ "ciboulette_test_helper",
  "messy_json",
  "petgraph",
  "quaint",
  "thiserror",
+]
+
+[[package]]
+name = "ciboulette_test_helper"
+version = "0.1.0"
+dependencies = [
+ "ciboulette",
+ "messy_json",
 ]
 
 [[package]]

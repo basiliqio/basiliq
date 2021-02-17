@@ -13,3 +13,6 @@ thiserror = "1"
 messy_json = { git = "https://gitlab.com/basiliq/messy_json.git"}
 bigdecimal = "0.2"
 petgraph = { version = "0.5.1", default-features = false }
+
+[dev-dependencies]
+ciboulette_test_helper = { path = "../../ciboulette/ciboulette_test_helper" }
