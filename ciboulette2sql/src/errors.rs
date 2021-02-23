@@ -14,4 +14,6 @@ pub enum Ciboulette2SqlError {
     CibouletteError(#[from] ciboulette::CibouletteError),
     #[error(transparent)]
     QuaintError(#[from] quaint::error::Error),
+    #[error(transparent)]
+    Sqlx(#[from] sqlx::Error),
 }

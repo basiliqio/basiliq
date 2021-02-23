@@ -1,16 +1,14 @@
 use super::*;
 
 fn insert_relationship_single<'a>(
-    relationships: &BTreeMap<Cow<'a, str>, CibouletteRelationshipObject<'a>>,
+    relationships: &'a BTreeMap<Cow<'a, str>, CibouletteRelationshipObject<'a>>,
     from_type_: &'a CibouletteResourceType,
     to_type_: &'a CibouletteResourceType,
     opt: &bool,
-) -> Result<Option<String>, Ciboulette2SqlError> {
+) -> Result<Option<&'a str>, Ciboulette2SqlError> {
     match relationships.get(to_type_.name().as_str()) {
         Some(rel_obj) => match rel_obj.data() {
-            Some(CibouletteResourceIdentifierSelector::One(rel_id)) => {
-                Ok(Some(rel_id.id().to_string()))
-            }
+            Some(CibouletteResourceIdentifierSelector::One(rel_id)) => Ok(Some(rel_id.id())),
             Some(CibouletteResourceIdentifierSelector::Many(_)) => {
                 return Err(Ciboulette2SqlError::RequiredSingleRelationship(
                     from_type_.name().to_string(),
@@ -52,49 +50,47 @@ pub fn fill_attributes_into_insert_statement<'a>(
     Ok(stmt)
 }
 
-pub fn process_insert_main<'a>(
+pub fn query_insert_main<'a>(
     store: &'a CibouletteStore,
-    query: &'a Option<CibouletteQueryParameters<'a>>,
-    data: &'a CibouletteResource<'a>,
+    req: &'a CibouletteCreateRequest<'a>,
 ) -> Result<Ciboulette2SqlRequest<'a>, Ciboulette2SqlError> {
-    let CibouletteResource {
-        identifier,
-        attributes,
-        relationships,
-        ..
-    } = data; // Extract the necessary attributes
-    let mut res: Vec<(String, Vec<quaint::ast::Value<'a>>)> = Vec::with_capacity(1); // Vector in which the main query will be stored
+    let main_type = req.path().main_type();
+    let main_type_index = store
+        .get_type_index(main_type.name())
+        .ok_or_else(|| CibouletteError::UnknownType(main_type.name().to_string()))?;
 
-    let (resource_index, resource_type) = crate::utils::extract_type(store, &identifier)?; // Extract type
-    let returning = crate::utils::extract_sparse(resource_type, query.as_ref()); // Set the returning argument
-    let mut insert_stmt = Insert::single_into(identifier.type_().to_string()); // Generate base insert statement
+    let returning = crate::utils::extract_sparse(main_type, req.query())?; // Set the returning argument
+    let mut insert_stmt = Insert::single_into(main_type.name().to_string()); // Generate base insert statement
 
     // TODO Pull request `quaint` for `with_capacity` when allocating new single_into
     // TODO Handle client provided id
-    insert_stmt = fill_attributes_into_insert_statement(insert_stmt, &attributes)?;
+    // TODO `quaint` should accept Cow
+    insert_stmt = fill_attributes_into_insert_statement(insert_stmt, &req.data().attributes())?;
     let mut walker = store
         .graph()
-        .neighbors_directed(resource_index, petgraph::Direction::Outgoing)
+        .neighbors_directed(*main_type_index, petgraph::Direction::Outgoing)
         .detach(); // Create a graph walker
     while let Some((edge_index, node_index)) = walker.next(&store.graph()) {
         // For each connect edge outgoing from the original node
-        let edge_weight = store.graph().edge_weight(edge_index).unwrap(); // Get the edge weight
-        let node_weight = store.graph().node_weight(node_index).unwrap(); // Get the node weight
-        let alias: &String = resource_type.get_alias(node_weight.name().as_str())?; // Get the alias translation of that resource
-
-        match edge_weight {
-            CibouletteRelationshipOption::One(opt) => {
-                if let Some(v) =
-                    insert_relationship_single(&relationships, &resource_type, &node_weight, opt)?
-                {
-                    insert_stmt = insert_stmt.value(alias.as_str(), v); // Insert the relationship
-                }
+        if let CibouletteRelationshipOption::One(opt) =
+            store.graph().edge_weight(edge_index).unwrap()
+        // Get the edge weight
+        {
+            let node_weight = store.graph().node_weight(node_index).unwrap(); // Get the node weight
+            let alias: &String = main_type.get_alias(node_weight.name().as_str())?; // Get the alias translation of that resource
+            if let Some(v) = insert_relationship_single(
+                &req.data().relationships(),
+                &main_type,
+                &node_weight,
+                opt,
+            )? {
+                insert_stmt = insert_stmt.value(alias.as_str(), v); // Insert the relationship
             }
-            _ => (),
         }
     }
-    res.push(Postgres::build(insert_stmt.build().returning(returning))?);
+    let (query, params) = Postgres::build(insert_stmt.build().returning(returning))?;
     Ok(Ciboulette2SqlRequest {
-        requests: vec![res],
+        request: json_wrap_with_id!(query),
+        params: Ciboulette2SqlArguments::new(params),
     })
 }

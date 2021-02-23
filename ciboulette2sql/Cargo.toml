@@ -8,11 +8,15 @@ edition = "2018"
 
 [dependencies]
 ciboulette = { path = "../../ciboulette" }
-quaint = { git = "https://github.com/prisma/quaint.git", features = ["postgresql", "uuid", "chrono", "serde-support", "bigdecimal"] }
+quaint = { git = "https://github.com/prisma/quaint.git", features = ["postgresql", "uuid", "chrono", "serde-support", "bigdecimal", "json"] }
 thiserror = "1"
 messy_json = { git = "https://gitlab.com/basiliq/messy_json.git"}
+serde_json = { version = "1.0", default-features = false, features = ["raw_value"] }
 bigdecimal = "0.2"
 petgraph = { version = "0.5.1", default-features = false }
+sqlx = { version = "0.5", features = [ "postgres", "runtime-tokio-rustls", "json", "macros", "uuid", "chrono", "bigdecimal" ] }
 
 [dev-dependencies]
 ciboulette_test_helper = { path = "../../ciboulette/ciboulette_test_helper" }
+url = "2.2.0"
+tokio = { version = "1", features = ["full"] }
