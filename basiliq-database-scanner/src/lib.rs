@@ -1,5 +1,5 @@
 use sqlx::postgres::PgPoolOptions;
 mod postgres_metadata;
-mod store_builder;
+mod store;
 
-pub use store_builder::{BasiliqStore, BasiliqStoreBuilder};
+pub use store::{BasiliqStore, BasiliqStoreBuilder};

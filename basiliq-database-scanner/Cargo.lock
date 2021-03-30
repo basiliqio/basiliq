@@ -75,6 +75,7 @@ name = "basiliq_database_scanner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "cargo-husky",
  "ciboulette",
  "ciboulette2postgres",
  "env_logger",
@@ -160,6 +161,12 @@ name = "bytes"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b700ce4376041dcd0a327fd0097c41095743c4c8af8887265942faf1100bd040"
+
+[[package]]
+name = "cargo-husky"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b02b629252fe8ef6460461409564e2c21d0c8e77e0944f3d189ff06c4e932ad"
 
 [[package]]
 name = "cc"
