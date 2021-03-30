@@ -1,4 +1,3 @@
-use super::*;
 use getset::{CopyGetters, Getters};
 use serde::{Deserialize, Serialize};
 
@@ -203,6 +202,7 @@ where
     )
 }
 
+#[allow(dead_code)]
 pub async fn read_roles<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerRoleRaw>, sqlx::Error>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,

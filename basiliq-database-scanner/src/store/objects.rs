@@ -1,9 +1,6 @@
 use super::*;
+use ciboulette::CibouletteIdType;
 use log::trace;
-const POSTGRES_SYSTEM_COLUMNS: &[&str] =
-    &["oid", "tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
-
-const POSTGRES_SYSTEM_SCHEMA: &[&str] = &["pg_catalog", "pg_toast", "information_schema"];
 
 impl BasiliqStoreBuilder {
     fn type_to_messy_json<'a>(
@@ -27,37 +24,21 @@ impl BasiliqStoreBuilder {
                 );
                 None
             }
-            BasiliqDbScannerTypeCategory::Enum => {
-                trace!(
-                    ">> Found an enum for type {}. Unsupported, skipping..",
-                    type_.name()
-                );
-                None
-            }
-            BasiliqDbScannerTypeCategory::Geo => {
-                trace!(
-                    ">> Found an geo for type {}. Unsupported, skipping..",
-                    type_.name()
-                );
-                None
-            }
+            BasiliqDbScannerTypeCategory::Enum => Some(MessyJson::String(Cow::Owned(
+                MessyJsonScalar::new(!required),
+            ))),
+            BasiliqDbScannerTypeCategory::Geo => Some(MessyJson::String(Cow::Owned(
+                MessyJsonScalar::new(!required),
+            ))),
             BasiliqDbScannerTypeCategory::NetworkAddress => Some(MessyJson::String(Cow::Owned(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Pseudo => {
-                trace!(
-                    ">> Found a pseudo- for type {}type. Unsupported, skipping..",
-                    type_.name()
-                );
-                None
-            }
-            BasiliqDbScannerTypeCategory::Range => {
-                trace!(
-                    ">> Found a range for type {}. Unsupported, skipping..",
-                    type_.name()
-                );
-                None
-            }
+            BasiliqDbScannerTypeCategory::Pseudo => Some(MessyJson::String(Cow::Owned(
+                MessyJsonScalar::new(!required),
+            ))),
+            BasiliqDbScannerTypeCategory::Range => Some(MessyJson::String(Cow::Owned(
+                MessyJsonScalar::new(!required),
+            ))),
             BasiliqDbScannerTypeCategory::DateTime => Some(MessyJson::String(Cow::Owned(
                 MessyJsonScalar::new(!required),
             ))),
@@ -67,13 +48,9 @@ impl BasiliqStoreBuilder {
             BasiliqDbScannerTypeCategory::String => Some(MessyJson::String(Cow::Owned(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Timespan => {
-                trace!(
-                    ">> Found a timespan for type {}. Unsupported, skipping..",
-                    type_.name()
-                );
-                None
-            }
+            BasiliqDbScannerTypeCategory::Timespan => Some(MessyJson::String(Cow::Owned(
+                MessyJsonScalar::new(!required),
+            ))),
             BasiliqDbScannerTypeCategory::UserDefined => match type_.name().as_str() {
                 "uuid" => Some(MessyJson::Uuid(Cow::Owned(MessyJsonScalar::new(!required)))),
                 _ => {
@@ -91,58 +68,121 @@ impl BasiliqStoreBuilder {
                 );
                 None
             }
-            BasiliqDbScannerTypeCategory::BitString => {
-                trace!(
-                    ">> Found a bitstring for type {}. Unsupported, skipping..",
-                    type_.name()
-                );
-                None
-            }
+            BasiliqDbScannerTypeCategory::BitString => Some(MessyJson::String(Cow::Owned(
+                MessyJsonScalar::new(!required),
+            ))),
             BasiliqDbScannerTypeCategory::Boolean => {
                 Some(MessyJson::Bool(Cow::Owned(MessyJsonScalar::new(!required))))
             }
         }
     }
 
-    pub fn build_object(&self) -> BTreeMap<String, MessyJsonObject> {
-        let mut res: BTreeMap<String, MessyJsonObject> = BTreeMap::new();
-
-        'table: for table in self.tables.iter() {
-            let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
-            if POSTGRES_SYSTEM_SCHEMA.contains(&table.schema().name().as_str())
-            // If in a system schema
-            {
-                continue 'table;
-            }
-            trace!(
-                "Scanning table {} in schema {}",
-                table.table().name(),
-                table.schema().name()
-            );
-
-            'col: for col_settings in table.columns_by_id().values() {
-                if POSTGRES_SYSTEM_COLUMNS.contains(&col_settings.column().name().as_str()) {
-                    // If a system column
-                    continue 'col;
+    fn type_to_id(col_settings: &BasiliqDbScannerColumn) -> Option<CibouletteIdType> {
+        match col_settings.type_() {
+            BasiliqDbScannerType::Simple(type_) => match type_.category() {
+                BasiliqDbScannerTypeCategory::Array => {
+                    trace!(
+                        ">> Found an array for type {}. Unsupported for an ID, skipping..",
+                        type_.name()
+                    );
+                    None
                 }
-                trace!("> Scanning columns {}", col_settings.column().name());
-                if let Some(obj) = match col_settings.type_() {
-                    BasiliqDbScannerType::Simple(type_) => {
-                        Self::type_to_messy_json(col_settings, type_)
-                    }
-                    BasiliqDbScannerType::Nested(_parent, _child) => {
-                        trace!("Found an array. Unsupported, skipping..");
+                BasiliqDbScannerTypeCategory::Composite => {
+                    trace!(
+                        ">> Found a composite for type {}. Unsupported for an ID, skipping..",
+                        type_.name()
+                    );
+                    None
+                }
+                BasiliqDbScannerTypeCategory::Enum => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Geo => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::NetworkAddress => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Pseudo => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Range => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::DateTime => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Numeric => Some(CibouletteIdType::Number),
+                BasiliqDbScannerTypeCategory::String => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Timespan => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::UserDefined => match type_.name().as_str() {
+                    "uuid" => Some(CibouletteIdType::Uuid),
+                    _ => {
+                        trace!(
+								">> Found an user-defined for type {}. Unsupported for an ID, skipping..",
+								type_.name()
+							);
                         None
                     }
-                } {
-                    obj_properties.insert(col_settings.column().name().clone(), obj);
+                },
+                BasiliqDbScannerTypeCategory::Unknown => {
+                    trace!(
+                        ">> Found an unknown for type {}. Unsupported for an ID, skipping..",
+                        type_.name()
+                    );
+                    None
                 }
+                BasiliqDbScannerTypeCategory::BitString => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Boolean => {
+                    trace!(
+                        ">> Found an unknown for type {}. Unsupported for an ID, skipping..",
+                        type_.name()
+                    );
+                    None
+                }
+            },
+            BasiliqDbScannerType::Nested(_, _) => {
+                trace!("Found an array. Unsupported for an id, skipping..");
+                None
             }
-            res.insert(
-                table.table().name().clone(),
-                MessyJsonObject::new(obj_properties, false),
-            );
         }
-        res
+    }
+
+    pub fn build_object(
+        table: &BasiliqDbScannerTable,
+        pkey: i16,
+        fkeys: BTreeMap<i16, (u32, i16)>,
+    ) -> Option<BasiliqStoreTableBuilder<'_>> {
+        let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
+        let mut pkey_type: Option<CibouletteIdType> = None;
+        trace!(
+            "Scanning table {} in schema {}",
+            table.table().name(),
+            table.schema().name()
+        );
+
+        for (id, col_settings) in table.columns_by_id() {
+            if pkey == *id {
+                // If the primary key
+                pkey_type = Self::type_to_id(col_settings);
+                continue;
+            }
+            if fkeys.contains_key(id) {
+                // If a foreign key
+                continue;
+            }
+            if POSTGRES_SYSTEM_COLUMNS.contains(&col_settings.column().name().as_str()) {
+                // If a system column
+                continue;
+            }
+            trace!("> Scanning columns {}", col_settings.column().name());
+            if let Some(obj) = match col_settings.type_() {
+                BasiliqDbScannerType::Simple(type_) => {
+                    Self::type_to_messy_json(col_settings, type_)
+                }
+                BasiliqDbScannerType::Nested(_parent, _child) => {
+                    trace!("Found an array. Unsupported, skipping..");
+                    None
+                }
+            } {
+                obj_properties.insert(col_settings.column().name().clone(), obj);
+            }
+        }
+        pkey_type
+            .map(|x| (x, MessyJsonObject::new(obj_properties, false)))
+            .map(|(id_type, properties)| BasiliqStoreTableBuilder {
+                table,
+                properties,
+                id_type,
+                fkeys: BTreeMap::default(),
+            })
     }
 }

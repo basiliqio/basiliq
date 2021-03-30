@@ -1,4 +1,3 @@
-use sqlx::postgres::PgPoolOptions;
 mod postgres_metadata;
 mod store;
 
