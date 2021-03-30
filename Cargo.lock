@@ -82,6 +82,7 @@ dependencies = [
  "getset",
  "itertools",
  "log",
+ "messy_json",
  "serde",
  "serde_json",
  "sqlx",

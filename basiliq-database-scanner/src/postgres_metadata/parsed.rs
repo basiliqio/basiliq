@@ -1,7 +1,7 @@
 use super::*;
 use getset::Getters;
 use log::warn;
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Debug, Clone, Getters)]
 #[getset(get = "pub")]
@@ -11,8 +11,8 @@ pub struct BasiliqDbScannerTable {
     pkeys: Vec<raw::BasiliqDbScannerPrimaryKeyRaw>,
     fkeys_child: Vec<raw::BasiliqDbScannerForeignKeyRaw>,
     fkeys_parent: Vec<raw::BasiliqDbScannerForeignKeyRaw>,
-    columns_by_name: HashMap<String, Rc<BasiliqDbScannerColumn>>,
-    columns_by_id: HashMap<i16, Rc<BasiliqDbScannerColumn>>,
+    columns_by_name: HashMap<String, Arc<BasiliqDbScannerColumn>>,
+    columns_by_id: HashMap<i16, Arc<BasiliqDbScannerColumn>>,
 }
 
 #[derive(Debug, Clone, Getters)]
@@ -76,9 +76,9 @@ impl BasiliqDbScannerTable {
                 .map(|(key, vals)| (key, vals.into_iter().map(|(_key, vals)| vals).collect()))
                 .collect();
         for table in tables.into_iter() {
-            let columns_store: Vec<Rc<BasiliqDbScannerColumn>> =
+            let columns_store: Vec<Arc<BasiliqDbScannerColumn>> =
                 match parsed_columns.get(&table.id()) {
-                    Some(x) => x.clone().into_iter().map(Rc::new).collect(),
+                    Some(x) => x.clone().into_iter().map(Arc::new).collect(),
                     None => {
                         warn!(
                             "Table `{}` doesn't have any columns. Skipping",
@@ -87,12 +87,12 @@ impl BasiliqDbScannerTable {
                         continue;
                     }
                 };
-            let columns_by_name: HashMap<String, Rc<BasiliqDbScannerColumn>> = columns_store
+            let columns_by_name: HashMap<String, Arc<BasiliqDbScannerColumn>> = columns_store
                 .clone()
                 .into_iter()
                 .map(|x| (x.column().name().clone(), x))
                 .collect();
-            let columns_by_id: HashMap<i16, Rc<BasiliqDbScannerColumn>> = columns_store
+            let columns_by_id: HashMap<i16, Arc<BasiliqDbScannerColumn>> = columns_store
                 .clone()
                 .into_iter()
                 .map(|x| (x.column().column_number(), x))

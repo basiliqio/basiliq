@@ -11,6 +11,6 @@ async fn main() -> anyhow::Result<()> {
         .await?;
     println!("Connected");
     let builder = BasiliqStoreBuilder::scan_db(pool).await?;
-    println!("{:#?}", builder);
+    println!("{:#?}", builder.build_object());
     Ok(())
 }
