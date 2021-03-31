@@ -76,4 +76,45 @@ impl<'a> BasiliqStoreBuilder<'a> {
         }
         res
     }
+
+    pub(super) fn build_relationships_many(
+        mut relationships: BTreeMap<
+            BasiliqStoreRelationshipIdentifier,
+            BasiliqStoreRelationshipData,
+        >,
+    ) -> BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData> {
+        let mut set: BTreeMap<BasiliqStoreTableIdentifier, Vec<BasiliqStoreRelationshipData>> =
+            BTreeMap::new();
+
+        for (ident, rel_data) in relationships.iter() {
+            if let BasiliqStoreRelationshipType::ManyToOne = rel_data.type_() {
+                if let Some(x) = set.get_mut(&ident.table_id()) {
+                    x.push(rel_data.clone());
+                } else {
+                    set.insert(ident.table_id().clone(), vec![rel_data.clone()]);
+                }
+            }
+        }
+        for (ident, elements) in set.into_iter() {
+            for element in elements.iter() {
+                for other_element in elements.iter() {
+                    if other_element == element {
+                        continue;
+                    }
+                    let mut new_ident = BasiliqStoreRelationshipIdentifier::from(element);
+                    let new_other_ident = BasiliqStoreRelationshipIdentifier::from(other_element);
+                    new_ident.check_index(&relationships);
+                    relationships.insert(
+                        new_ident,
+                        BasiliqStoreRelationshipData {
+                            ftable_name: new_other_ident.table_id,
+                            ffield_name: ident.to_string(),
+                            type_: BasiliqStoreRelationshipType::ManyToMany(ident.clone()),
+                        },
+                    );
+                }
+            }
+        }
+        relationships
+    }
 }
