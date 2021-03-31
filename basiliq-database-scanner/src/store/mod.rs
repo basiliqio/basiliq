@@ -17,9 +17,7 @@ const POSTGRES_SYSTEM_SCHEMA: &[&str] = &["pg_catalog", "pg_toast", "information
 
 mod builder;
 mod config;
-mod config_errors;
 mod keys;
-mod mergeable;
 mod name;
 mod objects;
 mod relationships;
@@ -27,10 +25,10 @@ mod relationships;
 pub use builder::BasiliqStoreBuilder;
 use builder::BasiliqStoreTableBuilder;
 pub use config::{
-    BasiliqStoreConfig, BasiliqStoreRelationshipTargetConfig, BasiliqStoreRelationshipsConfig,
+    BasiliqStoreConfig, BasiliqStoreConfigError, BasiliqStoreConfigMergeable,
+    BasiliqStoreRelationshipTargetConfig, BasiliqStoreRelationshipsConfig,
     BasiliqStoreResourceConfig,
 };
-pub use config_errors::BasiliqStoreConfigError;
 
 #[derive(Debug, Clone)]
 pub struct BasiliqStore<'a> {
