@@ -1,6 +1,7 @@
 use super::*;
 use log::warn;
 
+/// Fails if the array doesn't have a single elements
 fn check_len_is_1<'a, T>(table_name: &str, arr: &'a [T]) -> Option<&'a T> {
     match arr.len() {
         0 => warn!("The table {} has no primary key, skipping", table_name),
@@ -14,12 +15,14 @@ fn check_len_is_1<'a, T>(table_name: &str, arr: &'a [T]) -> Option<&'a T> {
 }
 
 impl<'a> BasiliqStoreBuilder<'a> {
+    /// Extract the column index of the primary key
     pub fn build_pkeys(table: &BasiliqDbScannedTable) -> Option<i16> {
         check_len_is_1(table.table().name().as_str(), table.pkeys().as_slice())
             .and_then(|x| check_len_is_1(table.table().name().as_str(), x.columns().as_slice()))
             .copied()
     }
 
+    /// Extract the column indexes of the foreign keys
     pub fn build_fkeys_raw(
         table: &BasiliqDbScannedTable,
     ) -> BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)> {

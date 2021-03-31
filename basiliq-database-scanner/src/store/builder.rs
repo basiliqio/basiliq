@@ -49,6 +49,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
 		}
     }
 
+    /// Create a new builder
     pub fn new(raw_tables: Vec<Arc<BasiliqDbScannedTable>>) -> Self {
         let (table_builder_store, relationships) =
             Self::extract_data_from_raw_tables(raw_tables.clone());
@@ -82,6 +83,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
     // 	}
     // 	todo!()
     // }
+
+    /// Extract data from the raw table, to build the builder
     fn extract_data_from_raw_tables(
         raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     ) -> (
@@ -115,6 +118,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
         (table_builder_store, relationships)
     }
 
+    /// Build an alias map with default values
     fn build_alias_map(
         table_builder_store: &BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder>,
     ) -> BTreeMap<BasiliqStoreTableIdentifier, String> {
@@ -125,6 +129,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
         aliases
     }
 
+    /// Build the relationships
     fn build_relationships(
         relationships: BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
         mut table_builder_store: BTreeMap<
@@ -138,11 +143,13 @@ impl<'a> BasiliqStoreBuilder<'a> {
             match table_store.get_mut(ident.table_id()) {
                 Some(table) => {
                     if inserts_relationship(table, &ident, rel_data) {
+                        // If the relationships exists, skip
                         continue;
                     }
                 }
                 None => {
                     if insert_table_and_relationship(
+                        // If the table or the relationships exists, skip
                         &mut table_builder_store,
                         ident,
                         &mut table_store,
@@ -157,6 +164,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
     }
 }
 
+/// Insert a new table into the builder store and attached it the provided relationship
 fn insert_table_and_relationship<'a>(
     table_builder_store: &mut BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
     ident: BasiliqStoreRelationshipIdentifier,
@@ -185,6 +193,7 @@ fn insert_table_and_relationship<'a>(
     false
 }
 
+/// Insert a new relationships into the provided table
 fn inserts_relationship(
     table: &mut BasiliqStoreTable,
     ident: &BasiliqStoreRelationshipIdentifier,
@@ -208,6 +217,7 @@ fn inserts_relationship(
     false
 }
 
+/// Extract the field name from a relationships using its column id
 fn extract_relationships_fields_name(
     fkey: BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)>,
     table_builder: &BasiliqStoreTableBuilder,
