@@ -62,7 +62,7 @@ impl BasiliqDbScannerTable {
             foreign_keys
                 .clone()
                 .into_iter()
-                .map(|x| (x.table(), x))
+                .map(|x| (x.table_id(), x))
                 .into_group_map_by(|x| x.0)
                 .into_iter()
                 .map(|(key, vals)| (key, vals.into_iter().map(|(_key, vals)| vals).collect()))
@@ -70,7 +70,7 @@ impl BasiliqDbScannerTable {
         let foreign_keys_map_parent: HashMap<u32, Vec<raw::BasiliqDbScannerForeignKeyRaw>> =
             foreign_keys
                 .into_iter()
-                .map(|x| (x.ftable(), x))
+                .map(|x| (x.ftable_id(), x))
                 .into_group_map_by(|x| x.0)
                 .into_iter()
                 .map(|(key, vals)| (key, vals.into_iter().map(|(_key, vals)| vals).collect()))

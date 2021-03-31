@@ -136,11 +136,11 @@ impl BasiliqStoreBuilder {
         }
     }
 
-    pub fn build_object(
-        table: &BasiliqDbScannerTable,
+    pub fn build_object<'a>(
+        table: &'a BasiliqDbScannerTable,
         pkey: i16,
-        fkeys: BTreeMap<i16, (u32, i16)>,
-    ) -> Option<BasiliqStoreTableBuilder<'_>> {
+        fkeys: &BTreeMap<i16, (String, i16)>,
+    ) -> Option<BasiliqStoreTableBuilder<'a>> {
         let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
         let mut pkey_type: Option<CibouletteIdType> = None;
         trace!(

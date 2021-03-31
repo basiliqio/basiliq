@@ -20,19 +20,21 @@ impl BasiliqStoreBuilder {
             .copied()
     }
 
-    pub fn build_fkeys_raw(table: &BasiliqDbScannerTable) -> BTreeMap<i16, (u32, i16)> {
-        let mut res: BTreeMap<i16, (u32, i16)> = BTreeMap::new();
+    pub fn build_fkeys_raw(table: &BasiliqDbScannerTable) -> BTreeMap<i16, (String, i16)> {
+        let mut res: BTreeMap<i16, (String, i16)> = BTreeMap::new();
         for rel in table.fkeys_child() {
+            let table_name = name::create_resource_name(&table);
+            let ftable_name = name::create_resource_name_from_parts(rel.fschema(), rel.ftable());
             let lcol = rel
                 .lcolumns()
                 .as_ref()
-                .and_then(|lcol| check_len_is_1(table.table().name().as_str(), lcol.as_slice()));
+                .and_then(|lcol| check_len_is_1(table_name.as_str(), lcol.as_slice()));
             let fcol = rel
                 .fcolumns()
                 .as_ref()
-                .and_then(|fcol| check_len_is_1(table.table().name().as_str(), fcol.as_slice()));
+                .and_then(|fcol| check_len_is_1(table_name.as_str(), fcol.as_slice()));
             if let (Some(lcol), Some(fcol)) = (lcol, fcol) {
-                res.insert(*lcol, (rel.ftable(), *fcol));
+                res.insert(*lcol, (ftable_name, *fcol));
             }
         }
         res

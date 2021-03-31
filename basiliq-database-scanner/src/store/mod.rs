@@ -12,6 +12,7 @@ const POSTGRES_SYSTEM_SCHEMA: &[&str] = &["pg_catalog", "pg_toast", "information
 
 mod builder;
 mod keys;
+mod name;
 mod objects;
 
 pub use builder::BasiliqStoreBuilder;

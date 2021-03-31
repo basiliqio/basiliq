@@ -162,14 +162,18 @@ pub struct BasiliqDbScannerForeignKeyRaw {
     id: u32,
     #[getset(get = "pub")]
     name: String,
+    #[getset(get = "pub")]
+    schema: String,
+    #[getset(get = "pub")]
+    table: String,
     #[getset(get_copy = "pub")]
-    schema: u32,
+    table_id: u32,
+    #[getset(get = "pub")]
+    fschema: String,
+    #[getset(get = "pub")]
+    ftable: String,
     #[getset(get_copy = "pub")]
-    table: u32,
-    #[getset(get_copy = "pub")]
-    index: u32,
-    #[getset(get_copy = "pub")]
-    ftable: u32,
+    ftable_id: u32,
     #[getset(get = "pub")]
     lcolumns: Option<Vec<i16>>,
     #[getset(get = "pub")]
@@ -256,7 +260,7 @@ pub async fn read_foreign_keys<'a, E>(
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    Ok(sqlx::query_file_as!(
+    Ok(sqlx::query_file_as_unchecked!(
         BasiliqDbScannerForeignKeyRaw,
         "discovery_queries/get_foreign_keys.sql"
     )
