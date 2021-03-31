@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 #[derive(Debug, Clone, Getters)]
 #[getset(get = "pub")]
-pub struct BasiliqDbScannerTable {
+pub struct BasiliqDbScannedTable {
     schema: raw::BasiliqDbScannerSchemaRaw,
     table: raw::BasiliqDbScannerTableRaw,
     pkeys: Vec<raw::BasiliqDbScannerPrimaryKeyRaw>,
@@ -19,16 +19,16 @@ pub struct BasiliqDbScannerTable {
 #[getset(get = "pub")]
 pub struct BasiliqDbScannerColumn {
     column: raw::BasiliqDbScannerColumnRaw,
-    type_: BasiliqDbScannerType,
+    type_: BasiliqDbScannedType,
 }
 
 #[derive(Debug, Clone)]
-pub enum BasiliqDbScannerType {
+pub enum BasiliqDbScannedType {
     Simple(raw::BasiliqDbScannerTypeRaw),
-    Nested(raw::BasiliqDbScannerTypeRaw, Box<BasiliqDbScannerType>),
+    Nested(raw::BasiliqDbScannerTypeRaw, Box<BasiliqDbScannedType>),
 }
 
-impl BasiliqDbScannerTable {
+impl BasiliqDbScannedTable {
     pub fn new(
         schemas: Vec<raw::BasiliqDbScannerSchemaRaw>,
         tables: Vec<raw::BasiliqDbScannerTableRaw>,
@@ -48,7 +48,7 @@ impl BasiliqDbScannerTable {
             .collect();
         let parsed_columns: HashMap<u32, Vec<BasiliqDbScannerColumn>> =
             BasiliqDbScannerColumn::new(&types_map, columns_grouped);
-        let mut res: Vec<Arc<BasiliqDbScannerTable>> = Vec::with_capacity(tables.len());
+        let mut res: Vec<Arc<BasiliqDbScannedTable>> = Vec::with_capacity(tables.len());
         let schemas_map: HashMap<u32, raw::BasiliqDbScannerSchemaRaw> =
             schemas.into_iter().map(|x| (x.id(), x)).collect();
         let primary_keys_map: HashMap<u32, Vec<raw::BasiliqDbScannerPrimaryKeyRaw>> = primary_keys
@@ -108,7 +108,7 @@ impl BasiliqDbScannerTable {
                     continue;
                 }
             };
-            res.push(Arc::new(BasiliqDbScannerTable {
+            res.push(Arc::new(BasiliqDbScannedTable {
                 schema,
                 columns_by_name,
                 columns_by_id,
@@ -150,7 +150,7 @@ impl BasiliqDbScannerTable {
     }
 }
 
-impl BasiliqDbScannerType {
+impl BasiliqDbScannedType {
     pub fn new(
         type_: raw::BasiliqDbScannerTypeRaw,
         list_available: &HashMap<u32, raw::BasiliqDbScannerTypeRaw>,
@@ -161,15 +161,15 @@ impl BasiliqDbScannerType {
                     Some(child) => child,
                     None => {
                         warn!("Nested type {} not found for type {}", child_id, type_.id());
-                        return BasiliqDbScannerType::Simple(type_); //FIXME
+                        return BasiliqDbScannedType::Simple(type_); //FIXME
                     }
                 };
-                BasiliqDbScannerType::Nested(
+                BasiliqDbScannedType::Nested(
                     type_,
-                    Box::new(BasiliqDbScannerType::new(child.clone(), list_available)),
+                    Box::new(BasiliqDbScannedType::new(child.clone(), list_available)),
                 )
             }
-            None => BasiliqDbScannerType::Simple(type_),
+            None => BasiliqDbScannedType::Simple(type_),
         }
     }
 }
@@ -197,7 +197,7 @@ impl BasiliqDbScannerColumn {
                 };
                 col_list.push(BasiliqDbScannerColumn {
                     column: col,
-                    type_: BasiliqDbScannerType::new(type_, types),
+                    type_: BasiliqDbScannedType::new(type_, types),
                 });
             }
             res.insert(key, col_list);

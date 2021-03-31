@@ -4,11 +4,11 @@ use super::*;
 
 fn gen_rels_identifier(
     map: &BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
-    table_name: String,
+    table_id: BasiliqStoreTableIdentifier,
     field_name: String,
 ) -> BasiliqStoreRelationshipIdentifier {
     let mut identifier = BasiliqStoreRelationshipIdentifier {
-        table_name,
+        table_id,
         field_name,
         index: 0,
     };
@@ -20,8 +20,11 @@ fn gen_rels_identifier(
 
 impl<'a> BasiliqStoreBuilder<'a> {
     pub(super) fn build_relationships_base(
-        tables: &BTreeMap<String, BasiliqStoreTableBuilder<'_>>,
-        relationships: BTreeMap<String, BTreeMap<String, (String, i16)>>,
+        tables: &BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'_>>,
+        relationships: BTreeMap<
+            BasiliqStoreTableIdentifier,
+            BTreeMap<String, (BasiliqStoreTableIdentifier, i16)>,
+        >,
     ) -> BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData> {
         let mut res: BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData> =
             BTreeMap::new();

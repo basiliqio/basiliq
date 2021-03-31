@@ -14,17 +14,18 @@ fn check_len_is_1<'a, T>(table_name: &str, arr: &'a [T]) -> Option<&'a T> {
 }
 
 impl<'a> BasiliqStoreBuilder<'a> {
-    pub fn build_pkeys(table: &BasiliqDbScannerTable) -> Option<i16> {
+    pub fn build_pkeys(table: &BasiliqDbScannedTable) -> Option<i16> {
         check_len_is_1(table.table().name().as_str(), table.pkeys().as_slice())
             .and_then(|x| check_len_is_1(table.table().name().as_str(), x.columns().as_slice()))
             .copied()
     }
 
-    pub fn build_fkeys_raw(table: &BasiliqDbScannerTable) -> BTreeMap<i16, (String, i16)> {
-        let mut res: BTreeMap<i16, (String, i16)> = BTreeMap::new();
+    pub fn build_fkeys_raw(
+        table: &BasiliqDbScannedTable,
+    ) -> BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)> {
+        let mut res: BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)> = BTreeMap::new();
         for rel in table.fkeys_child() {
             let table_name = name::create_resource_name(&table);
-            let ftable_name = name::create_resource_name_from_parts(rel.fschema(), rel.ftable());
             let lcol = rel
                 .lcolumns()
                 .as_ref()
@@ -34,7 +35,16 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 .as_ref()
                 .and_then(|fcol| check_len_is_1(table_name.as_str(), fcol.as_slice()));
             if let (Some(lcol), Some(fcol)) = (lcol, fcol) {
-                res.insert(*lcol, (ftable_name, *fcol));
+                res.insert(
+                    *lcol,
+                    (
+                        BasiliqStoreTableIdentifier {
+                            table_name: rel.ftable().clone(),
+                            schema_name: rel.fschema().clone(),
+                        },
+                        *fcol,
+                    ),
+                );
             }
         }
         res

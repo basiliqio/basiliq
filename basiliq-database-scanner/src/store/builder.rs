@@ -5,21 +5,22 @@ use std::sync::Arc;
 
 #[derive(Debug, Clone)]
 pub struct BasiliqStoreBuilder<'a> {
-    pub(crate) raw_tables: Vec<Arc<BasiliqDbScannerTable>>,
-    pub(crate) tables: BTreeMap<String, BasiliqStoreTableBuilder<'a>>,
+    pub(crate) raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
+    pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
     pub(crate) relationships:
         BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
+    pub(crate) aliases: BTreeMap<BasiliqStoreTableIdentifier, String>,
 }
 
 #[derive(Debug, Clone)]
 pub struct BasiliqStoreTableBuilder<'a> {
-    pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannerTable>,
+    pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
     pub(crate) id_type: CibouletteIdType,
     pub(crate) properties: MessyJsonObject<'a>,
 }
 
 impl<'a> BasiliqStoreBuilder<'a> {
-    pub fn check_schema(table: &BasiliqDbScannerTable) -> Option<&BasiliqDbScannerTable> {
+    pub fn check_schema(table: &BasiliqDbScannedTable) -> Option<&BasiliqDbScannedTable> {
         match POSTGRES_SYSTEM_SCHEMA.contains(&table.schema().name().as_str())
 		// If in a system schema
 		{
@@ -28,9 +29,13 @@ impl<'a> BasiliqStoreBuilder<'a> {
 		}
     }
 
-    pub fn new(raw_tables: Vec<Arc<BasiliqDbScannerTable>>) -> Self {
-        let mut res: BTreeMap<String, BasiliqStoreTableBuilder<'_>> = BTreeMap::new();
-        let mut relationships: BTreeMap<String, BTreeMap<String, (String, i16)>> = BTreeMap::new();
+    pub fn new(raw_tables: Vec<Arc<BasiliqDbScannedTable>>) -> Self {
+        let mut res: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'_>> =
+            BTreeMap::new();
+        let mut relationships: BTreeMap<
+            BasiliqStoreTableIdentifier,
+            BTreeMap<String, (BasiliqStoreTableIdentifier, i16)>,
+        > = BTreeMap::new();
         for table in raw_tables.iter() {
             if let Some((table_builder, fkey)) = Self::check_schema(&table)
                 .map(|table| (table, Self::build_fkeys_raw(&table)))
@@ -40,25 +45,29 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 })
             {
                 let nfkey = extract_relationships_fields_name(fkey, &table_builder);
-                let name = name::create_resource_name(&table);
-                res.insert(name.clone(), table_builder);
-                relationships.insert(name, nfkey);
+                res.insert(BasiliqStoreTableIdentifier::from(&**table), table_builder);
+                relationships.insert(BasiliqStoreTableIdentifier::from(&**table), nfkey);
             }
         }
         let relationships = Self::build_relationships_base(&res, relationships);
+        let aliases = res
+            .iter()
+            .map(|(x, _)| (x.clone(), format!("{}__{}", x.schema_name, x.table_name)))
+            .collect();
         BasiliqStoreBuilder {
             raw_tables,
             tables: res,
             relationships,
+            aliases,
         }
     }
 }
 
 fn extract_relationships_fields_name(
-    fkey: BTreeMap<i16, (String, i16)>,
+    fkey: BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)>,
     table_builder: &BasiliqStoreTableBuilder,
-) -> BTreeMap<String, (String, i16)> {
-    let mut nfkey: BTreeMap<String, (String, i16)> = BTreeMap::new();
+) -> BTreeMap<String, (BasiliqStoreTableIdentifier, i16)> {
+    let mut nfkey: BTreeMap<String, (BasiliqStoreTableIdentifier, i16)> = BTreeMap::new();
     for (k, v) in fkey.into_iter() {
         if let Some(name) = table_builder
             .table

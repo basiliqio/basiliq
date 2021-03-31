@@ -26,8 +26,29 @@ pub struct BasiliqStore<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct BasiliqStoreRelationshipIdentifier {
+pub struct BasiliqStoreTableIdentifier {
+    schema_name: String,
     table_name: String,
+}
+
+impl std::fmt::Display for BasiliqStoreTableIdentifier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}__{}", self.schema_name, self.table_name)
+    }
+}
+
+impl From<&BasiliqDbScannedTable> for BasiliqStoreTableIdentifier {
+    fn from(table: &BasiliqDbScannedTable) -> Self {
+        BasiliqStoreTableIdentifier {
+            table_name: table.table().name().clone(),
+            schema_name: table.schema().name().clone(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct BasiliqStoreRelationshipIdentifier {
+    table_id: BasiliqStoreTableIdentifier,
     field_name: String,
     index: usize,
 }
@@ -41,7 +62,7 @@ pub enum BasiliqStoreRelationshipType {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct BasiliqStoreRelationshipData {
-    ftable_name: String,
+    ftable_name: BasiliqStoreTableIdentifier,
     ffield_name: String,
     type_: BasiliqStoreRelationshipType,
 }

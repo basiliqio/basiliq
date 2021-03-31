@@ -80,7 +80,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
 
     fn type_to_id(col_settings: &BasiliqDbScannerColumn) -> Option<CibouletteIdType> {
         match col_settings.type_() {
-            BasiliqDbScannerType::Simple(type_) => match type_.category() {
+            BasiliqDbScannedType::Simple(type_) => match type_.category() {
                 BasiliqDbScannerTypeCategory::Array => {
                     trace!(
                         ">> Found an array for type {}. Unsupported for an ID, skipping..",
@@ -130,7 +130,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                     None
                 }
             },
-            BasiliqDbScannerType::Nested(_, _) => {
+            BasiliqDbScannedType::Nested(_, _) => {
                 trace!("Found an array. Unsupported for an id, skipping..");
                 None
             }
@@ -138,9 +138,9 @@ impl<'a> BasiliqStoreBuilder<'a> {
     }
 
     pub fn build_object(
-        table: Arc<BasiliqDbScannerTable>,
+        table: Arc<BasiliqDbScannedTable>,
         pkey: i16,
-        fkeys: &BTreeMap<i16, (String, i16)>,
+        fkeys: &BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)>,
     ) -> Option<BasiliqStoreTableBuilder<'a>> {
         let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
         let mut pkey_type: Option<CibouletteIdType> = None;
@@ -166,10 +166,10 @@ impl<'a> BasiliqStoreBuilder<'a> {
             }
             trace!("> Scanning columns {}", col_settings.column().name());
             if let Some(obj) = match col_settings.type_() {
-                BasiliqDbScannerType::Simple(type_) => {
+                BasiliqDbScannedType::Simple(type_) => {
                     Self::type_to_messy_json(col_settings, type_)
                 }
-                BasiliqDbScannerType::Nested(_parent, _child) => {
+                BasiliqDbScannedType::Nested(_parent, _child) => {
                     trace!("Found an array. Unsupported, skipping..");
                     None
                 }
