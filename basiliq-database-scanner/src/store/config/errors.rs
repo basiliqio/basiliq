@@ -8,4 +8,6 @@ pub enum BasiliqStoreConfigError {
     DuplicateTable(BasiliqStoreRelationshipTargetConfig),
     #[error("Unknown table: `{0}`")]
     UnknownTable(BasiliqStoreRelationshipTargetConfig),
+    #[error("Cannot change target configuration")]
+    TargetConfigChange,
 }

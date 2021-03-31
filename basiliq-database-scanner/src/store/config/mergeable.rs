@@ -1,5 +1,5 @@
 use super::*;
 
 pub trait BasiliqStoreConfigMergeable {
-    fn merge() -> Result<(), BasiliqStoreConfigError>;
+    fn basiliq_config_merge(&mut self, other: &Self) -> Result<(), BasiliqStoreConfigError>;
 }
