@@ -36,7 +36,7 @@ impl BasiliqDbScannerTable {
         types: Vec<raw::BasiliqDbScannerTypeRaw>,
         primary_keys: Vec<raw::BasiliqDbScannerPrimaryKeyRaw>,
         foreign_keys: Vec<raw::BasiliqDbScannerForeignKeyRaw>,
-    ) -> Vec<Self> {
+    ) -> Vec<Arc<Self>> {
         let types_map: HashMap<u32, raw::BasiliqDbScannerTypeRaw> =
             types.into_iter().map(|x| (x.id(), x)).collect();
         let columns_grouped: HashMap<u32, Vec<raw::BasiliqDbScannerColumnRaw>> = columns
@@ -48,7 +48,7 @@ impl BasiliqDbScannerTable {
             .collect();
         let parsed_columns: HashMap<u32, Vec<BasiliqDbScannerColumn>> =
             BasiliqDbScannerColumn::new(&types_map, columns_grouped);
-        let mut res: Vec<BasiliqDbScannerTable> = Vec::with_capacity(tables.len());
+        let mut res: Vec<Arc<BasiliqDbScannerTable>> = Vec::with_capacity(tables.len());
         let schemas_map: HashMap<u32, raw::BasiliqDbScannerSchemaRaw> =
             schemas.into_iter().map(|x| (x.id(), x)).collect();
         let primary_keys_map: HashMap<u32, Vec<raw::BasiliqDbScannerPrimaryKeyRaw>> = primary_keys
@@ -108,7 +108,7 @@ impl BasiliqDbScannerTable {
                     continue;
                 }
             };
-            res.push(BasiliqDbScannerTable {
+            res.push(Arc::new(BasiliqDbScannerTable {
                 schema,
                 columns_by_name,
                 columns_by_id,
@@ -125,9 +125,28 @@ impl BasiliqDbScannerTable {
                     .cloned()
                     .unwrap_or_default(),
                 table,
-            })
+            }))
         }
         res
+    }
+
+    pub async fn scan_db(pool: sqlx::PgPool) -> Result<Vec<Arc<Self>>, sqlx::Error> {
+        let (schemas, tables, columns, types, primary_keys, foreign_keys) = tokio::try_join!(
+            raw::read_schemas(&pool),
+            raw::read_tables(&pool),
+            raw::read_columns(&pool),
+            raw::read_types(&pool),
+            raw::read_primary_keys(&pool),
+            raw::read_foreign_keys(&pool)
+        )?;
+        Ok(Self::new(
+            schemas,
+            tables,
+            columns,
+            types,
+            primary_keys,
+            foreign_keys,
+        ))
     }
 }
 

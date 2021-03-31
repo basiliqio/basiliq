@@ -13,7 +13,7 @@ fn check_len_is_1<'a, T>(table_name: &str, arr: &'a [T]) -> Option<&'a T> {
     None
 }
 
-impl BasiliqStoreBuilder {
+impl<'a> BasiliqStoreBuilder<'a> {
     pub fn build_pkeys(table: &BasiliqDbScannerTable) -> Option<i16> {
         check_len_is_1(table.table().name().as_str(), table.pkeys().as_slice())
             .and_then(|x| check_len_is_1(table.table().name().as_str(), x.columns().as_slice()))

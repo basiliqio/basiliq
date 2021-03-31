@@ -14,6 +14,7 @@ mod builder;
 mod keys;
 mod name;
 mod objects;
+mod relationships;
 
 pub use builder::BasiliqStoreBuilder;
 use builder::BasiliqStoreTableBuilder;
@@ -22,4 +23,25 @@ use builder::BasiliqStoreTableBuilder;
 pub struct BasiliqStore<'a> {
     pub(crate) ciboulette: ciboulette::CibouletteStore<'a>,
     pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore<'a>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct BasiliqStoreRelationshipIdentifier {
+    table_name: String,
+    field_name: String,
+    index: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum BasiliqStoreRelationshipType {
+    OneToMany,
+    ManyToOne,
+    ManyToMany,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct BasiliqStoreRelationshipData {
+    ftable_name: String,
+    ffield_name: String,
+    type_: BasiliqStoreRelationshipType,
 }

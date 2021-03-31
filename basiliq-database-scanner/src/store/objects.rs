@@ -1,9 +1,10 @@
 use super::*;
 use ciboulette::CibouletteIdType;
 use log::trace;
+use std::sync::Arc;
 
-impl BasiliqStoreBuilder {
-    fn type_to_messy_json<'a>(
+impl<'a> BasiliqStoreBuilder<'a> {
+    fn type_to_messy_json(
         col_settings: &BasiliqDbScannerColumn,
         type_: &BasiliqDbScannerTypeRaw,
     ) -> Option<MessyJson<'a>> {
@@ -136,8 +137,8 @@ impl BasiliqStoreBuilder {
         }
     }
 
-    pub fn build_object<'a>(
-        table: &'a BasiliqDbScannerTable,
+    pub fn build_object(
+        table: Arc<BasiliqDbScannerTable>,
         pkey: i16,
         fkeys: &BTreeMap<i16, (String, i16)>,
     ) -> Option<BasiliqStoreTableBuilder<'a>> {
@@ -182,7 +183,6 @@ impl BasiliqStoreBuilder {
                 table,
                 properties,
                 id_type,
-                fkeys: BTreeMap::default(),
             })
     }
 }

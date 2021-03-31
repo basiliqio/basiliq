@@ -10,8 +10,9 @@ async fn main() -> anyhow::Result<()> {
         .connect(db_uri.unwrap().to_str().unwrap())
         .await?;
     println!("Connected");
-    let builder = BasiliqStoreBuilder::scan_db(pool).await?;
-    println!("{:#?}", builder.build());
+    let raw_tables = BasiliqDbScannerTable::scan_db(pool).await?;
+    let builder = BasiliqStoreBuilder::new(raw_tables);
+    println!("{:#?}", builder);
     // builder.build();
     Ok(())
 }
