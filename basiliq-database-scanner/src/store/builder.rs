@@ -1,16 +1,15 @@
 use super::*;
-use ciboulette::CibouletteIdType;
-use log::warn;
-use std::sync::Arc;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Getters)]
+#[getset(get = "pub")]
 pub struct BasiliqStoreBuilder<'a> {
     pub(crate) raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>>,
     pub(crate) aliases: BTreeMap<BasiliqStoreTableIdentifier, String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Getters)]
+#[getset(get = "pub")]
 pub struct BasiliqStoreTableBuilder<'a> {
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
     pub(crate) id_type: CibouletteIdType,
@@ -61,28 +60,6 @@ impl<'a> BasiliqStoreBuilder<'a> {
             aliases,
         }
     }
-
-    // pub fn generate_config(&self) -> BasiliqStoreConfig
-    // {
-    // 	let mut resource: BTreeMap<String, BasiliqStoreResourceConfig> = BTreeMap::new();
-
-    // 	for (alias, (table_ident, table_builder)) in self.aliases.values().zip(self.tables.iter())
-    // 	{
-    // 		if resource.contains_key(alias)
-    // 		{
-    // 			warn!("Duplicate resource name `{}`", alias);
-    // 			continue ;
-    // 		}
-    // 		let relationships
-    // 		resource.insert(alias, BasiliqStoreResourceConfig {
-    // 			schema: table_ident.schema_name().clone(),
-    // 			table_name: table_ident.table_name().clone(),
-    // 			enabled: true,
-
-    // 		})
-    // 	}
-    // 	todo!()
-    // }
 
     /// Extract data from the raw table, to build the builder
     fn extract_data_from_raw_tables(

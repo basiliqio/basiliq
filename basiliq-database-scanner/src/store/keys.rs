@@ -1,5 +1,4 @@
 use super::*;
-use log::warn;
 
 /// Fails if the array doesn't have a single elements
 fn check_len_is_1<'a, T>(table_name: &str, arr: &'a [T]) -> Option<&'a T> {

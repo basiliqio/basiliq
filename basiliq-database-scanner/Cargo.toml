@@ -16,6 +16,7 @@ ciboulette = { git = "https://gitlab.com/basiliq/ciboulette.git", features = [ "
 ciboulette2postgres = { git = "https://gitlab.com/basiliq/ciboulette2postgres.git", package = "ciboulette2postgres" }
 messy_json = { git = "https://gitlab.com/basiliq/messy_json.git"}
 tokio = { version = "1", features = ["full"] }
+thiserror = "1"
 
 [dev-dependencies]
 anyhow = "1"

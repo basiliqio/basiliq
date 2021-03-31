@@ -1,7 +1,4 @@
 use super::*;
-use ciboulette::CibouletteIdType;
-use log::trace;
-use std::sync::Arc;
 
 impl<'a> BasiliqStoreBuilder<'a> {
     fn type_to_messy_json(

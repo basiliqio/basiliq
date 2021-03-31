@@ -1,5 +1,3 @@
-use log::warn;
-
 use super::*;
 
 fn gen_rels_identifier(

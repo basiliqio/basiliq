@@ -1,10 +1,15 @@
 use super::postgres_metadata::parsed::*;
 use super::postgres_metadata::raw::*;
 use super::*;
+use ciboulette::CibouletteIdType;
 use getset::Getters;
+use log::{trace, warn};
 use messy_json::*;
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 use std::collections::BTreeMap;
+use std::collections::BTreeSet;
+use std::sync::Arc;
 const POSTGRES_SYSTEM_COLUMNS: &[&str] =
     &["oid", "tableoid", "xmin", "cmin", "xmax", "cmax", "ctid"];
 
@@ -12,14 +17,20 @@ const POSTGRES_SYSTEM_SCHEMA: &[&str] = &["pg_catalog", "pg_toast", "information
 
 mod builder;
 mod config;
+mod config_errors;
 mod keys;
+mod mergeable;
 mod name;
 mod objects;
 mod relationships;
 
 pub use builder::BasiliqStoreBuilder;
 use builder::BasiliqStoreTableBuilder;
-pub use config::*;
+pub use config::{
+    BasiliqStoreConfig, BasiliqStoreRelationshipTargetConfig, BasiliqStoreRelationshipsConfig,
+    BasiliqStoreResourceConfig,
+};
+pub use config_errors::BasiliqStoreConfigError;
 
 #[derive(Debug, Clone)]
 pub struct BasiliqStore<'a> {
