@@ -91,7 +91,13 @@ impl<'a> BasiliqStoreBuilder<'a> {
                         lfield_name: element.lfield_name().clone(),
                         ftable_name: other_element.ltable_name().clone(),
                         ffield_name: other_element.lfield_name().clone(),
-                        type_: BasiliqStoreRelationshipType::ManyToMany(ident.clone()),
+                        type_: BasiliqStoreRelationshipType::ManyToMany(
+                            BasiliqStoreRelationshipManyToManyData {
+                                bucket: ident.clone(),
+                                lfield_name: element.ffield_name().clone(),
+                                ffield_name: other_element.ffield_name().clone(),
+                            },
+                        ),
                     });
                 }
             }

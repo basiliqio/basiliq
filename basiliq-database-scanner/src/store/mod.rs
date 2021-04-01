@@ -80,7 +80,15 @@ impl From<&BasiliqStoreResourceConfig> for BasiliqStoreTableIdentifier {
 pub enum BasiliqStoreRelationshipType {
     OneToMany,
     ManyToOne,
-    ManyToMany(BasiliqStoreTableIdentifier),
+    ManyToMany(BasiliqStoreRelationshipManyToManyData),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
+#[getset(get = "pub")]
+pub struct BasiliqStoreRelationshipManyToManyData {
+    bucket: BasiliqStoreTableIdentifier,
+    lfield_name: String,
+    ffield_name: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
