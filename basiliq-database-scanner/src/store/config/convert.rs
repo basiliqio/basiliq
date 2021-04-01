@@ -19,8 +19,8 @@ impl<'a> From<&BasiliqStoreBuilder<'a>> for BasiliqStoreConfig {
                     (
                         k.clone(),
                         BasiliqStoreRelationshipsConfig {
-                            target: BasiliqStoreRelationshipTargetConfig {
-                                schema: v.ftable_name().schema_name().clone(),
+                            target: BasiliqStoreTableIdentifier {
+                                schema_name: v.ftable_name().schema_name().clone(),
                                 table_name: v.ftable_name().table_name().clone(),
                             },
                             enabled: true,
@@ -32,8 +32,8 @@ impl<'a> From<&BasiliqStoreBuilder<'a>> for BasiliqStoreConfig {
             resources.insert(
                 alias.clone(),
                 BasiliqStoreResourceConfig {
-                    target: BasiliqStoreRelationshipTargetConfig {
-                        schema: table_ident.schema_name().clone(),
+                    target: BasiliqStoreTableIdentifier {
+                        schema_name: table_ident.schema_name().clone(),
                         table_name: table_ident.table_name().clone(),
                     },
                     relationships,

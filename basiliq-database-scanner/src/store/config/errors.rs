@@ -5,9 +5,9 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum BasiliqStoreConfigError {
     #[error("Duplicate table entry in the configuration: `{0}`")]
-    DuplicateTable(BasiliqStoreRelationshipTargetConfig),
+    DuplicateTable(BasiliqStoreTableIdentifier),
     #[error("Unknown table: `{0}`")]
-    UnknownTable(BasiliqStoreRelationshipTargetConfig),
+    UnknownTable(BasiliqStoreTableIdentifier),
     #[error("Cannot change target configuration")]
     TargetConfigChange,
 }

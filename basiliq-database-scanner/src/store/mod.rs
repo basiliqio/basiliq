@@ -2,7 +2,7 @@ use super::postgres_metadata::parsed::*;
 use super::postgres_metadata::raw::*;
 use super::*;
 use ciboulette::CibouletteIdType;
-use getset::Getters;
+use getset::{Getters, MutGetters};
 use log::{trace, warn};
 use messy_json::*;
 use serde::{Deserialize, Serialize};
@@ -26,8 +26,7 @@ pub use builder::BasiliqStoreBuilder;
 use builder::BasiliqStoreTableBuilder;
 pub use config::{
     BasiliqStoreConfig, BasiliqStoreConfigError, BasiliqStoreConfigMergeable,
-    BasiliqStoreRelationshipTargetConfig, BasiliqStoreRelationshipsConfig,
-    BasiliqStoreResourceConfig,
+    BasiliqStoreRelationshipsConfig, BasiliqStoreResourceConfig,
 };
 
 #[derive(Debug, Clone)]
@@ -36,7 +35,7 @@ pub struct BasiliqStore<'a> {
     pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore<'a>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters, Deserialize, Serialize)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreTableIdentifier {
     schema_name: String,
@@ -54,6 +53,15 @@ impl From<&BasiliqDbScannedTable> for BasiliqStoreTableIdentifier {
         BasiliqStoreTableIdentifier {
             table_name: table.table().name().clone(),
             schema_name: table.schema().name().clone(),
+        }
+    }
+}
+
+impl From<&BasiliqStoreResourceConfig> for BasiliqStoreTableIdentifier {
+    fn from(table: &BasiliqStoreResourceConfig) -> Self {
+        BasiliqStoreTableIdentifier {
+            table_name: table.target().table_name().clone(),
+            schema_name: table.target().schema_name().clone(),
         }
     }
 }

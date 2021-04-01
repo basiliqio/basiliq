@@ -16,7 +16,7 @@ pub struct BasiliqStoreConfig {
     pub(crate) resources: BTreeMap<String, BasiliqStoreResourceConfig>,
 }
 
-impl BasiliqStoreConfigMergeable for BasiliqStoreConfig {
+impl BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreConfig {
     fn basiliq_config_merge(&mut self, other: &Self) -> Result<(), BasiliqStoreConfigError> {
         let mut new_resources: BTreeMap<String, BasiliqStoreResourceConfig> =
             self.resources.clone();
@@ -53,14 +53,17 @@ impl BasiliqStoreConfigMergeable for BasiliqStoreConfig {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreResourceConfig {
-    pub(crate) target: BasiliqStoreRelationshipTargetConfig,
+    pub(crate) target: BasiliqStoreTableIdentifier,
     pub(crate) enabled: bool,
     /// A map of the relationships
     pub(crate) relationships: BTreeMap<String, BasiliqStoreRelationshipsConfig>,
 }
 
-impl BasiliqStoreConfigMergeable for BasiliqStoreResourceConfig {
-    fn basiliq_config_merge(&mut self, other: &Self) -> Result<(), BasiliqStoreConfigError> {
+impl BasiliqStoreConfigMergeable<BasiliqStoreResourceConfig> for BasiliqStoreResourceConfig {
+    fn basiliq_config_merge(
+        &mut self,
+        other: &BasiliqStoreResourceConfig,
+    ) -> Result<(), BasiliqStoreConfigError> {
         if self.target != other.target {
             return Err(BasiliqStoreConfigError::TargetConfigChange);
         }
@@ -100,13 +103,18 @@ impl BasiliqStoreConfigMergeable for BasiliqStoreResourceConfig {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipsConfig {
-    pub(crate) target: BasiliqStoreRelationshipTargetConfig,
+    pub(crate) target: BasiliqStoreTableIdentifier,
     pub(crate) enabled: bool,
     pub(crate) field: String,
 }
 
-impl BasiliqStoreConfigMergeable for BasiliqStoreRelationshipsConfig {
-    fn basiliq_config_merge(&mut self, other: &Self) -> Result<(), BasiliqStoreConfigError> {
+impl BasiliqStoreConfigMergeable<BasiliqStoreRelationshipsConfig>
+    for BasiliqStoreRelationshipsConfig
+{
+    fn basiliq_config_merge(
+        &mut self,
+        other: &BasiliqStoreRelationshipsConfig,
+    ) -> Result<(), BasiliqStoreConfigError> {
         if self.target != other.target || self.field != other.field {
             return Err(BasiliqStoreConfigError::TargetConfigChange);
         }
@@ -115,25 +123,9 @@ impl BasiliqStoreConfigMergeable for BasiliqStoreRelationshipsConfig {
     }
 }
 
-/// The configuration of a store relationship target
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters)]
-#[getset(get = "pub")]
-pub struct BasiliqStoreRelationshipTargetConfig {
-    /// The schema name of the resource
-    pub(crate) schema: String,
-    /// The table name of the resource
-    pub(crate) table_name: String,
-}
-
-impl std::fmt::Display for BasiliqStoreRelationshipTargetConfig {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}.{}", self.schema, self.table_name)
-    }
-}
-
 impl BasiliqStoreConfig {
     fn check_uniq(&self) -> Result<(), BasiliqStoreConfigError> {
-        let mut name_set: BTreeSet<&BasiliqStoreRelationshipTargetConfig> = BTreeSet::new();
+        let mut name_set: BTreeSet<&BasiliqStoreTableIdentifier> = BTreeSet::new();
 
         for resource in self.resources.values() {
             if !name_set.insert(resource.target()) {
