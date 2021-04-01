@@ -6,7 +6,7 @@ use itertools::{EitherOrBoth, Itertools};
 pub struct BasiliqStoreBuilder<'a> {
     pub(crate) raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>>,
-    pub(crate) aliases: BTreeMap<BasiliqStoreTableIdentifier, String>,
+    pub(crate) aliases: BiBTreeMap<BasiliqStoreTableIdentifier, String>,
 }
 
 impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder<'a> {
@@ -20,7 +20,7 @@ impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder
             // Disable that resource
             {
                 self.tables_mut().remove(&table_ident);
-                self.aliases_mut().remove(&table_ident);
+                self.aliases_mut().remove_by_left(&table_ident);
                 continue;
             }
             self.aliases_mut()
@@ -101,6 +101,16 @@ impl<'a> BasiliqStoreBuilder<'a> {
 		}
     }
 
+    pub fn get_table(&self, ident: &BasiliqStoreTableIdentifier) -> Option<&'a BasiliqStoreTable> {
+        self.tables().get(ident)
+    }
+
+    pub fn get_table_by_alias(&self, alias: &str) -> Option<&'a BasiliqStoreTable> {
+        self.aliases()
+            .get_by_right(alias)
+            .and_then(|ident| self.tables().get(ident))
+    }
+
     /// Create a new builder
     pub fn new(raw_tables: Vec<Arc<BasiliqDbScannedTable>>) -> Self {
         let (table_builder_store, relationships) =
@@ -143,6 +153,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 relationships.insert(BasiliqStoreTableIdentifier::from(&**table), nfkey);
             }
         }
+
         let relationships = Self::build_relationships_base(&table_builder_store, relationships);
         let relationships = Self::build_relationships_many(relationships);
         (table_builder_store, relationships)
@@ -151,7 +162,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
     /// Build an alias map with default values
     fn build_alias_map(
         table_builder_store: &BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder>,
-    ) -> BTreeMap<BasiliqStoreTableIdentifier, String> {
+    ) -> BiBTreeMap<BasiliqStoreTableIdentifier, String> {
         let aliases = table_builder_store
             .iter()
             .map(|(x, _)| (x.clone(), format!("{}__{}", x.schema_name, x.table_name)))
@@ -162,65 +173,24 @@ impl<'a> BasiliqStoreBuilder<'a> {
     /// Build the relationships
     fn build_relationships(
         relationships: BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
-        mut table_builder_store: BTreeMap<
-            BasiliqStoreTableIdentifier,
-            BasiliqStoreTableBuilder<'a>,
-        >,
+        table_builder_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
     ) -> BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>> {
         let mut table_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable> =
-            BTreeMap::new();
+            table_builder_store
+                .into_iter()
+                .map(|(k, v)| (k, v.build(std::iter::empty())))
+                .collect();
+
         for (ident, rel_data) in relationships.into_iter() {
-            match table_store.get_mut(ident.table_id()) {
-                Some(table) => {
-                    if inserts_relationship(table, &ident, rel_data) {
-                        // If the relationships exists, skip
-                        continue;
-                    }
-                }
-                None => {
-                    if insert_table_and_relationship(
-                        // If the table or the relationships exists, skip
-                        &mut table_builder_store,
-                        ident,
-                        &mut table_store,
-                        rel_data,
-                    ) {
-                        continue;
-                    }
+            if let Some(table) = table_store.get_mut(ident.table_id()) {
+                if inserts_relationship(table, &ident, rel_data) {
+                    // If the relationships exists, skip
+                    continue;
                 }
             }
         }
         table_store
     }
-}
-
-/// Insert a new table into the builder store and attached it the provided relationship
-fn insert_table_and_relationship<'a>(
-    table_builder_store: &mut BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
-    ident: BasiliqStoreRelationshipIdentifier,
-    table_store: &mut BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>>,
-    rel_data: BasiliqStoreRelationshipData,
-) -> bool {
-    {
-        let (id, table) = match table_builder_store.remove_entry(ident.table_id()) {
-            Some(x) => x,
-            None => {
-                warn!(
-                    "Relationship reference an unknown table `{}`",
-                    ident.table_id(),
-                );
-                return true;
-            }
-        };
-        table_store.insert(
-            id,
-            table.build(std::iter::once((
-                rel_data.ftable_name().table_name().clone(),
-                rel_data,
-            ))),
-        );
-    }
-    false
 }
 
 /// Insert a new relationships into the provided table

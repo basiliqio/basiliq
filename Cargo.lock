@@ -75,14 +75,18 @@ name = "basiliq_database_scanner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "bimap",
  "cargo-husky",
  "ciboulette",
  "ciboulette2postgres",
+ "ciboulette2postgres_test_proc_macro",
  "env_logger",
  "getset",
  "itertools",
+ "lazy_static",
  "log",
  "messy_json",
+ "num_cpus",
  "serde",
  "serde_json",
  "sqlx",
@@ -101,6 +105,12 @@ dependencies = [
  "num-integer",
  "num-traits",
 ]
+
+[[package]]
+name = "bimap"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f92b72b8f03128773278bf74418b9205f3d2a12c39a61f92395f47af390c32bf"
 
 [[package]]
 name = "bitflags"
@@ -197,7 +207,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#8d43ae2c7d75b47dc95e98344ac2b27b22e48100"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#1520aa49709253f6ec36bcf417410a22584acd78"
 dependencies = [
  "getset",
  "itertools",
@@ -232,6 +242,16 @@ dependencies = [
  "sqlx",
  "thiserror",
  "uuid",
+]
+
+[[package]]
+name = "ciboulette2postgres_test_proc_macro"
+version = "0.1.0"
+source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#aec92db2f73b64f23179b58ed77105783c3c7625"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

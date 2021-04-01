@@ -1,6 +1,7 @@
 use super::postgres_metadata::parsed::*;
 use super::postgres_metadata::raw::*;
 use super::*;
+use bimap::BiBTreeMap;
 use ciboulette::CibouletteIdType;
 use getset::{Getters, MutGetters};
 use log::{trace, warn};
@@ -40,6 +41,15 @@ pub struct BasiliqStore<'a> {
 pub struct BasiliqStoreTableIdentifier {
     schema_name: String,
     table_name: String,
+}
+
+impl BasiliqStoreTableIdentifier {
+    pub fn new(schema_name: &str, table_name: &str) -> Self {
+        BasiliqStoreTableIdentifier {
+            schema_name: schema_name.to_string(),
+            table_name: table_name.to_string(),
+        }
+    }
 }
 
 impl std::fmt::Display for BasiliqStoreTableIdentifier {

@@ -17,10 +17,14 @@ ciboulette2postgres = { git = "https://gitlab.com/basiliq/ciboulette2postgres.gi
 messy_json = { git = "https://gitlab.com/basiliq/messy_json.git"}
 tokio = { version = "1", features = ["full"] }
 thiserror = "1"
+bimap = "0.6.0"
 
 [dev-dependencies]
 anyhow = "1"
 env_logger = "0.8"
+lazy_static = "1.4"
+num_cpus = "1.13.0"
+ciboulette2postgres_test_proc_macro = { git = "https://gitlab.com/basiliq/ciboulette2postgres.git", package = "ciboulette2postgres_test_proc_macro" }
 
 [dev-dependencies.cargo-husky]
 version = "1"

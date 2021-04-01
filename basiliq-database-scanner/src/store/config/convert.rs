@@ -5,8 +5,10 @@ impl<'a> From<&BasiliqStoreBuilder<'a>> for BasiliqStoreConfig {
     fn from(builder: &BasiliqStoreBuilder<'a>) -> Self {
         let mut resources: BTreeMap<String, BasiliqStoreResourceConfig> = BTreeMap::new();
 
-        for (alias, (table_ident, table_builder)) in
-            builder.aliases().values().zip(builder.tables().iter())
+        for (alias, (table_ident, table_builder)) in builder
+            .aliases()
+            .right_values()
+            .zip(builder.tables().iter())
         {
             if resources.contains_key(alias) {
                 log::warn!("Duplicate resource name `{}`", alias);

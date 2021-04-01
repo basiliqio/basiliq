@@ -130,7 +130,29 @@ impl BasiliqDbScannedTable {
         res
     }
 
-    pub async fn scan_db(pool: sqlx::PgPool) -> Result<Vec<Arc<Self>>, sqlx::Error> {
+    pub async fn scan_db<'a, I>(conn: I) -> Result<Vec<Arc<Self>>, sqlx::Error>
+    where
+        I: sqlx::Acquire<'a, Database = sqlx::Postgres, Connection = &'a mut sqlx::PgConnection>,
+    {
+        let connection = conn.acquire().await?;
+
+        let schemas = raw::read_schemas(&mut *connection).await?;
+        let tables = raw::read_tables(&mut *connection).await?;
+        let columns = raw::read_columns(&mut *connection).await?;
+        let types = raw::read_types(&mut *connection).await?;
+        let primary_keys = raw::read_primary_keys(&mut *connection).await?;
+        let foreign_keys = raw::read_foreign_keys(&mut *connection).await?;
+        Ok(Self::new(
+            schemas,
+            tables,
+            columns,
+            types,
+            primary_keys,
+            foreign_keys,
+        ))
+    }
+
+    pub async fn scan_db_pool(pool: sqlx::PgPool) -> Result<Vec<Arc<Self>>, sqlx::Error> {
         let (schemas, tables, columns, types, primary_keys, foreign_keys) = tokio::try_join!(
             raw::read_schemas(&pool),
             raw::read_tables(&pool),
