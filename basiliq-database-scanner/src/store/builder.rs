@@ -82,7 +82,7 @@ impl<'a> BasiliqStoreTableBuilder<'a> {
     }
 }
 
-#[derive(Debug, Clone, Getters)]
+#[derive(Debug, Clone, Getters, PartialEq)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreTable<'a> {
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
@@ -129,7 +129,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
         raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     ) -> (
         BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
-        BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
+        BTreeSet<BasiliqStoreRelationshipData>,
     ) {
         let mut table_builder_store: BTreeMap<
             BasiliqStoreTableIdentifier,
@@ -172,7 +172,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
 
     /// Build the relationships
     fn build_relationships(
-        relationships: BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
+        relationships: BTreeSet<BasiliqStoreRelationshipData>,
         table_builder_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
     ) -> BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>> {
         let mut table_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable> =
@@ -181,12 +181,9 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 .map(|(k, v)| (k, v.build(std::iter::empty())))
                 .collect();
 
-        for (ident, rel_data) in relationships.into_iter() {
-            if let Some(table) = table_store.get_mut(ident.table_id()) {
-                if inserts_relationship(table, &ident, rel_data) {
-                    // If the relationships exists, skip
-                    continue;
-                }
+        for rel_data in relationships.into_iter() {
+            if let Some(table) = table_store.get_mut(rel_data.ltable_name()) {
+                inserts_relationship(table, rel_data);
             }
         }
         table_store
@@ -194,27 +191,24 @@ impl<'a> BasiliqStoreBuilder<'a> {
 }
 
 /// Insert a new relationships into the provided table
-fn inserts_relationship(
-    table: &mut BasiliqStoreTable,
-    ident: &BasiliqStoreRelationshipIdentifier,
-    rel_data: BasiliqStoreRelationshipData,
-) -> bool {
-    match table.relationships.contains_key(ident.field_name()) {
-        true => {
-            warn!(
-                "Duplicate relation on table `{}`, field `{}`",
-                ident.table_id(),
-                ident.field_name()
-            );
-            return true;
+fn inserts_relationship(table: &mut BasiliqStoreTable, rel_data: BasiliqStoreRelationshipData) {
+    match table.relationships.get(rel_data.ftable_name().table_name()) {
+        Some(x) if x == &rel_data => (),
+        Some(_) => {
+            let mut counter: usize = 0;
+            let mut name = format!("{}_{}", rel_data.ftable_name().table_name(), counter);
+            while table.relationships.contains_key(&name) {
+                counter += 1;
+                name = format!("{}_{}", rel_data.ftable_name().table_name(), counter);
+            }
+            table.relationships.insert(name, rel_data);
         }
-        false => {
+        None => {
             table
                 .relationships
                 .insert(rel_data.ftable_name().table_name().clone(), rel_data);
         }
     }
-    false
 }
 
 /// Extract the field name from a relationships using its column id

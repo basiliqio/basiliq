@@ -12,7 +12,7 @@ async fn main() -> anyhow::Result<()> {
     println!("Connected");
     let raw_tables = BasiliqDbScannedTable::scan_db_pool(pool).await?;
     let builder = BasiliqStoreBuilder::new(raw_tables);
-    println!("{:#?}", builder);
+    // println!("{:#?}", builder);
     println!("{:#?}", BasiliqStoreConfig::from(&builder));
     // builder.build();
     Ok(())

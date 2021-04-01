@@ -3,7 +3,7 @@ use getset::Getters;
 use log::warn;
 use std::sync::Arc;
 
-#[derive(Debug, Clone, Getters)]
+#[derive(Debug, Clone, Getters, PartialEq)]
 #[getset(get = "pub")]
 pub struct BasiliqDbScannedTable {
     schema: raw::BasiliqDbScannerSchemaRaw,
@@ -15,14 +15,14 @@ pub struct BasiliqDbScannedTable {
     columns_by_id: HashMap<i16, Arc<BasiliqDbScannerColumn>>,
 }
 
-#[derive(Debug, Clone, Getters)]
+#[derive(Debug, Clone, Getters, PartialEq)]
 #[getset(get = "pub")]
 pub struct BasiliqDbScannerColumn {
     column: raw::BasiliqDbScannerColumnRaw,
     type_: BasiliqDbScannedType,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum BasiliqDbScannedType {
     Simple(raw::BasiliqDbScannerTypeRaw),
     Nested(raw::BasiliqDbScannerTypeRaw, Box<BasiliqDbScannedType>),

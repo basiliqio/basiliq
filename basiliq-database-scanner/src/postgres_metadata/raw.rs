@@ -1,7 +1,7 @@
 use getset::{CopyGetters, Getters};
 use serde::{Deserialize, Serialize};
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerSchemaRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -13,7 +13,7 @@ pub struct BasiliqDbScannerSchemaRaw {
     usage: bool,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerRoleRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -21,7 +21,7 @@ pub struct BasiliqDbScannerRoleRaw {
     name: String,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, sqlx::Type)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::Type)]
 #[repr(i8)]
 pub enum BasiliqDbScannerTableType {
     CompositeType = 99, // c
@@ -33,7 +33,7 @@ pub enum BasiliqDbScannerTableType {
     View = 118,         // v
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerTableRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -59,7 +59,7 @@ pub struct BasiliqDbScannerTableRaw {
     delete_perm: bool,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerColumnRaw {
     #[getset(get = "pub")]
     name: String,
@@ -85,7 +85,7 @@ pub struct BasiliqDbScannerColumnRaw {
     reference_perm: bool,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, sqlx::Type)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::Type)]
 #[repr(i8)]
 pub enum BasiliqDbScannerTypeType {
     Base = 98,      // b
@@ -96,7 +96,7 @@ pub enum BasiliqDbScannerTypeType {
     Range = 114,    // r
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize, sqlx::Type)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::Type)]
 #[repr(i8)]
 pub enum BasiliqDbScannerTypeCategory {
     Array = 65,          // A
@@ -116,7 +116,7 @@ pub enum BasiliqDbScannerTypeCategory {
     Unknown = 88,        // X
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerTypeRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -140,7 +140,7 @@ pub struct BasiliqDbScannerTypeRaw {
     dimensions: u32,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerPrimaryKeyRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -156,7 +156,7 @@ pub struct BasiliqDbScannerPrimaryKeyRaw {
     columns: Vec<i16>,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize)]
+#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct BasiliqDbScannerForeignKeyRaw {
     #[getset(get_copy = "pub")]
     id: u32,

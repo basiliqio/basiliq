@@ -76,35 +76,6 @@ impl From<&BasiliqStoreResourceConfig> for BasiliqStoreTableIdentifier {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Ord, Eq, PartialOrd, Getters)]
-#[getset(get = "pub")]
-pub struct BasiliqStoreRelationshipIdentifier {
-    table_id: BasiliqStoreTableIdentifier,
-    field_name: String,
-    index: usize,
-}
-
-impl From<&BasiliqStoreRelationshipData> for BasiliqStoreRelationshipIdentifier {
-    fn from(data: &BasiliqStoreRelationshipData) -> Self {
-        BasiliqStoreRelationshipIdentifier {
-            table_id: data.ftable_name().clone(),
-            field_name: data.ffield_name().clone(),
-            index: 0,
-        }
-    }
-}
-
-impl BasiliqStoreRelationshipIdentifier {
-    pub fn check_index(
-        &mut self,
-        relationships: &BTreeMap<BasiliqStoreRelationshipIdentifier, BasiliqStoreRelationshipData>,
-    ) {
-        while relationships.contains_key(&self) {
-            self.index += 1;
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum BasiliqStoreRelationshipType {
     OneToMany,
@@ -115,6 +86,8 @@ pub enum BasiliqStoreRelationshipType {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipData {
+    ltable_name: BasiliqStoreTableIdentifier,
+    lfield_name: String,
     ftable_name: BasiliqStoreTableIdentifier,
     ffield_name: String,
     type_: BasiliqStoreRelationshipType,

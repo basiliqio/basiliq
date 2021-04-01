@@ -1,0 +1,248 @@
+use super::*;
+
+#[ciboulette2postgres_test]
+async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+    sqlx::query!(
+        r#"
+		CREATE TABLE director(
+			id			UUID PRIMARY KEY,
+			name		TEXT NOT NULL
+		);
+	"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+    sqlx::query!(
+        r#"
+		CREATE TABLE movies(
+			id			UUID PRIMARY KEY,
+			title		TEXT NOT NULL,
+			director	UUID NOT NULL REFERENCES director(id) ON DELETE CASCADE
+		);
+	"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
+        .await
+        .unwrap();
+    let builder = BasiliqStoreBuilder::new(raw_table);
+    assert_eq!(builder.tables().len(), 2);
+    let director_table = builder
+        .get_table(&BasiliqStoreTableIdentifier::new("public", "director"))
+        .unwrap();
+    let movies_table = builder
+        .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
+        .unwrap();
+    let director_movie_rel = director_table.relationships().get("movies").unwrap();
+    let movie_director_rel = movies_table.relationships().get("director").unwrap();
+
+    assert_eq!(director_movie_rel.ftable_name().table_name(), "movies");
+    assert_eq!(director_movie_rel.ftable_name().schema_name(), "public");
+    assert_eq!(director_movie_rel.lfield_name(), "id");
+    assert_eq!(director_movie_rel.ffield_name(), "director");
+    assert_eq!(
+        matches!(
+            director_movie_rel.type_(),
+            BasiliqStoreRelationshipType::OneToMany
+        ),
+        true
+    );
+
+    assert_eq!(movie_director_rel.ftable_name().table_name(), "director");
+    assert_eq!(movie_director_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_director_rel.ffield_name(), "id");
+    assert_eq!(movie_director_rel.lfield_name(), "director");
+    assert_eq!(
+        matches!(
+            movie_director_rel.type_(),
+            BasiliqStoreRelationshipType::ManyToOne
+        ),
+        true
+    );
+}
+
+#[ciboulette2postgres_test]
+async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+    sqlx::query!(
+        r#"
+		CREATE TABLE peoples(
+			id			UUID PRIMARY KEY,
+			name		TEXT NOT NULL
+		);
+	"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+    sqlx::query!(
+        r#"
+		CREATE TABLE movies(
+			id			UUID PRIMARY KEY,
+			title		TEXT NOT NULL,
+			director	UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE,
+			publisher	UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE
+		);
+	"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
+        .await
+        .unwrap();
+    let builder = BasiliqStoreBuilder::new(raw_table);
+    assert_eq!(builder.tables().len(), 2);
+    let director_table = builder
+        .get_table(&BasiliqStoreTableIdentifier::new("public", "peoples"))
+        .unwrap();
+    let movies_table = builder
+        .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
+        .unwrap();
+    let director_movie_rel = director_table.relationships().get("movies").unwrap();
+    let movie_director_rel = movies_table.relationships().get("peoples").unwrap();
+    let movie_publisher_rel = movies_table.relationships().get("peoples_0").unwrap();
+
+    assert_eq!(director_movie_rel.ftable_name().table_name(), "movies");
+    assert_eq!(director_movie_rel.ftable_name().schema_name(), "public");
+    assert_eq!(director_movie_rel.lfield_name(), "id");
+    assert_eq!(director_movie_rel.ffield_name(), "director");
+    assert_eq!(
+        matches!(
+            director_movie_rel.type_(),
+            BasiliqStoreRelationshipType::OneToMany
+        ),
+        true
+    );
+
+    assert_eq!(movie_director_rel.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_director_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_director_rel.ffield_name(), "id");
+    assert_eq!(movie_director_rel.lfield_name(), "director");
+    assert_eq!(
+        matches!(
+            movie_director_rel.type_(),
+            BasiliqStoreRelationshipType::ManyToOne
+        ),
+        true
+    );
+
+    assert_eq!(movie_publisher_rel.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_publisher_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_publisher_rel.ffield_name(), "id");
+    assert_eq!(movie_publisher_rel.lfield_name(), "publisher");
+    assert_eq!(
+        matches!(
+            movie_publisher_rel.type_(),
+            BasiliqStoreRelationshipType::ManyToOne
+        ),
+        true
+    );
+}
+
+#[ciboulette2postgres_test]
+async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+    sqlx::query!(
+        r#"
+		CREATE TABLE peoples(
+			id			UUID PRIMARY KEY,
+			name		TEXT NOT NULL
+		);
+	"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+    sqlx::query!(
+        r#"
+		CREATE TABLE movies(
+			id			UUID PRIMARY KEY,
+			title		TEXT NOT NULL
+		);
+		"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+    sqlx::query!(
+        r#"
+		CREATE TABLE movies_staff(
+			id			UUID PRIMARY KEY,
+			role		TEXT NOT NULL,
+			person		UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE,
+			movies		UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE
+		);
+	"#
+    )
+    .execute(&mut transaction)
+    .await
+    .unwrap();
+
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
+        .await
+        .unwrap();
+    let builder = BasiliqStoreBuilder::new(raw_table);
+    assert_eq!(builder.tables().len(), 3);
+    let staff_table = builder
+        .get_table(&BasiliqStoreTableIdentifier::new("public", "peoples"))
+        .unwrap();
+    let movies_table = builder
+        .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
+        .unwrap();
+    let staff_movie_rel = staff_table.relationships().get("movies").unwrap();
+    let staff_movie_staf_rel = staff_table.relationships().get("movies_staff").unwrap();
+    let movie_staff_rel = movies_table.relationships().get("peoples").unwrap();
+    let movie_movie_staff_rel = movies_table.relationships().get("movies_staff").unwrap();
+
+    assert_eq!(staff_movie_rel.ftable_name().schema_name(), "public");
+    assert_eq!(staff_movie_rel.ftable_name().table_name(), "movies");
+    assert_eq!(staff_movie_rel.lfield_name(), "id");
+    assert_eq!(staff_movie_rel.ffield_name(), "id");
+    assert_eq!(
+        matches!(staff_movie_rel.type_(), BasiliqStoreRelationshipType::ManyToMany(x) if x.schema_name() == "public" && x.table_name() == "movies_staff"),
+        true
+    );
+
+    assert_eq!(movie_staff_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_staff_rel.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_staff_rel.ffield_name(), "id");
+    assert_eq!(movie_staff_rel.lfield_name(), "id");
+    assert_eq!(
+        matches!(movie_staff_rel.type_(), BasiliqStoreRelationshipType::ManyToMany(x) if x.schema_name() == "public" && x.table_name() == "movies_staff"),
+        true
+    );
+
+    assert_eq!(staff_movie_staf_rel.ftable_name().schema_name(), "public");
+    assert_eq!(
+        staff_movie_staf_rel.ftable_name().table_name(),
+        "movies_staff"
+    );
+    assert_eq!(staff_movie_staf_rel.lfield_name(), "id");
+    assert_eq!(staff_movie_staf_rel.ffield_name(), "person");
+    assert_eq!(
+        matches!(
+            staff_movie_staf_rel.type_(),
+            BasiliqStoreRelationshipType::OneToMany
+        ),
+        true
+    );
+
+    assert_eq!(movie_movie_staff_rel.ftable_name().schema_name(), "public");
+    assert_eq!(
+        movie_movie_staff_rel.ftable_name().table_name(),
+        "movies_staff"
+    );
+    assert_eq!(movie_movie_staff_rel.lfield_name(), "id");
+    assert_eq!(movie_movie_staff_rel.ffield_name(), "movies");
+    assert_eq!(
+        matches!(
+            movie_movie_staff_rel.type_(),
+            BasiliqStoreRelationshipType::OneToMany
+        ),
+        true
+    );
+}
