@@ -6,5 +6,6 @@ use ciboulette::*;
 pub use db::*;
 mod build_default;
 mod complex_types;
+mod config;
 mod id;
 mod relationships;

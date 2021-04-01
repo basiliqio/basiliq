@@ -1,0 +1,94 @@
+---
+source: basiliq-database-scanner/src/tests/config.rs
+expression: config
+
+---
+{
+  "resources": {
+    "public__movies": {
+      "target": {
+        "schema_name": "public",
+        "table_name": "movies"
+      },
+      "enabled": true,
+      "relationships": {
+        "movies_staff": {
+          "target": {
+            "schema_name": "public",
+            "table_name": "movies_staff"
+          },
+          "enabled": true,
+          "field": "movies"
+        },
+        "peoples": {
+          "target": {
+            "schema_name": "public",
+            "table_name": "peoples"
+          },
+          "through": {
+            "schema_name": "public",
+            "table_name": "movies_staff",
+            "field": "person"
+          },
+          "enabled": true,
+          "field": "id"
+        }
+      }
+    },
+    "public__movies_staff": {
+      "target": {
+        "schema_name": "public",
+        "table_name": "movies_staff"
+      },
+      "enabled": true,
+      "relationships": {
+        "movies": {
+          "target": {
+            "schema_name": "public",
+            "table_name": "movies"
+          },
+          "enabled": true,
+          "field": "id"
+        },
+        "peoples": {
+          "target": {
+            "schema_name": "public",
+            "table_name": "peoples"
+          },
+          "enabled": true,
+          "field": "id"
+        }
+      }
+    },
+    "public__peoples": {
+      "target": {
+        "schema_name": "public",
+        "table_name": "peoples"
+      },
+      "enabled": true,
+      "relationships": {
+        "movies": {
+          "target": {
+            "schema_name": "public",
+            "table_name": "movies"
+          },
+          "through": {
+            "schema_name": "public",
+            "table_name": "movies_staff",
+            "field": "movies"
+          },
+          "enabled": true,
+          "field": "id"
+        },
+        "movies_staff": {
+          "target": {
+            "schema_name": "public",
+            "table_name": "movies_staff"
+          },
+          "enabled": true,
+          "field": "person"
+        }
+      }
+    }
+  }
+}

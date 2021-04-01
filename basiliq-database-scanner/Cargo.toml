@@ -25,6 +25,7 @@ env_logger = "0.8"
 lazy_static = "1.4"
 num_cpus = "1.13.0"
 ciboulette2postgres_test_proc_macro = { git = "https://gitlab.com/basiliq/ciboulette2postgres.git", package = "ciboulette2postgres_test_proc_macro" }
+insta = { version = "1.7" }
 
 [dev-dependencies.cargo-husky]
 version = "1"

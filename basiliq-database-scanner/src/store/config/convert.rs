@@ -25,6 +25,15 @@ impl<'a> From<&BasiliqStoreBuilder<'a>> for BasiliqStoreConfig {
                                 schema_name: v.ftable_name().schema_name().clone(),
                                 table_name: v.ftable_name().table_name().clone(),
                             },
+                            through: match v.type_() {
+                                BasiliqStoreRelationshipType::ManyToMany(x) => {
+                                    Some(BasiliqStoreRelationshipsThroughConfig {
+                                        target: x.bucket().clone(),
+                                        field: x.ffield_name().clone(),
+                                    })
+                                }
+                                _ => None,
+                            },
                             enabled: true,
                             field: v.ffield_name().clone(),
                         },

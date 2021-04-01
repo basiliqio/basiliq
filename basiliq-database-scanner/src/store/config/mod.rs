@@ -102,8 +102,19 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreResourceConfig> for BasiliqStoreRes
 /// The configuration of a store relationships
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters)]
 #[getset(get = "pub")]
+pub struct BasiliqStoreRelationshipsThroughConfig {
+    #[serde(flatten)]
+    pub(crate) target: BasiliqStoreTableIdentifier,
+    pub(crate) field: String,
+}
+
+/// The configuration of a store relationships
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters)]
+#[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipsConfig {
     pub(crate) target: BasiliqStoreTableIdentifier,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) through: Option<BasiliqStoreRelationshipsThroughConfig>,
     pub(crate) enabled: bool,
     pub(crate) field: String,
 }
