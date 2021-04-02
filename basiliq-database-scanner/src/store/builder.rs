@@ -1,5 +1,4 @@
 use super::*;
-use itertools::{EitherOrBoth, Itertools};
 
 #[derive(Debug, Clone, Getters, MutGetters)]
 #[getset(get = "pub", get_mut = "pub(crate)")]
@@ -7,57 +6,7 @@ pub struct BasiliqStoreBuilder<'a> {
     pub(crate) raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>>,
     pub(crate) aliases: BiBTreeMap<BasiliqStoreTableIdentifier, String>,
-}
-
-impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder<'a> {
-    fn basiliq_config_merge(
-        &mut self,
-        other: &BasiliqStoreConfig,
-    ) -> Result<(), BasiliqStoreConfigError> {
-        for (resource_name, resource_cfg) in other.resources() {
-            let table_ident = BasiliqStoreTableIdentifier::from(resource_cfg);
-            if !resource_cfg.enabled
-            // Disable that resource
-            {
-                self.tables_mut().remove(&table_ident);
-                self.aliases_mut().remove_by_left(&table_ident);
-                continue;
-            }
-            self.aliases_mut()
-                .insert(table_ident.clone(), resource_name.clone());
-            if let Some(table) = self.tables().get(&table_ident) {
-                let mut new_rel: BTreeMap<String, BasiliqStoreRelationshipData> =
-                    table.relationships().clone();
-
-                for x in table.relationships().iter().merge_join_by(
-                    resource_cfg.relationships().iter(),
-                    |(_k1, v1), (_k2, v2)| v1.ftable_name().cmp(v2.target()),
-                ) {
-                    match x {
-                        EitherOrBoth::Both((k1, _v1), (k2, _v2)) => {
-                            new_rel
-                                .remove(k1)
-                                .and_then(|x| new_rel.insert(k2.clone(), x));
-                        }
-                        EitherOrBoth::Left((k1, _v1)) => {
-                            new_rel.remove(k1);
-                        }
-                        EitherOrBoth::Right((_, _)) => {
-                            warn!("Can't insert new relationships from the configuration. Skipping...");
-                        }
-                    };
-                }
-                let new_rel: BTreeMap<String, BasiliqStoreRelationshipData> = new_rel
-                    .into_iter()
-                    .filter(|(_, v)| self.tables().contains_key(v.ftable_name()))
-                    .collect();
-                if let Some(table) = self.tables_mut().get_mut(&table_ident) {
-                    table.relationships = new_rel
-                }
-            }
-        }
-        Ok(())
-    }
+    pub(crate) config: BasiliqStoreConfig,
 }
 
 #[derive(Debug, Clone, Getters)]
@@ -117,11 +66,14 @@ impl<'a> BasiliqStoreBuilder<'a> {
             Self::extract_data_from_raw_tables(raw_tables.clone());
         let aliases = Self::build_alias_map(&table_builder_store);
         let table_store = Self::build_relationships(relationships, table_builder_store);
-        BasiliqStoreBuilder {
+        let mut builder = BasiliqStoreBuilder {
             raw_tables,
             tables: table_store,
             aliases,
-        }
+            config: BasiliqStoreConfig::default(),
+        };
+        builder.config = builder.gen_config();
+        builder
     }
 
     /// Extract data from the raw table, to build the builder

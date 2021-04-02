@@ -10,4 +10,25 @@ pub enum BasiliqStoreConfigError {
     UnknownTable(BasiliqStoreTableIdentifier),
     #[error("Cannot change target configuration")]
     TargetConfigChange,
+    #[error("An unknown resource was found in the {0}, describing the table `{1}`")]
+    UnkownResource(BasiliqStoreConfigErrorSource, BasiliqStoreTableIdentifier),
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum BasiliqStoreConfigErrorSource {
+    BaseConfig,
+    ProvidedConfig,
+}
+
+impl std::fmt::Display for BasiliqStoreConfigErrorSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            BasiliqStoreConfigErrorSource::BaseConfig => {
+                write!(f, "base configuration")
+            }
+            BasiliqStoreConfigErrorSource::ProvidedConfig => {
+                write!(f, "provided configuration")
+            }
+        }
+    }
 }

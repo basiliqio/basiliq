@@ -1,33 +1,56 @@
 [package]
-name = "basiliq_database_scanner"
-version = "0.1.0"
 authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
 edition = "2018"
-
+name = "basiliq_database_scanner"
+version = "0.1.0"
 [dependencies]
-sqlx = { version = "0.5", features = [ "runtime-tokio-rustls", "postgres", "uuid", "macros", "json" ] }
-serde = "1"
-serde_json = "1"
-uuid = { version = "0.8", features = ["serde", "v4"] }
-log = "0.4.11"
+bimap = "0.6.0"
 getset = "0.1.1"
 itertools = "0.10.0"
-ciboulette = { git = "https://gitlab.com/basiliq/ciboulette.git", features = [ "sqlx_postgres" ], package = "ciboulette" }
-ciboulette2postgres = { git = "https://gitlab.com/basiliq/ciboulette2postgres.git", package = "ciboulette2postgres" }
-messy_json = { git = "https://gitlab.com/basiliq/messy_json.git"}
-tokio = { version = "1", features = ["full"] }
+log = "0.4.11"
+serde = "1"
+serde_json = "1"
+src = "*"
 thiserror = "1"
-bimap = "0.6.0"
+
+[dependencies.ciboulette]
+features = ["sqlx_postgres"]
+git = "https://gitlab.com/basiliq/ciboulette.git"
+package = "ciboulette"
+
+[dependencies.ciboulette2postgres]
+git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+package = "ciboulette2postgres"
+
+[dependencies.messy_json]
+git = "https://gitlab.com/basiliq/messy_json.git"
+
+[dependencies.sqlx]
+features = ["runtime-tokio-rustls", "postgres", "uuid", "macros", "json"]
+version = "0.5"
+
+[dependencies.tokio]
+features = ["full"]
+version = "1"
+
+[dependencies.uuid]
+features = ["serde", "v4"]
+version = "0.8"
 
 [dev-dependencies]
 anyhow = "1"
 env_logger = "0.8"
 lazy_static = "1.4"
 num_cpus = "1.13.0"
-ciboulette2postgres_test_proc_macro = { git = "https://gitlab.com/basiliq/ciboulette2postgres.git", package = "ciboulette2postgres_test_proc_macro" }
-insta = { version = "1.7" }
 
 [dev-dependencies.cargo-husky]
-version = "1"
-default-features = false # Disable features which are enabled by default
+default-features = false
 features = ["precommit-hook", "run-cargo-check", "run-cargo-fmt"]
+version = "1"
+
+[dev-dependencies.ciboulette2postgres_test_proc_macro]
+git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+package = "ciboulette2postgres_test_proc_macro"
+
+[dev-dependencies.insta]
+version = "1.7"
