@@ -140,7 +140,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
         fkeys: &BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)>,
     ) -> Option<BasiliqStoreTableBuilder<'a>> {
         let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
-        let mut pkey_type: Option<CibouletteIdType> = None;
+        let mut pkey_type: Option<(CibouletteIdType, String)> = None;
         trace!(
             "Scanning table {} in schema {}",
             table.table().name(),
@@ -150,7 +150,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
         for (id, col_settings) in table.columns_by_id() {
             if pkey == *id {
                 // If the primary key
-                pkey_type = Self::type_to_id(col_settings);
+                pkey_type = Self::type_to_id(col_settings)
+                    .map(|x| (x, col_settings.column().name().clone()));
                 continue;
             }
             if fkeys.contains_key(id) {
@@ -176,10 +177,11 @@ impl<'a> BasiliqStoreBuilder<'a> {
         }
         pkey_type
             .map(|x| (x, MessyJsonObject::new(obj_properties, false)))
-            .map(|(id_type, properties)| BasiliqStoreTableBuilder {
+            .map(|(id, properties)| BasiliqStoreTableBuilder {
                 table,
                 properties,
-                id_type,
+                id_type: id.0,
+                id_name: id.1,
             })
     }
 }

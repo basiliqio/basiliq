@@ -14,6 +14,7 @@ async fn main() -> anyhow::Result<()> {
     let builder = BasiliqStoreBuilder::new(raw_tables);
     // println!("{:#?}", builder);
     // println!("{:#?}", BasiliqStoreConfig::from(&builder));
-    // builder.build();
+    let res = builder.build().unwrap();
+    println!("{:#?}", res);
     Ok(())
 }

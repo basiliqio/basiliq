@@ -34,6 +34,7 @@ pub use config::{
 pub struct BasiliqStore<'a> {
     pub(crate) ciboulette: ciboulette::CibouletteStore<'a>,
     pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore<'a>,
+    pub(crate) config: BasiliqStoreConfig,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters, Deserialize, Serialize)]

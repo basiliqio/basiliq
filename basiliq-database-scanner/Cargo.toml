@@ -15,15 +15,18 @@ thiserror = "1"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]
-git = "https://gitlab.com/basiliq/ciboulette.git"
+# git = "https://gitlab.com/basiliq/ciboulette.git"
+path = "../../ciboulette"
 package = "ciboulette"
 
 [dependencies.ciboulette2postgres]
-git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+# git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+path = "../../ciboulette2postgres"
 package = "ciboulette2postgres"
 
 [dependencies.messy_json]
 git = "https://gitlab.com/basiliq/messy_json.git"
+features = ["uuid", "arcstr"]
 
 [dependencies.sqlx]
 features = ["runtime-tokio-rustls", "postgres", "uuid", "macros", "json"]
