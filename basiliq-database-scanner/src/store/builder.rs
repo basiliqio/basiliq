@@ -32,7 +32,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             for (rel_alias, v) in table.relationships() {
                 match v.type_() {
-                    BasiliqStoreRelationshipType::OneToMany(x) if !x => {
+                    BasiliqStoreRelationshipType::OneToMany(_) => {
                         let one_type = ciboulette_store_builder.get_type(alias)?.clone();
                         let many_type = ciboulette_store_builder
                             .get_type(self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
@@ -49,7 +49,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                             Some(rel_alias),
                         )?;
                     }
-                    BasiliqStoreRelationshipType::ManyToOne(x) if !x => {
+                    BasiliqStoreRelationshipType::ManyToOne(_) => {
                         let many_type = ciboulette_store_builder.get_type(alias)?.clone();
                         let one_type = ciboulette_store_builder
                             .get_type(self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
@@ -94,7 +94,6 @@ impl<'a> BasiliqStoreBuilder<'a> {
                             ),
                         )?;
                     }
-                    _ => continue,
                 }
             }
         }
