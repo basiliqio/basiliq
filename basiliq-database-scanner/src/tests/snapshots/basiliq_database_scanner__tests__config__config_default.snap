@@ -7,27 +7,27 @@ expression: config
   "resources": {
     "public__movies": {
       "target": {
-        "schema_name": "public",
-        "table_name": "movies"
+        "schema": "public",
+        "table": "movies"
       },
       "enabled": true,
       "relationships": {
-        "movies_staff": {
+        "public__movies_staff": {
           "target": {
-            "schema_name": "public",
-            "table_name": "movies_staff"
+            "schema": "public",
+            "table": "movies_staff"
           },
           "enabled": true,
           "field": "movies"
         },
-        "peoples": {
+        "public__peoples": {
           "target": {
-            "schema_name": "public",
-            "table_name": "peoples"
+            "schema": "public",
+            "table": "peoples"
           },
           "through": {
-            "schema_name": "public",
-            "table_name": "movies_staff",
+            "schema": "public",
+            "table": "movies_staff",
             "field": "person"
           },
           "enabled": true,
@@ -37,23 +37,23 @@ expression: config
     },
     "public__movies_staff": {
       "target": {
-        "schema_name": "public",
-        "table_name": "movies_staff"
+        "schema": "public",
+        "table": "movies_staff"
       },
       "enabled": true,
       "relationships": {
-        "movies": {
+        "public__movies": {
           "target": {
-            "schema_name": "public",
-            "table_name": "movies"
+            "schema": "public",
+            "table": "movies"
           },
           "enabled": true,
           "field": "id"
         },
-        "peoples": {
+        "public__peoples": {
           "target": {
-            "schema_name": "public",
-            "table_name": "peoples"
+            "schema": "public",
+            "table": "peoples"
           },
           "enabled": true,
           "field": "id"
@@ -62,28 +62,28 @@ expression: config
     },
     "public__peoples": {
       "target": {
-        "schema_name": "public",
-        "table_name": "peoples"
+        "schema": "public",
+        "table": "peoples"
       },
       "enabled": true,
       "relationships": {
-        "movies": {
+        "public__movies": {
           "target": {
-            "schema_name": "public",
-            "table_name": "movies"
+            "schema": "public",
+            "table": "movies"
           },
           "through": {
-            "schema_name": "public",
-            "table_name": "movies_staff",
+            "schema": "public",
+            "table": "movies_staff",
             "field": "movies"
           },
           "enabled": true,
           "field": "id"
         },
-        "movies_staff": {
+        "public__movies_staff": {
           "target": {
-            "schema_name": "public",
-            "table_name": "movies_staff"
+            "schema": "public",
+            "table": "movies_staff"
           },
           "enabled": true,
           "field": "person"

@@ -37,11 +37,17 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     let movies_table = builder
         .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
         .unwrap();
-    let director_movie_rel = director_table.relationships().get("movies").unwrap();
-    let movie_director_rel = movies_table.relationships().get("director").unwrap();
+    let director_movie_rel = director_table
+        .relationships()
+        .get("public__movies")
+        .unwrap();
+    let movie_director_rel = movies_table
+        .relationships()
+        .get("public__director")
+        .unwrap();
 
-    assert_eq!(director_movie_rel.ftable_name().table_name(), "movies");
-    assert_eq!(director_movie_rel.ftable_name().schema_name(), "public");
+    assert_eq!(director_movie_rel.ftable().table(), "movies");
+    assert_eq!(director_movie_rel.ftable().schema(), "public");
     assert_eq!(director_movie_rel.lfield_name(), "id");
     assert_eq!(director_movie_rel.ffield_name(), "director");
     assert_eq!(
@@ -52,8 +58,8 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
         true
     );
 
-    assert_eq!(movie_director_rel.ftable_name().table_name(), "director");
-    assert_eq!(movie_director_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_director_rel.ftable().table(), "director");
+    assert_eq!(movie_director_rel.ftable().schema(), "public");
     assert_eq!(movie_director_rel.ffield_name(), "id");
     assert_eq!(movie_director_rel.lfield_name(), "director");
     assert_eq!(
@@ -103,12 +109,18 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
     let movies_table = builder
         .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
         .unwrap();
-    let director_movie_rel = director_table.relationships().get("movies").unwrap();
-    let movie_director_rel = movies_table.relationships().get("peoples").unwrap();
-    let movie_publisher_rel = movies_table.relationships().get("peoples_0").unwrap();
+    let director_movie_rel = director_table
+        .relationships()
+        .get("public__movies")
+        .unwrap();
+    let movie_director_rel = movies_table.relationships().get("public__peoples").unwrap();
+    let movie_publisher_rel = movies_table
+        .relationships()
+        .get("public__peoples_0")
+        .unwrap();
 
-    assert_eq!(director_movie_rel.ftable_name().table_name(), "movies");
-    assert_eq!(director_movie_rel.ftable_name().schema_name(), "public");
+    assert_eq!(director_movie_rel.ftable().table(), "movies");
+    assert_eq!(director_movie_rel.ftable().schema(), "public");
     assert_eq!(director_movie_rel.lfield_name(), "id");
     assert_eq!(director_movie_rel.ffield_name(), "director");
     assert_eq!(
@@ -119,8 +131,8 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
         true
     );
 
-    assert_eq!(movie_director_rel.ftable_name().table_name(), "peoples");
-    assert_eq!(movie_director_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_director_rel.ftable().table(), "peoples");
+    assert_eq!(movie_director_rel.ftable().schema(), "public");
     assert_eq!(movie_director_rel.ffield_name(), "id");
     assert_eq!(movie_director_rel.lfield_name(), "director");
     assert_eq!(
@@ -131,8 +143,8 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
         true
     );
 
-    assert_eq!(movie_publisher_rel.ftable_name().table_name(), "peoples");
-    assert_eq!(movie_publisher_rel.ftable_name().schema_name(), "public");
+    assert_eq!(movie_publisher_rel.ftable().table(), "peoples");
+    assert_eq!(movie_publisher_rel.ftable().schema(), "public");
     assert_eq!(movie_publisher_rel.ffield_name(), "id");
     assert_eq!(movie_publisher_rel.lfield_name(), "publisher");
     assert_eq!(
@@ -193,12 +205,18 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     let movies_table = builder
         .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
         .unwrap();
-    let staff_movie_rel = staff_table.relationships().get("movies").unwrap();
-    let staff_movie_staf_rel = staff_table.relationships().get("movies_staff").unwrap();
-    let movie_staff_rel = movies_table.relationships().get("peoples").unwrap();
-    let movie_movie_staff_rel = movies_table.relationships().get("movies_staff").unwrap();
-    assert_eq!(staff_movie_rel.ftable_name().schema_name(), "public");
-    assert_eq!(staff_movie_rel.ftable_name().table_name(), "movies");
+    let staff_movie_rel = staff_table.relationships().get("public__movies").unwrap();
+    let staff_movie_staf_rel = staff_table
+        .relationships()
+        .get("public__movies_staff")
+        .unwrap();
+    let movie_staff_rel = movies_table.relationships().get("public__peoples").unwrap();
+    let movie_movie_staff_rel = movies_table
+        .relationships()
+        .get("public__movies_staff")
+        .unwrap();
+    assert_eq!(staff_movie_rel.ftable().schema(), "public");
+    assert_eq!(staff_movie_rel.ftable().table(), "movies");
     assert_eq!(staff_movie_rel.lfield_name(), "id");
     assert_eq!(staff_movie_rel.ffield_name(), "id");
     assert_eq!(
@@ -209,14 +227,14 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = staff_movie_rel.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "person");
         assert_eq!(data.ffield_name(), "movies");
     }
 
-    assert_eq!(movie_staff_rel.ftable_name().schema_name(), "public");
-    assert_eq!(movie_staff_rel.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_staff_rel.ftable().schema(), "public");
+    assert_eq!(movie_staff_rel.ftable().table(), "peoples");
     assert_eq!(movie_staff_rel.ffield_name(), "id");
     assert_eq!(movie_staff_rel.lfield_name(), "id");
     assert_eq!(
@@ -227,17 +245,14 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = movie_staff_rel.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "movies");
         assert_eq!(data.ffield_name(), "person");
     }
 
-    assert_eq!(staff_movie_staf_rel.ftable_name().schema_name(), "public");
-    assert_eq!(
-        staff_movie_staf_rel.ftable_name().table_name(),
-        "movies_staff"
-    );
+    assert_eq!(staff_movie_staf_rel.ftable().schema(), "public");
+    assert_eq!(staff_movie_staf_rel.ftable().table(), "movies_staff");
     assert_eq!(staff_movie_staf_rel.lfield_name(), "id");
     assert_eq!(staff_movie_staf_rel.ffield_name(), "person");
     assert_eq!(
@@ -248,11 +263,8 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
         true
     );
 
-    assert_eq!(movie_movie_staff_rel.ftable_name().schema_name(), "public");
-    assert_eq!(
-        movie_movie_staff_rel.ftable_name().table_name(),
-        "movies_staff"
-    );
+    assert_eq!(movie_movie_staff_rel.ftable().schema(), "public");
+    assert_eq!(movie_movie_staff_rel.ftable().table(), "movies_staff");
     assert_eq!(movie_movie_staff_rel.lfield_name(), "id");
     assert_eq!(movie_movie_staff_rel.ffield_name(), "movies");
     assert_eq!(
@@ -315,17 +327,26 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
     let movies_table = builder
         .get_table(&BasiliqStoreTableIdentifier::new("public", "movies"))
         .unwrap();
-    let staff_movie_rel = staff_table.relationships().get("movies").unwrap();
-    let staff_movie_rel1 = staff_table.relationships().get("movies_0").unwrap();
-    let staff_movie_rel2 = staff_table.relationships().get("movies_1").unwrap();
-    let staff_movie_rel3 = staff_table.relationships().get("movies_2").unwrap();
-    let movie_staff_rel = movies_table.relationships().get("peoples").unwrap();
-    let movie_staff_rel1 = movies_table.relationships().get("peoples_0").unwrap();
-    let movie_staff_rel2 = movies_table.relationships().get("peoples_1").unwrap();
-    let movie_staff_rel3 = movies_table.relationships().get("peoples_2").unwrap();
+    let staff_movie_rel = staff_table.relationships().get("public__movies").unwrap();
+    let staff_movie_rel1 = staff_table.relationships().get("public__movies_0").unwrap();
+    let staff_movie_rel2 = staff_table.relationships().get("public__movies_1").unwrap();
+    let staff_movie_rel3 = staff_table.relationships().get("public__movies_2").unwrap();
+    let movie_staff_rel = movies_table.relationships().get("public__peoples").unwrap();
+    let movie_staff_rel1 = movies_table
+        .relationships()
+        .get("public__peoples_0")
+        .unwrap();
+    let movie_staff_rel2 = movies_table
+        .relationships()
+        .get("public__peoples_1")
+        .unwrap();
+    let movie_staff_rel3 = movies_table
+        .relationships()
+        .get("public__peoples_2")
+        .unwrap();
 
-    assert_eq!(staff_movie_rel.ftable_name().schema_name(), "public");
-    assert_eq!(staff_movie_rel.ftable_name().table_name(), "movies");
+    assert_eq!(staff_movie_rel.ftable().schema(), "public");
+    assert_eq!(staff_movie_rel.ftable().table(), "movies");
     assert_eq!(staff_movie_rel.lfield_name(), "id");
     assert_eq!(staff_movie_rel.ffield_name(), "id");
     assert_eq!(
@@ -336,14 +357,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = staff_movie_rel.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "backup_person");
         assert_eq!(data.ffield_name(), "making_of");
     }
 
-    assert_eq!(staff_movie_rel1.ftable_name().schema_name(), "public");
-    assert_eq!(staff_movie_rel1.ftable_name().table_name(), "movies");
+    assert_eq!(staff_movie_rel1.ftable().schema(), "public");
+    assert_eq!(staff_movie_rel1.ftable().table(), "movies");
     assert_eq!(staff_movie_rel1.lfield_name(), "id");
     assert_eq!(staff_movie_rel1.ffield_name(), "id");
     assert_eq!(
@@ -354,14 +375,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = staff_movie_rel1.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "backup_person");
         assert_eq!(data.ffield_name(), "movies");
     }
 
-    assert_eq!(staff_movie_rel2.ftable_name().schema_name(), "public");
-    assert_eq!(staff_movie_rel2.ftable_name().table_name(), "movies");
+    assert_eq!(staff_movie_rel2.ftable().schema(), "public");
+    assert_eq!(staff_movie_rel2.ftable().table(), "movies");
     assert_eq!(staff_movie_rel2.lfield_name(), "id");
     assert_eq!(staff_movie_rel2.ffield_name(), "id");
     assert_eq!(
@@ -372,14 +393,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = staff_movie_rel2.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "person");
         assert_eq!(data.ffield_name(), "making_of");
     }
 
-    assert_eq!(staff_movie_rel3.ftable_name().schema_name(), "public");
-    assert_eq!(staff_movie_rel3.ftable_name().table_name(), "movies");
+    assert_eq!(staff_movie_rel3.ftable().schema(), "public");
+    assert_eq!(staff_movie_rel3.ftable().table(), "movies");
     assert_eq!(staff_movie_rel3.lfield_name(), "id");
     assert_eq!(staff_movie_rel3.ffield_name(), "id");
     assert_eq!(
@@ -390,14 +411,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = staff_movie_rel3.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "person");
         assert_eq!(data.ffield_name(), "movies");
     }
 
-    assert_eq!(movie_staff_rel.ftable_name().schema_name(), "public");
-    assert_eq!(movie_staff_rel.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_staff_rel.ftable().schema(), "public");
+    assert_eq!(movie_staff_rel.ftable().table(), "peoples");
     assert_eq!(movie_staff_rel.lfield_name(), "id");
     assert_eq!(movie_staff_rel.ffield_name(), "id");
     assert_eq!(
@@ -408,14 +429,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = movie_staff_rel.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "making_of");
         assert_eq!(data.ffield_name(), "backup_person");
     }
 
-    assert_eq!(movie_staff_rel1.ftable_name().schema_name(), "public");
-    assert_eq!(movie_staff_rel1.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_staff_rel1.ftable().schema(), "public");
+    assert_eq!(movie_staff_rel1.ftable().table(), "peoples");
     assert_eq!(movie_staff_rel1.lfield_name(), "id");
     assert_eq!(movie_staff_rel1.ffield_name(), "id");
     assert_eq!(
@@ -426,14 +447,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = movie_staff_rel1.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "making_of");
         assert_eq!(data.ffield_name(), "person");
     }
 
-    assert_eq!(movie_staff_rel2.ftable_name().schema_name(), "public");
-    assert_eq!(movie_staff_rel2.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_staff_rel2.ftable().schema(), "public");
+    assert_eq!(movie_staff_rel2.ftable().table(), "peoples");
     assert_eq!(movie_staff_rel2.lfield_name(), "id");
     assert_eq!(movie_staff_rel2.ffield_name(), "id");
     assert_eq!(
@@ -444,14 +465,14 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = movie_staff_rel2.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "movies");
         assert_eq!(data.ffield_name(), "backup_person");
     }
 
-    assert_eq!(movie_staff_rel3.ftable_name().schema_name(), "public");
-    assert_eq!(movie_staff_rel3.ftable_name().table_name(), "peoples");
+    assert_eq!(movie_staff_rel3.ftable().schema(), "public");
+    assert_eq!(movie_staff_rel3.ftable().table(), "peoples");
     assert_eq!(movie_staff_rel3.lfield_name(), "id");
     assert_eq!(movie_staff_rel3.ffield_name(), "id");
     assert_eq!(
@@ -462,8 +483,8 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
         true
     );
     if let BasiliqStoreRelationshipType::ManyToMany(data) = movie_staff_rel3.type_() {
-        assert_eq!(data.bucket().schema_name(), "public");
-        assert_eq!(data.bucket().table_name(), "movies_staff");
+        assert_eq!(data.bucket().schema(), "public");
+        assert_eq!(data.bucket().table(), "movies_staff");
         assert_eq!(data.lfield_name(), "movies");
         assert_eq!(data.ffield_name(), "person");
     }

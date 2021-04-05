@@ -30,14 +30,14 @@ impl<'a> BasiliqStoreBuilder<'a> {
             )?;
         }
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
-            for (k, v) in table.relationships() {
+            for (rel_alias, v) in table.relationships() {
                 match v.type_() {
                     BasiliqStoreRelationshipType::OneToMany(x) if !x => {
                         let one_type = ciboulette_store_builder.get_type(alias)?.clone();
                         let many_type = ciboulette_store_builder
-                            .get_type(self.aliases().get_by_left(v.ftable_name()).ok_or_else(
-                                || Ciboulette2SqlError::UnknownTable(v.ftable_name().to_string()),
-                            )?)?
+                            .get_type(self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
+                            })?)?
                             .clone();
                         ciboulette_store_builder.add_one_to_many_rel_no_reverse(
                             CibouletteRelationshipOneToManyOptionBuilder::new(
@@ -46,45 +46,45 @@ impl<'a> BasiliqStoreBuilder<'a> {
                                 v.ffield_name().clone(),
                                 false, //FIXME
                             ),
-                            Some(k),
+                            Some(rel_alias),
                         )?;
                     }
                     BasiliqStoreRelationshipType::ManyToOne(x) if !x => {
                         let many_type = ciboulette_store_builder.get_type(alias)?.clone();
                         let one_type = ciboulette_store_builder
-                            .get_type(self.aliases().get_by_left(v.ftable_name()).ok_or_else(
-                                || Ciboulette2SqlError::UnknownTable(v.ftable_name().to_string()),
-                            )?)?
+                            .get_type(self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
+                            })?)?
                             .clone();
-                        ciboulette_store_builder.add_one_to_many_rel_no_reverse(
+                        ciboulette_store_builder.add_many_to_one_rel_no_reverse(
                             CibouletteRelationshipOneToManyOptionBuilder::new(
                                 one_type,
                                 many_type,
-                                v.ffield_name().clone(),
+                                v.lfield_name().clone(),
                                 false, // FIXME
                             ),
-                            Some(alias.as_str()),
+                            Some(rel_alias),
                         )?;
                     }
                     BasiliqStoreRelationshipType::ManyToMany(opt) => {
                         let bucket_alias =
                             self.aliases().get_by_left(opt.bucket()).ok_or_else(|| {
-                                Ciboulette2SqlError::UnknownTable(v.ftable_name().to_string())
+                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
                             })?;
                         let bucket_type = ciboulette_store_builder.get_type(bucket_alias)?.clone();
                         let ltype_alias =
-                            self.aliases().get_by_left(v.ltable_name()).ok_or_else(|| {
-                                Ciboulette2SqlError::UnknownTable(v.ftable_name().to_string())
+                            self.aliases().get_by_left(v.ltable()).ok_or_else(|| {
+                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
                             })?;
                         let rtype_alias =
-                            self.aliases().get_by_left(v.ftable_name()).ok_or_else(|| {
-                                Ciboulette2SqlError::UnknownTable(v.ftable_name().to_string())
+                            self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
                             })?;
                         let ltable_type = ciboulette_store_builder.get_type(ltype_alias)?.clone();
                         let rtable_type = ciboulette_store_builder.get_type(rtype_alias)?.clone();
                         ciboulette_store_builder.add_many_to_many_rel_no_reverse(
                             ltype_alias,
-                            (rtype_alias, Some(k)),
+                            (rtype_alias, Some(rel_alias)),
                             CibouletteRelationshipManyToManyOptionBuilder::new(
                                 bucket_type,
                                 [
@@ -234,7 +234,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
     ) -> BiBTreeMap<BasiliqStoreTableIdentifier, String> {
         let aliases = table_builder_store
             .iter()
-            .map(|(x, _)| (x.clone(), format!("{}__{}", x.schema_name, x.table_name)))
+            .map(|(x, _)| (x.clone(), format!("{}__{}", x.schema, x.table)))
             .collect();
         aliases
     }
@@ -251,7 +251,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 .collect();
 
         for rel_data in relationships.into_iter() {
-            if let Some(table) = table_store.get_mut(rel_data.ltable_name()) {
+            if let Some(table) = table_store.get_mut(rel_data.ltable()) {
                 inserts_relationship(table, rel_data);
             }
         }
@@ -261,21 +261,24 @@ impl<'a> BasiliqStoreBuilder<'a> {
 
 /// Insert a new relationships into the provided table
 fn inserts_relationship(table: &mut BasiliqStoreTable, rel_data: BasiliqStoreRelationshipData) {
-    match table.relationships.get(rel_data.ftable_name().table_name()) {
+    let base_name = format!(
+        "{}__{}",
+        rel_data.ftable().schema(),
+        rel_data.ftable().table()
+    );
+    match table.relationships.get(&base_name) {
         Some(x) if x == &rel_data => (),
         Some(_) => {
             let mut counter: usize = 0;
-            let mut name = format!("{}_{}", rel_data.ftable_name().table_name(), counter);
+            let mut name = format!("{}_{}", base_name, counter);
             while table.relationships.contains_key(&name) {
                 counter += 1;
-                name = format!("{}_{}", rel_data.ftable_name().table_name(), counter);
+                name = format!("{}_{}", base_name, counter);
             }
             table.relationships.insert(name, rel_data);
         }
         None => {
-            table
-                .relationships
-                .insert(rel_data.ftable_name().table_name().clone(), rel_data);
+            table.relationships.insert(base_name, rel_data);
         }
     }
 }

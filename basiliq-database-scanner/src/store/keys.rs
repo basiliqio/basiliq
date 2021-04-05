@@ -41,8 +41,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                     *lcol,
                     (
                         BasiliqStoreTableIdentifier {
-                            table_name: rel.ftable().clone(),
-                            schema_name: rel.fschema().clone(),
+                            table: rel.ftable().clone(),
+                            schema: rel.fschema().clone(),
                         },
                         *fcol,
                     ),

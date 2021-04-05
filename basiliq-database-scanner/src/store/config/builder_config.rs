@@ -19,8 +19,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                         k.clone(),
                         BasiliqStoreRelationshipsConfig {
                             target: BasiliqStoreTableIdentifier {
-                                schema_name: v.ftable_name().schema_name().clone(),
-                                table_name: v.ftable_name().table_name().clone(),
+                                schema: v.ftable().schema().clone(),
+                                table: v.ftable().table().clone(),
                             },
                             through: match v.type_() {
                                 BasiliqStoreRelationshipType::ManyToMany(x) => {
@@ -41,8 +41,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 alias.clone(),
                 BasiliqStoreResourceConfig {
                     target: BasiliqStoreTableIdentifier {
-                        schema_name: table_ident.schema_name().clone(),
-                        table_name: table_ident.table_name().clone(),
+                        schema: table_ident.schema().clone(),
+                        table: table_ident.table().clone(),
                     },
                     relationships,
                     enabled: true,
@@ -68,7 +68,7 @@ impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder
 
                 for x in table.relationships().iter().merge_join_by(
                     resource_cfg.relationships().iter(),
-                    |(_k1, v1), (_k2, v2)| v1.ftable_name().cmp(v2.target()),
+                    |(_k1, v1), (_k2, v2)| v1.ftable().cmp(v2.target()),
                 ) {
                     match x {
                         EitherOrBoth::Both((k1, _v1), (k2, _v2)) => {
@@ -79,7 +79,7 @@ impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder
                         EitherOrBoth::Left((_, v1)) => {
                             return Err(BasiliqStoreConfigError::UnkownResource(
                                 BasiliqStoreConfigErrorSource::BaseConfig,
-                                v1.ltable_name().clone(),
+                                v1.ltable().clone(),
                             ));
                         }
                         EitherOrBoth::Right((_, v2)) => {

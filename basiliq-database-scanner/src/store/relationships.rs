@@ -45,8 +45,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 res.insert(
                     // Insert the ManyToOne relationship from the main type to the foreign type
                     BasiliqStoreRelationshipData {
-                        ltable_name: main_table_name.clone(),
-                        ftable_name: rel_type.clone(),
+                        ltable: main_table_name.clone(),
+                        ftable: rel_type.clone(),
                         ffield_name: fkey_col_name.clone(),
                         lfield_name: rel_key.clone(),
                         type_: BasiliqStoreRelationshipType::ManyToOne(false),
@@ -55,8 +55,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 res.insert(
                     // Insert the OneToMany relationship from the foreign type to the main type
                     BasiliqStoreRelationshipData {
-                        ltable_name: rel_type.clone(),
-                        ftable_name: main_table_name.clone(),
+                        ltable: rel_type.clone(),
+                        ftable: main_table_name.clone(),
                         ffield_name: rel_key.clone(),
                         lfield_name: fkey_col_name.clone(),
                         type_: BasiliqStoreRelationshipType::OneToMany(false),
@@ -95,9 +95,9 @@ impl<'a> BasiliqStoreBuilder<'a> {
                     relationships.insert(old_rel_1);
                     relationships.insert(old_rel_2);
                     relationships.insert(BasiliqStoreRelationshipData {
-                        ltable_name: element.ltable_name().clone(),
+                        ltable: element.ltable().clone(),
                         lfield_name: element.lfield_name().clone(),
-                        ftable_name: other_element.ltable_name().clone(),
+                        ftable: other_element.ltable().clone(),
                         ffield_name: other_element.lfield_name().clone(),
                         type_: BasiliqStoreRelationshipType::ManyToMany(
                             BasiliqStoreRelationshipManyToManyData {
@@ -121,10 +121,10 @@ fn fill_relationships_set(
 ) {
     for rel_data in relationships.iter() {
         if let BasiliqStoreRelationshipType::OneToMany(_) = rel_data.type_() {
-            if let Some(x) = set.get_mut(&rel_data.ftable_name()) {
+            if let Some(x) = set.get_mut(&rel_data.ftable()) {
                 x.push(rel_data.clone());
             } else {
-                set.insert(rel_data.ftable_name().clone(), vec![rel_data.clone()]);
+                set.insert(rel_data.ftable().clone(), vec![rel_data.clone()]);
             }
         }
     }

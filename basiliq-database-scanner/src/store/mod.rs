@@ -30,7 +30,8 @@ pub use config::{
     BasiliqStoreRelationshipsConfig, BasiliqStoreResourceConfig,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Getters)]
+#[getset(get = "pub")]
 pub struct BasiliqStore<'a> {
     pub(crate) ciboulette: ciboulette::CibouletteStore<'a>,
     pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore<'a>,
@@ -40,30 +41,30 @@ pub struct BasiliqStore<'a> {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters, Deserialize, Serialize)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreTableIdentifier {
-    schema_name: String,
-    table_name: String,
+    schema: String,
+    table: String,
 }
 
 impl BasiliqStoreTableIdentifier {
     pub fn new(schema_name: &str, table_name: &str) -> Self {
         BasiliqStoreTableIdentifier {
-            schema_name: schema_name.to_string(),
-            table_name: table_name.to_string(),
+            schema: schema_name.to_string(),
+            table: table_name.to_string(),
         }
     }
 }
 
 impl std::fmt::Display for BasiliqStoreTableIdentifier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}__{}", self.schema_name, self.table_name)
+        write!(f, "{}__{}", self.schema, self.table)
     }
 }
 
 impl From<&BasiliqDbScannedTable> for BasiliqStoreTableIdentifier {
     fn from(table: &BasiliqDbScannedTable) -> Self {
         BasiliqStoreTableIdentifier {
-            table_name: table.table().name().clone(),
-            schema_name: table.schema().name().clone(),
+            table: table.table().name().clone(),
+            schema: table.schema().name().clone(),
         }
     }
 }
@@ -71,8 +72,8 @@ impl From<&BasiliqDbScannedTable> for BasiliqStoreTableIdentifier {
 impl From<&BasiliqStoreResourceConfig> for BasiliqStoreTableIdentifier {
     fn from(table: &BasiliqStoreResourceConfig) -> Self {
         BasiliqStoreTableIdentifier {
-            table_name: table.target().table_name().clone(),
-            schema_name: table.target().schema_name().clone(),
+            table: table.target().table().clone(),
+            schema: table.target().schema().clone(),
         }
     }
 }
@@ -98,9 +99,9 @@ pub struct BasiliqStoreRelationshipManyToManyData {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipData {
-    ltable_name: BasiliqStoreTableIdentifier,
+    ltable: BasiliqStoreTableIdentifier,
     lfield_name: String,
-    ftable_name: BasiliqStoreTableIdentifier,
+    ftable: BasiliqStoreTableIdentifier,
     ffield_name: String,
     type_: BasiliqStoreRelationshipType,
 }
