@@ -47,7 +47,7 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     assert_eq!(
         matches!(
             director_movie_rel.type_(),
-            BasiliqStoreRelationshipType::OneToMany
+            BasiliqStoreRelationshipType::OneToMany(_)
         ),
         true
     );
@@ -59,7 +59,7 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     assert_eq!(
         matches!(
             movie_director_rel.type_(),
-            BasiliqStoreRelationshipType::ManyToOne
+            BasiliqStoreRelationshipType::ManyToOne(_)
         ),
         true
     );
@@ -114,7 +114,7 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
     assert_eq!(
         matches!(
             director_movie_rel.type_(),
-            BasiliqStoreRelationshipType::OneToMany
+            BasiliqStoreRelationshipType::OneToMany(_)
         ),
         true
     );
@@ -126,7 +126,7 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
     assert_eq!(
         matches!(
             movie_director_rel.type_(),
-            BasiliqStoreRelationshipType::ManyToOne
+            BasiliqStoreRelationshipType::ManyToOne(_)
         ),
         true
     );
@@ -138,7 +138,7 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
     assert_eq!(
         matches!(
             movie_publisher_rel.type_(),
-            BasiliqStoreRelationshipType::ManyToOne
+            BasiliqStoreRelationshipType::ManyToOne(_)
         ),
         true
     );
@@ -243,7 +243,7 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     assert_eq!(
         matches!(
             staff_movie_staf_rel.type_(),
-            BasiliqStoreRelationshipType::OneToMany
+            BasiliqStoreRelationshipType::OneToMany(_)
         ),
         true
     );
@@ -258,7 +258,7 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     assert_eq!(
         matches!(
             movie_movie_staff_rel.type_(),
-            BasiliqStoreRelationshipType::OneToMany
+            BasiliqStoreRelationshipType::OneToMany(_)
         ),
         true
     );

@@ -79,8 +79,11 @@ impl From<&BasiliqStoreResourceConfig> for BasiliqStoreTableIdentifier {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum BasiliqStoreRelationshipType {
-    OneToMany,
-    ManyToOne,
+    /// One-to-many relationship. Take a value, true if part of Many-to-Many relationships
+    OneToMany(bool),
+    /// Many-to-one relationship. Take a value, true if part of Many-to-Many relationships
+    ManyToOne(bool),
+    /// Many-to-Many relationship. Take an option structure
     ManyToMany(BasiliqStoreRelationshipManyToManyData),
 }
 

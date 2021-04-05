@@ -49,7 +49,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                         ftable_name: rel_type.clone(),
                         ffield_name: fkey_col_name.clone(),
                         lfield_name: rel_key.clone(),
-                        type_: BasiliqStoreRelationshipType::ManyToOne,
+                        type_: BasiliqStoreRelationshipType::ManyToOne(false),
                     },
                 );
                 res.insert(
@@ -59,7 +59,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                         ftable_name: main_table_name.clone(),
                         ffield_name: rel_key.clone(),
                         lfield_name: fkey_col_name.clone(),
-                        type_: BasiliqStoreRelationshipType::OneToMany,
+                        type_: BasiliqStoreRelationshipType::OneToMany(false),
                     },
                 );
             }
@@ -86,6 +86,14 @@ impl<'a> BasiliqStoreBuilder<'a> {
                         // Skip if the same type
                         continue;
                     }
+                    let mut old_rel_1 = element.clone();
+                    let mut old_rel_2 = other_element.clone();
+                    relationships.remove(&old_rel_1);
+                    relationships.remove(&old_rel_2);
+                    old_rel_1.type_ = BasiliqStoreRelationshipType::OneToMany(true);
+                    old_rel_2.type_ = BasiliqStoreRelationshipType::OneToMany(true);
+                    relationships.insert(old_rel_1);
+                    relationships.insert(old_rel_2);
                     relationships.insert(BasiliqStoreRelationshipData {
                         ltable_name: element.ltable_name().clone(),
                         lfield_name: element.lfield_name().clone(),
@@ -112,7 +120,7 @@ fn fill_relationships_set(
     relationships: &BTreeSet<BasiliqStoreRelationshipData>,
 ) {
     for rel_data in relationships.iter() {
-        if let BasiliqStoreRelationshipType::OneToMany = rel_data.type_() {
+        if let BasiliqStoreRelationshipType::OneToMany(_) = rel_data.type_() {
             if let Some(x) = set.get_mut(&rel_data.ftable_name()) {
                 x.push(rel_data.clone());
             } else {
