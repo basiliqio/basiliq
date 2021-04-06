@@ -1,6 +1,13 @@
-use hyper::client::conn;
-
 use super::*;
+use getset::CopyGetters;
+
+#[derive(Clone, Debug, Getters, CopyGetters)]
+pub struct BasiliqCliGenerateConfig {
+    #[getset(get = "pub")]
+    path: std::path::PathBuf,
+    #[getset(get_copy = "pub")]
+    overwrite: bool,
+}
 
 pub async fn handle_cli(
     connect_option: PgConnectOptions,
@@ -16,6 +23,9 @@ pub async fn handle_cli(
     };
     Some(BasiliqCliResult {
         database_connection_infos: connect_option,
-        intention: BasiliqCliIntention::GenConfig(out_file),
+        intention: BasiliqCliIntention::GenConfig(BasiliqCliGenerateConfig {
+            path: out_file,
+            overwrite: cli_matches.is_present("overwrite"),
+        }),
     })
 }

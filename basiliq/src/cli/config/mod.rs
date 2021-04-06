@@ -1,6 +1,6 @@
 use super::*;
 
-mod generate;
+pub mod generate;
 
 pub async fn handle_cli(
     connect_option: PgConnectOptions,

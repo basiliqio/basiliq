@@ -86,6 +86,10 @@ subcommands:
                   short: o
                   help: output file
                   takes_value: true
+              - overwrite:
+                  short: w
+                  help: overwrite file
+                  takes_value: false
   - serve:
       about: Start basiliq's server
       args:

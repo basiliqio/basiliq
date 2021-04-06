@@ -108,11 +108,18 @@ name = "basiliq"
 version = "0.1.0"
 dependencies = [
  "basiliq_database_scanner",
+ "ciboulette",
+ "ciboulette2postgres",
  "clap",
  "env_logger",
+ "getset",
  "hyper",
  "log",
+ "serde",
+ "serde_json",
+ "serde_yaml",
  "sqlx",
+ "thiserror",
  "tokio",
 ]
 

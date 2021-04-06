@@ -16,3 +16,19 @@ log = "0.4.11"
 clap = { version = "2", features = [ "yaml" ] }
 sqlx = { version = "0.5", features = [ "postgres", "runtime-tokio-rustls", "json", "uuid", "chrono", "bigdecimal" ] }
 basiliq_database_scanner = { version = "*", path = "../basiliq-database-scanner", package = "basiliq_database_scanner"}
+getset = "0.1"
+thiserror = "1"
+serde = "1"
+serde_json = "1"
+serde_yaml = "0.8"
+
+[dependencies.ciboulette2postgres]
+git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+# path = "../../ciboulette2postgres"
+package = "ciboulette2postgres"
+
+[dependencies.ciboulette]
+features = ["sqlx_postgres"]
+git = "https://gitlab.com/basiliq/ciboulette.git"
+# path = "../../ciboulette"
+package = "ciboulette"

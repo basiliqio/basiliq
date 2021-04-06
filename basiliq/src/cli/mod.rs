@@ -1,10 +1,11 @@
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 use clap::{AppSettings, ArgMatches};
+use getset::Getters;
 use sqlx::postgres::PgConnectOptions;
 use std::{path, str::FromStr};
 
-mod config;
-mod database_connection;
+pub mod config;
+pub mod database_connection;
 
 #[macro_export]
 macro_rules! print_usage {
@@ -16,11 +17,12 @@ macro_rules! print_usage {
 
 #[derive(Clone, Debug)]
 pub enum BasiliqCliIntention {
-    GenConfig(std::path::PathBuf),
+    GenConfig(config::generate::BasiliqCliGenerateConfig),
     Serve,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Getters)]
+#[getset(get = "pub")]
 pub struct BasiliqCliResult {
     database_connection_infos: PgConnectOptions,
     intention: BasiliqCliIntention,
