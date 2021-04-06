@@ -1,0 +1,95 @@
+name: basiliq
+version: "0.0"
+author: Francis (GrandChaman) Le Roy <francis.leroy@protonmail.ch>
+about: Serve your tastiest data-centric APIs
+
+settings:
+  - ColorAuto
+  - GlobalVersion
+  - SubcommandRequiredElseHelp
+
+args:
+  - dbhost:
+      short: h
+      long: dbhost
+      help: host of the database
+      takes_value: true
+  - dbport:
+      short: p
+      long: dbport
+      help: port of the database
+      takes_value: true
+  - dbusername:
+      short: u
+      long: dbuser
+      help: user of the database
+      takes_value: true
+  - dbpassword:
+      short: P
+      long: dbpass
+      help: pass of the database
+      takes_value: true
+  - dbdatabase:
+      short: n
+      long: dbname
+      help: name of the database
+      takes_value: true
+  - dbconnstring:
+      short: d
+      long: db
+      help: postgres connection string
+      takes_value: true
+  - dbstatement_cache_capacity:
+      long: dbcache_capacity
+      help: database statement cache capacity
+      takes_value: true
+  - dbssl_root_cert:
+      long: dbroot_cert
+      help: database root certificate
+      takes_value: true
+  - dbssl_mode:
+      long: dbssl_mode
+      help: database ssl mode
+      takes_value: true
+      possible_values:
+        - disable
+        - allow
+        - prefer
+        - require
+        - verify-ca
+        - verify-full
+  - dbsocket:
+      long: dbsocket
+      help: socket connecting to the database
+      takes_value: true
+      conflicts_with:
+          - dbhost
+  - dbapp_name:
+      long: dbapp_name
+      help: application name to send to the database, preceded by `basiliq_` 
+      takes_value: true
+  - verbose:
+      long: verbose
+      short: v
+      help: increase verbosity, can be repeated
+      multiple: true
+subcommands:
+  - config:
+      settings:
+        - SubcommandRequiredElseHelp
+      about: Handles configuration
+      subcommands:
+        - generate:
+            about: Generate configuration from a database
+            args:
+              - output:
+                  short: o
+                  help: output file
+                  takes_value: true
+  - serve:
+      about: Start basiliq's server
+      args:
+        - config:
+            short: c
+            help: config file
+            takes_value: true

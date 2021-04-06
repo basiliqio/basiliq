@@ -1,0 +1,18 @@
+[package]
+name = "basiliq"
+version = "0.1.0"
+authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
+
+[dependencies]
+hyper = { version = "0.14", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+env_logger = "0.8"
+log = "0.4.11"
+clap = { version = "2", features = [ "yaml" ] }
+sqlx = { version = "0.5", features = [ "postgres", "runtime-tokio-rustls", "json", "uuid", "chrono", "bigdecimal" ] }
+basiliq_database_scanner = { version = "*", path = "../basiliq-database-scanner", package = "basiliq_database_scanner"}
