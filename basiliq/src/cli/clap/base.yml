@@ -90,6 +90,17 @@ subcommands:
                   short: w
                   help: overwrite file
                   takes_value: false
+        - check:
+            about: Check that the configuration is valid
+            args:
+              - output:
+                  short: i
+                  help: input file
+                  takes_value: true
+              - no_scan:
+                  short: n
+                  help: don't scan the database to check against it's schema
+                  takes_value: false
   - serve:
       about: Start basiliq's server
       args:

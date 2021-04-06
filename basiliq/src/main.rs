@@ -19,6 +19,9 @@ pub async fn main() -> Result<(), BasiliqError> {
             BasiliqCliIntention::GenConfig(path) => {
                 config::generate::gen_config(&cli_param, path).await
             }
+            BasiliqCliIntention::CheckConfig(path) => {
+                config::check::check_config(&cli_param, path).await
+            }
             _ => unimplemented!(),
         },
         None => Ok(()),

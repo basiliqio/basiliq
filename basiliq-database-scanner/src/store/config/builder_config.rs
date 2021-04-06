@@ -62,36 +62,44 @@ impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder
             let table_ident = BasiliqStoreTableIdentifier::from(resource_cfg);
             self.aliases_mut()
                 .insert(table_ident.clone(), resource_name.clone());
-            if let Some(table) = self.tables().get(&table_ident) {
-                let mut new_rel: BTreeMap<String, BasiliqStoreRelationshipData> =
-                    table.relationships().clone();
+            match self.tables().get(&table_ident) {
+                Some(table) => {
+                    let mut new_rel: BTreeMap<String, BasiliqStoreRelationshipData> =
+                        table.relationships().clone();
 
-                for x in table.relationships().iter().merge_join_by(
-                    resource_cfg.relationships().iter(),
-                    |(_k1, v1), (_k2, v2)| v1.ftable().cmp(v2.target()),
-                ) {
-                    match x {
-                        EitherOrBoth::Both((k1, _v1), (k2, _v2)) => {
-                            new_rel
-                                .remove(k1)
-                                .and_then(|x| new_rel.insert(k2.clone(), x));
-                        }
-                        EitherOrBoth::Left((_, v1)) => {
-                            return Err(BasiliqStoreConfigError::UnkownResource(
-                                BasiliqStoreConfigErrorSource::BaseConfig,
-                                v1.ltable().clone(),
-                            ));
-                        }
-                        EitherOrBoth::Right((_, v2)) => {
-                            return Err(BasiliqStoreConfigError::UnkownResource(
-                                BasiliqStoreConfigErrorSource::ProvidedConfig,
-                                v2.target().clone(),
-                            ));
-                        }
-                    };
+                    for x in table.relationships().iter().merge_join_by(
+                        resource_cfg.relationships().iter(),
+                        |(_k1, v1), (_k2, v2)| v1.ftable().cmp(v2.target()),
+                    ) {
+                        match x {
+                            EitherOrBoth::Both((k1, _v1), (k2, _v2)) => {
+                                new_rel
+                                    .remove(k1)
+                                    .and_then(|x| new_rel.insert(k2.clone(), x));
+                            }
+                            EitherOrBoth::Left((_, v1)) => {
+                                return Err(BasiliqStoreConfigError::UnkownResource(
+                                    BasiliqStoreConfigErrorSource::BaseConfig,
+                                    v1.ltable().clone(),
+                                ));
+                            }
+                            EitherOrBoth::Right((_, v2)) => {
+                                return Err(BasiliqStoreConfigError::UnkownResource(
+                                    BasiliqStoreConfigErrorSource::ProvidedConfig,
+                                    v2.target().clone(),
+                                ));
+                            }
+                        };
+                    }
+                    if let Some(table) = self.tables_mut().get_mut(&table_ident) {
+                        table.relationships = new_rel
+                    }
                 }
-                if let Some(table) = self.tables_mut().get_mut(&table_ident) {
-                    table.relationships = new_rel
+                None => {
+                    return Err(BasiliqStoreConfigError::UnkownResource(
+                        BasiliqStoreConfigErrorSource::ProvidedConfig,
+                        table_ident.clone(),
+                    ))
                 }
             }
         }

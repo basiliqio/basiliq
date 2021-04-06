@@ -18,6 +18,7 @@ macro_rules! print_usage {
 #[derive(Clone, Debug)]
 pub enum BasiliqCliIntention {
     GenConfig(config::generate::BasiliqCliGenerateConfig),
+    CheckConfig(config::check::BasiliqCliCheckConfig),
     Serve,
 }
 
@@ -39,6 +40,6 @@ pub async fn handle_cli<'a>() -> Option<BasiliqCliResult> {
         ("serve", Some(x)) => {
             unimplemented!()
         }
-        _ => None,
+        _ => unreachable!(),
     }
 }

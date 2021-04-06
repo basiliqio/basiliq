@@ -1,5 +1,6 @@
 use super::*;
 
+pub mod check;
 pub mod generate;
 
 pub async fn handle_cli(
@@ -8,6 +9,7 @@ pub async fn handle_cli(
 ) -> Option<BasiliqCliResult> {
     match cli_matches.subcommand() {
         ("generate", Some(x)) => generate::handle_cli(connect_option, x).await,
-        _ => None,
+        ("check", Some(x)) => check::handle_cli(connect_option, x).await,
+        _ => unreachable!(),
     }
 }
