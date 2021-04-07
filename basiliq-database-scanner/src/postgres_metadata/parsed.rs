@@ -142,6 +142,7 @@ impl BasiliqDbScannedTable {
         let types = raw::read_types(&mut *connection).await?;
         let primary_keys = raw::read_primary_keys(&mut *connection).await?;
         let foreign_keys = raw::read_foreign_keys(&mut *connection).await?;
+
         Ok(Self::new(
             schemas,
             tables,

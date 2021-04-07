@@ -105,6 +105,14 @@ subcommands:
       about: Start basiliq's server
       args:
         - config:
-            short: c
             help: config file
+            required: true
+            index: 1
+        - bind_port:
+            short: P
+            help: The port on which to start the server. Default to 8080
+            takes_value: true
+        - bind_host:
+            short: H
+            help: The host on which to bind the server. Default to 127.0.0.1
             takes_value: true

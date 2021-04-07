@@ -1,11 +1,12 @@
 const VERSION: &str = env!("CARGO_PKG_VERSION");
-use clap::{AppSettings, ArgMatches};
+use clap::ArgMatches;
 use getset::Getters;
 use sqlx::postgres::PgConnectOptions;
-use std::{path, str::FromStr};
+use std::str::FromStr;
 
 pub mod config;
 pub mod database_connection;
+pub mod serve;
 
 #[macro_export]
 macro_rules! print_usage {
@@ -19,7 +20,7 @@ macro_rules! print_usage {
 pub enum BasiliqCliIntention {
     GenConfig(config::generate::BasiliqCliGenerateConfig),
     CheckConfig(config::check::BasiliqCliCheckConfig),
-    Serve,
+    Serve(serve::BasiliqCliServerConfig),
 }
 
 #[derive(Clone, Debug, Getters)]
@@ -37,9 +38,7 @@ pub async fn handle_cli<'a>() -> Option<BasiliqCliResult> {
 
     match cli_matches.subcommand() {
         ("config", Some(x)) => config::handle_cli(connect_option, x).await,
-        ("serve", Some(x)) => {
-            unimplemented!()
-        }
+        ("serve", Some(x)) => serve::handle_cli(connect_option, x).await,
         _ => unreachable!(),
     }
 }

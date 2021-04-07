@@ -1,11 +1,11 @@
+use super::*;
 use log::info;
-use sqlx::ConnectOptions;
 
-pub async fn get_single_connection(
+pub async fn get_connection_pool(
     opt: &sqlx::postgres::PgConnectOptions,
-) -> Result<sqlx::PgConnection, sqlx::Error> {
+) -> Result<sqlx::PgPool, sqlx::Error> {
     info!("Connecting to the database..."); // TODO See https://github.com/launchbadge/sqlx/issues/659
-    let res = opt.connect().await?;
+    let res = sqlx::PgPool::connect_with(opt.clone()).await?;
     info!("Connected"); // TODO See https://github.com/launchbadge/sqlx/issues/659
     Ok(res)
 }

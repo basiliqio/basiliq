@@ -2,6 +2,7 @@ mod cli;
 mod config;
 mod database;
 mod errors;
+mod serve;
 
 use errors::BasiliqError;
 
@@ -22,7 +23,7 @@ pub async fn main() -> Result<(), BasiliqError> {
             BasiliqCliIntention::CheckConfig(path) => {
                 config::check::check_config(&cli_param, path).await
             }
-            _ => unimplemented!(),
+            BasiliqCliIntention::Serve(opt) => serve::serve(&cli_param, opt).await,
         },
         None => Ok(()),
     }
