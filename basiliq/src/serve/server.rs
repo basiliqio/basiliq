@@ -1,6 +1,5 @@
 use super::*;
 use ciboulette::CibouletteIntention;
-use std::convert::TryFrom;
 
 fn check_content_type(req: &Request<Body>) -> Result<(), BasiliqServerError> {
     match req.headers().get(hyper::header::CONTENT_TYPE) {

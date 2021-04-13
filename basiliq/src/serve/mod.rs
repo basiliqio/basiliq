@@ -2,19 +2,17 @@ use super::*;
 use crate::cli::serve::BasiliqCliServerConfig;
 use basiliq_database_scanner::BasiliqStore;
 use getset::Getters;
-use log::info;
-use std::{str::FromStr, sync::Arc};
-
-use std::convert::Infallible;
+use std::sync::Arc;
+use tracing::info;
 
 use hyper::server::conn::AddrStream;
-use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Request, Response, Server};
 
 pub mod addr;
 pub mod errors;
 pub mod handlers;
 pub mod server;
+pub mod status_code;
 
 use errors::BasiliqServerError;
 
@@ -56,7 +54,7 @@ pub async fn serve(
         let state = state.clone();
 
         async move {
-            Ok::<_, BasiliqServerError>(service_fn(move |x| {
+            Ok::<_, BasiliqServerError>(hyper::service::service_fn(move |x| {
                 let state = state.clone();
                 async move {
                     let res = server::entry_server(state, x).await;

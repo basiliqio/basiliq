@@ -17,6 +17,14 @@ impl BasiliqStoreBuilder {
                 warn!("Unknown table `{}`, skipping...", main_table_name);
                 continue 'tables;
             }
+            let ltable = match tables.get(main_table_name) {
+                // Get the type of the foreign table, fails if can't be found
+                Some(x) => x,
+                None => {
+                    warn!("Unknown table `{}`, skipping...", main_table_name);
+                    continue 'tables;
+                }
+            };
             'rels: for (rel_key, (rel_type, rel_field_index)) in rels {
                 // Iterate over every relationships in that table
                 let ftable = match tables.get(rel_type) {
@@ -27,11 +35,24 @@ impl BasiliqStoreBuilder {
                         continue 'tables;
                     }
                 };
-                let fkey_col_name = match ftable // Get the column name of the field that is referenced, fails if can't be found
+                let lkey_col = match ltable // Get the column name of the field that is referenced, fails if can't be found
+                    .table
+                    .columns_by_name()
+                    .get(rel_key)
+                {
+                    Some(x) => x,
+                    None => {
+                        warn!(
+                            "Unknown column {} for table `{}`, skipping...",
+                            main_table_name, main_table_name
+                        );
+                        continue 'rels;
+                    }
+                };
+                let fkey_col = match ftable // Get the column name of the field that is referenced, fails if can't be found
                     .table
                     .columns_by_id()
                     .get(rel_field_index)
-                    .map(|c| c.column().name().to_string())
                 {
                     Some(x) => x,
                     None => {
@@ -47,9 +68,10 @@ impl BasiliqStoreBuilder {
                     BasiliqStoreRelationshipData {
                         ltable: main_table_name.clone(),
                         ftable: rel_type.clone(),
-                        ffield_name: ArcStr::from(&fkey_col_name),
+                        ffield_name: ArcStr::from(fkey_col.column().name()),
                         lfield_name: ArcStr::from(rel_key),
                         type_: BasiliqStoreRelationshipType::ManyToOne(false),
+                        optional: !lkey_col.column().non_null(),
                     },
                 );
                 res.insert(
@@ -58,8 +80,9 @@ impl BasiliqStoreBuilder {
                         ltable: rel_type.clone(),
                         ftable: main_table_name.clone(),
                         ffield_name: ArcStr::from(rel_key),
-                        lfield_name: ArcStr::from(&fkey_col_name),
+                        lfield_name: ArcStr::from(fkey_col.column().name()),
                         type_: BasiliqStoreRelationshipType::OneToMany(false),
+                        optional: !lkey_col.column().non_null(),
                     },
                 );
             }
@@ -106,6 +129,7 @@ impl BasiliqStoreBuilder {
                                 ffield_name: other_element.ffield_name().clone(),
                             },
                         ),
+                        optional: true,
                     });
                 }
             }

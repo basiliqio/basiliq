@@ -31,7 +31,9 @@ async fn exec_query<'request>(
     let response: CibouletteOutboundRequest<&serde_json::value::RawValue> = accumulator.build()?;
     let res = Body::from(bytes::Bytes::from(serde_json::to_string(&response)?));
     transaction.commit().await?;
-    Ok(Response::builder().status(200).body(res)?)
+    Ok(Response::builder()
+        .status(super::status_code::convert_status_code(response.status()))
+        .body(res)?)
 }
 
 pub async fn handle_request(

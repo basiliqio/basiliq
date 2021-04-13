@@ -44,7 +44,7 @@ impl BasiliqStoreBuilder {
                                 one_type,
                                 many_type,
                                 v.ffield_name().clone(),
-                                false, //FIXME
+                                v.optional(),
                             ),
                             Some(rel_alias),
                         )?;
@@ -61,7 +61,7 @@ impl BasiliqStoreBuilder {
                                 one_type,
                                 many_type,
                                 v.lfield_name().clone(),
-                                false, // FIXME
+                                v.optional(),
                             ),
                             Some(rel_alias),
                         )?;

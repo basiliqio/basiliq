@@ -1,5 +1,5 @@
-use log::info;
 use sqlx::ConnectOptions;
+use tracing::info;
 
 pub async fn get_single_connection(
     opt: &sqlx::postgres::PgConnectOptions,

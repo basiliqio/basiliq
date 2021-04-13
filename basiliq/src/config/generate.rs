@@ -1,8 +1,8 @@
 use super::*;
 use crate::cli::config::generate::BasiliqCliGenerateConfig;
 use basiliq_database_scanner::{BasiliqDbScannedTable, BasiliqStoreBuilder};
-use log::{error, info};
 use std::fs::OpenOptions;
+use tracing::{error, info};
 
 pub async fn gen_config(
     param: &BasiliqCliResult,
@@ -26,7 +26,7 @@ pub async fn gen_config(
             );
             return Ok(());
         }
-        Err(err) => return Err(BasiliqError::IO(err)),
+        Err(err) => return Err(BasiliqError::Io(err)),
     };
 
     info!("Scanning the database...");

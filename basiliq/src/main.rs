@@ -2,18 +2,16 @@ mod cli;
 mod config;
 mod database;
 mod errors;
+mod logging;
 mod serve;
 
-use errors::BasiliqError;
-
 use cli::{BasiliqCliIntention, BasiliqCliResult};
+use errors::BasiliqError;
 
 #[tokio::main]
 pub async fn main() -> Result<(), BasiliqError> {
-    env_logger::Builder::from_env(
-        env_logger::Env::default().default_filter_or("basiliq=info,warn"),
-    )
-    .init();
+    logging::init_logging();
+
     let cli_res = cli::handle_cli().await;
     match cli_res {
         Some(cli_param) => match cli_param.intention() {

@@ -3,7 +3,7 @@ use super::postgres_metadata::raw::*;
 use super::*;
 use bimap::BiBTreeMap;
 use ciboulette::CibouletteIdType;
-use getset::{Getters, MutGetters};
+use getset::{CopyGetters, Getters, MutGetters};
 use log::{trace, warn};
 use messy_json::*;
 use serde::{Deserialize, Serialize};
@@ -95,12 +95,18 @@ pub struct BasiliqStoreRelationshipManyToManyData {
     ffield_name: ArcStr,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
-#[getset(get = "pub")]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters, CopyGetters)]
 pub struct BasiliqStoreRelationshipData {
+    #[getset(get = "pub")]
     ltable: BasiliqStoreTableIdentifier,
+    #[getset(get = "pub")]
     lfield_name: ArcStr,
+    #[getset(get = "pub")]
     ftable: BasiliqStoreTableIdentifier,
+    #[getset(get = "pub")]
     ffield_name: ArcStr,
+    #[getset(get = "pub")]
     type_: BasiliqStoreRelationshipType,
+    #[getset(get_copy = "pub")]
+    optional: bool,
 }

@@ -1,5 +1,4 @@
-use super::*;
-use log::info;
+use tracing::info;
 
 pub async fn get_connection_pool(
     opt: &sqlx::postgres::PgConnectOptions,

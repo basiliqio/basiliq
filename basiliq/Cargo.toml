@@ -11,10 +11,13 @@ better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
 [dependencies]
 basiliq_database_scanner = {version = "*", path = "../basiliq-database-scanner", package = "basiliq_database_scanner"}
 clap = {version = "2", features = ["yaml"]}
-env_logger = "0.8"
+tracing = { version = "0.1", features = [ "log" ] }
+tracing-log = { version = "0.1", features = [ "env_logger" ] }
+tracing-subscriber = { version = "0.2.17", features = ["json", "fmt" ] }
+# log = "0.4"
+# env_logger = "0.8"
 getset = "0.1"
 hyper = {version = "0.14", features = ["full"]}
-log = "0.4.11"
 serde = "1"
 serde_json = "1"
 serde_yaml = "0.8"

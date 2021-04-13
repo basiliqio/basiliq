@@ -3,9 +3,9 @@ use crate::cli::config::check::BasiliqCliCheckConfig;
 use basiliq_database_scanner::{
     BasiliqDbScannedTable, BasiliqStoreBuilder, BasiliqStoreConfig, BasiliqStoreConfigMergeable,
 };
-use log::{error, info};
 use std::fs::File;
 use std::path::PathBuf;
+use tracing::{error, info};
 
 pub fn read_config_from_file(path: PathBuf) -> Result<BasiliqStoreConfig, BasiliqError> {
     let file = match File::open(path) {

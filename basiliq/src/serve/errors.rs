@@ -16,7 +16,7 @@ pub enum BasiliqServerError {
     #[error(transparent)]
     HyperError(#[from] hyper::Error),
     #[error(transparent)]
-    UTF8(#[from] std::str::Utf8Error),
+    Utf8(#[from] std::str::Utf8Error),
     #[error(transparent)]
     Json(#[from] serde_json::Error),
     #[error(transparent)]

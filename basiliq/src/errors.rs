@@ -10,11 +10,11 @@ pub enum BasiliqError {
     #[error(transparent)]
     BasiliqStoreConfigError(#[from] basiliq_database_scanner::BasiliqStoreConfigError),
     #[error(transparent)]
-    SQLx(#[from] sqlx::Error),
+    Sqlx(#[from] sqlx::Error),
     #[error(transparent)]
-    IO(#[from] std::io::Error),
+    Io(#[from] std::io::Error),
     #[error(transparent)]
-    DNS(#[from] trust_dns_resolver::error::ResolveError),
+    Dns(#[from] trust_dns_resolver::error::ResolveError),
     #[error(transparent)]
     Hyper(#[from] hyper::Error),
     #[error("No bindable IP address were found")]
