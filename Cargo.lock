@@ -120,13 +120,16 @@ version = "0.1.0"
 dependencies = [
  "basiliq_database_scanner",
  "bytes",
+ "casey",
  "ciboulette",
  "ciboulette2postgres",
  "clap",
  "getset",
  "hyper",
+ "paste",
  "serde",
  "serde_json",
+ "serde_urlencoded",
  "serde_yaml",
  "sqlx",
  "thiserror",
@@ -136,6 +139,7 @@ dependencies = [
  "tracing-subscriber",
  "trust-dns-resolver",
  "url",
+ "uuid",
 ]
 
 [[package]]
@@ -299,6 +303,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b02b629252fe8ef6460461409564e2c21d0c8e77e0944f3d189ff06c4e932ad"
 
 [[package]]
+name = "casey"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fabe85130dda9cf267715582ce6cf1ab581c8dfe3cb33f7065fee0f14e3fea14"
+dependencies = [
+ "syn",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.67"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -345,7 +358,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#c42a981b5b4a511f890bd905acfe26e46751ffed"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#1c2246fd0276973ef7d221cc1c2a72b0bc0c3654"
 dependencies = [
  "arcstr",
  "getset",
@@ -1494,6 +1507,12 @@ checksum = "c705f256449c60da65e11ff6626e0c16a0a0b96aaa348de61376b249bc340f41"
 dependencies = [
  "regex",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "acbf547ad0c65e31259204bd90935776d1c693cec2f4ff7abb7a1bbbd40dfe58"
 
 [[package]]
 name = "percent-encoding"

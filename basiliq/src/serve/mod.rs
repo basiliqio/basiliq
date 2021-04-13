@@ -14,7 +14,7 @@ pub mod handlers;
 pub mod server;
 pub mod status_code;
 
-use errors::BasiliqServerError;
+use errors::obj::BasiliqServerError;
 
 #[derive(Clone, Debug, Getters)]
 #[getset(get = "pub")]
@@ -54,11 +54,15 @@ pub async fn serve(
         let state = state.clone();
 
         async move {
-            Ok::<_, BasiliqServerError>(hyper::service::service_fn(move |x| {
+            Ok::<_, std::convert::Infallible>(hyper::service::service_fn(move |x| {
                 let state = state.clone();
                 async move {
                     let res = server::entry_server(state, x).await;
-                    res
+                    let res = match res {
+                        Ok(res) => res,
+                        Err(err) => unimplemented!(),
+                    };
+                    core::result::Result::<Response<Body>, std::convert::Infallible>::Ok(res)
                 }
             }))
         }
