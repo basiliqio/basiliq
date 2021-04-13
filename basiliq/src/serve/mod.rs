@@ -58,7 +58,6 @@ pub async fn serve(
                 let state = state.clone();
                 async move {
                     let res = server::entry_server(state, x).await;
-                    println!("{:#?}", res);
                     res
                 }
             }))

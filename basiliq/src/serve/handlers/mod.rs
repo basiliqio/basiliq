@@ -32,6 +32,10 @@ async fn exec_query<'request>(
     let res = Body::from(bytes::Bytes::from(serde_json::to_string(&response)?));
     transaction.commit().await?;
     Ok(Response::builder()
+        .header(
+            hyper::header::CONTENT_TYPE,
+            super::server::JSON_API_CONTENT_TYPE,
+        )
         .status(super::status_code::convert_status_code(response.status()))
         .body(res)?)
 }

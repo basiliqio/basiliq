@@ -1,12 +1,14 @@
 use super::*;
 use ciboulette::CibouletteIntention;
 
+pub const JSON_API_CONTENT_TYPE: &str = "application/vnd.api+json";
+
 fn check_content_type(req: &Request<Body>) -> Result<(), BasiliqServerError> {
     match req.headers().get(hyper::header::CONTENT_TYPE) {
         Some(content_type) => match content_type
             .to_str()
             .map_err(|err| BasiliqServerError::BadHeader(hyper::header::CONTENT_TYPE, err))?
-            == "application/vnd.api+json"
+            == JSON_API_CONTENT_TYPE
         {
             true => Ok(()),
             false => Err(BasiliqServerError::BadContentType),
