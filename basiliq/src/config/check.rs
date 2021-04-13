@@ -25,20 +25,20 @@ pub fn read_config_from_file(path: PathBuf) -> Result<BasiliqStoreConfig, Basili
     Ok(read_config)
 }
 
-pub async fn create_store_builder_single_conn<'a>(
+pub async fn create_store_builder_single_conn(
     mut conn: sqlx::PgConnection,
     read_config: BasiliqStoreConfig,
-) -> Result<BasiliqStoreBuilder<'a>, BasiliqError> {
+) -> Result<BasiliqStoreBuilder, BasiliqError> {
     info!("Scanning the database...");
     let mut builder = BasiliqStoreBuilder::new(BasiliqDbScannedTable::scan_db(&mut conn).await?);
     builder.basiliq_config_merge(&read_config)?;
     Ok(builder)
 }
 
-pub async fn create_store_builder_pool<'a>(
+pub async fn create_store_builder_pool(
     pool: &sqlx::PgPool,
     config_path: PathBuf,
-) -> Result<BasiliqStoreBuilder<'a>, BasiliqError> {
+) -> Result<BasiliqStoreBuilder, BasiliqError> {
     let read_config = read_config_from_file(config_path)?;
     // let connection = conn.acquire().await?;
     info!("Scanning the database...");

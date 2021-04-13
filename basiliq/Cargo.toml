@@ -22,7 +22,8 @@ sqlx = {version = "0.5", features = ["postgres", "runtime-tokio-rustls", "json",
 thiserror = "1"
 tokio = {version = "1", features = ["full"]}
 trust-dns-resolver = {version = "0.20", features = ["tokio", "dns-over-rustls", "dns-over-https-rustls", "mdns", "ipconfig"]}
-
+url = "2.2.0"
+bytes = { version = "1"}
 [dependencies.ciboulette2postgres]
 git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
 # path = "../../ciboulette2postgres"

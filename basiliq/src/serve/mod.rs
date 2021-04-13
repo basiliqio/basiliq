@@ -12,20 +12,25 @@ use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Request, Response, Server};
 
 pub mod addr;
+pub mod errors;
+pub mod handlers;
 pub mod server;
+
+use errors::BasiliqServerError;
 
 #[derive(Clone, Debug, Getters)]
 #[getset(get = "pub")]
-pub struct BasiliqServerState<'a> {
+pub struct BasiliqServerState {
     db_pool: sqlx::PgPool,
-    store: BasiliqStore<'a>,
+    store: BasiliqStore,
     dns_resolver: trust_dns_resolver::TokioAsyncResolver,
+    base_url: url::Url,
 }
 
-pub async fn build_server_state<'a>(
+pub async fn build_server_state(
     param: &BasiliqCliResult,
     opt: &BasiliqCliServerConfig,
-) -> Result<BasiliqServerState<'a>, BasiliqError> {
+) -> Result<BasiliqServerState, BasiliqError> {
     let pool =
         crate::database::pool::get_connection_pool(param.database_connection_infos()).await?;
     info!("Building store...");
@@ -36,6 +41,7 @@ pub async fn build_server_state<'a>(
         db_pool: pool,
         store: store_builder.build()?,
         dns_resolver,
+        base_url: url::Url::parse("http://localhost:4444/").unwrap(), //FIXME
     })
 }
 
@@ -50,9 +56,13 @@ pub async fn serve(
         let state = state.clone();
 
         async move {
-            Ok::<_, BasiliqError>(service_fn(move |x| {
+            Ok::<_, BasiliqServerError>(service_fn(move |x| {
                 let state = state.clone();
-                async move { server::entry_server(state, x).await }
+                async move {
+                    let res = server::entry_server(state, x).await;
+                    println!("{:#?}", res);
+                    res
+                }
             }))
         }
     });
