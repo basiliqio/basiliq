@@ -12,6 +12,7 @@ serde = "1"
 serde_json = "1"
 src = "*"
 thiserror = "1"
+arcstr = "1"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]
@@ -26,7 +27,7 @@ package = "ciboulette2postgres"
 
 [dependencies.messy_json]
 git = "https://gitlab.com/basiliq/messy_json.git"
-features = ["uuid", "arcstr"]
+features = ["uuid"]
 
 [dependencies.sqlx]
 features = ["runtime-tokio-rustls", "postgres", "uuid", "macros", "json"]

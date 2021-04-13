@@ -1,5 +1,6 @@
 mod postgres_metadata;
 mod store;
+use arcstr::ArcStr;
 
 #[cfg(test)]
 mod tests;

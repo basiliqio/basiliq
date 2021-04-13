@@ -1,10 +1,10 @@
 use super::*;
 
-impl<'a> BasiliqStoreBuilder<'a> {
+impl BasiliqStoreBuilder {
     fn type_to_messy_json(
         col_settings: &BasiliqDbScannerColumn,
         type_: &BasiliqDbScannerTypeRaw,
-    ) -> Option<MessyJson<'a>> {
+    ) -> Option<MessyJson> {
         let required: bool = col_settings.column().non_null();
 
         match type_.category() {
@@ -22,35 +22,37 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 );
                 None
             }
-            BasiliqDbScannerTypeCategory::Enum => Some(MessyJson::String(Cow::Owned(
+            BasiliqDbScannerTypeCategory::Enum => Some(MessyJson::from(MessyJsonInner::String(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Geo => Some(MessyJson::String(Cow::Owned(
+            BasiliqDbScannerTypeCategory::Geo => Some(MessyJson::from(MessyJsonInner::String(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::NetworkAddress => Some(MessyJson::String(Cow::Owned(
+            BasiliqDbScannerTypeCategory::NetworkAddress => Some(MessyJson::from(
+                MessyJsonInner::String(MessyJsonScalar::new(!required)),
+            )),
+            BasiliqDbScannerTypeCategory::Pseudo => Some(MessyJson::from(MessyJsonInner::String(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Pseudo => Some(MessyJson::String(Cow::Owned(
+            BasiliqDbScannerTypeCategory::Range => Some(MessyJson::from(MessyJsonInner::String(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Range => Some(MessyJson::String(Cow::Owned(
-                MessyJsonScalar::new(!required),
-            ))),
-            BasiliqDbScannerTypeCategory::DateTime => Some(MessyJson::String(Cow::Owned(
-                MessyJsonScalar::new(!required),
-            ))),
-            BasiliqDbScannerTypeCategory::Numeric => Some(MessyJson::Number(Cow::Owned(
+            BasiliqDbScannerTypeCategory::DateTime => Some(MessyJson::from(
+                MessyJsonInner::String(MessyJsonScalar::new(!required)),
+            )),
+            BasiliqDbScannerTypeCategory::Numeric => Some(MessyJson::from(MessyJsonInner::Number(
                 MessyJsonNumeric::new(MessyJsonNumberType::U64, !required),
             ))),
-            BasiliqDbScannerTypeCategory::String => Some(MessyJson::String(Cow::Owned(
+            BasiliqDbScannerTypeCategory::String => Some(MessyJson::from(MessyJsonInner::String(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Timespan => Some(MessyJson::String(Cow::Owned(
-                MessyJsonScalar::new(!required),
-            ))),
+            BasiliqDbScannerTypeCategory::Timespan => Some(MessyJson::from(
+                MessyJsonInner::String(MessyJsonScalar::new(!required)),
+            )),
             BasiliqDbScannerTypeCategory::UserDefined => match type_.name().as_str() {
-                "uuid" => Some(MessyJson::Uuid(Cow::Owned(MessyJsonScalar::new(!required)))),
+                "uuid" => Some(MessyJson::from(MessyJsonInner::Uuid(MessyJsonScalar::new(
+                    !required,
+                )))),
                 _ => {
                     trace!(
                         ">> Found an user-defined for type {}. Unsupported, skipping..",
@@ -66,12 +68,12 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 );
                 None
             }
-            BasiliqDbScannerTypeCategory::BitString => Some(MessyJson::String(Cow::Owned(
+            BasiliqDbScannerTypeCategory::BitString => Some(MessyJson::from(
+                MessyJsonInner::String(MessyJsonScalar::new(!required)),
+            )),
+            BasiliqDbScannerTypeCategory::Boolean => Some(MessyJson::from(MessyJsonInner::Bool(
                 MessyJsonScalar::new(!required),
             ))),
-            BasiliqDbScannerTypeCategory::Boolean => {
-                Some(MessyJson::Bool(Cow::Owned(MessyJsonScalar::new(!required))))
-            }
         }
     }
 
@@ -138,7 +140,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
         table: Arc<BasiliqDbScannedTable>,
         pkey: i16,
         fkeys: &BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)>,
-    ) -> Option<BasiliqStoreTableBuilder<'a>> {
+    ) -> Option<BasiliqStoreTableBuilder> {
         let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
         let mut pkey_type: Option<(CibouletteIdType, String)> = None;
         trace!(
@@ -176,7 +178,18 @@ impl<'a> BasiliqStoreBuilder<'a> {
             }
         }
         pkey_type
-            .map(|x| (x, MessyJsonObject::new(obj_properties, false)))
+            .map(|x| {
+                (
+                    x,
+                    MessyJsonObject::from(MessyJsonObjectInner::new(
+                        obj_properties
+                            .into_iter()
+                            .map(|(k, v)| (ArcStr::from(k), v))
+                            .collect(),
+                        false,
+                    )),
+                )
+            })
             .map(|(id, properties)| BasiliqStoreTableBuilder {
                 table,
                 properties,

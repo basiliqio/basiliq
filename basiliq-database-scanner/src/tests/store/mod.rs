@@ -2,10 +2,10 @@ use super::*;
 
 mod many_to_many;
 mod one_to_many;
-async fn setup_1_n<'a>(
+async fn setup_1_n(
     transaction: &mut sqlx::Transaction<'_, sqlx::Postgres>,
     config: Option<BasiliqStoreConfig>,
-) -> BasiliqStore<'a> {
+) -> BasiliqStore {
     sqlx::query!(
         r#"
 		CREATE TABLE director(
@@ -40,10 +40,10 @@ async fn setup_1_n<'a>(
     builder.build().unwrap()
 }
 
-async fn setup_n_m<'a>(
+async fn setup_n_m(
     transaction: &mut sqlx::Transaction<'_, sqlx::Postgres>,
     config: Option<BasiliqStoreConfig>,
-) -> BasiliqStore<'a> {
+) -> BasiliqStore {
     sqlx::query!(
         r#"
 		CREATE TABLE peoples(

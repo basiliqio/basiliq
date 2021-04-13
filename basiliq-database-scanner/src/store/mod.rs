@@ -7,7 +7,6 @@ use getset::{Getters, MutGetters};
 use log::{trace, warn};
 use messy_json::*;
 use serde::{Deserialize, Serialize};
-use std::borrow::Cow;
 use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 use std::sync::Arc;
@@ -32,9 +31,9 @@ pub use config::{
 
 #[derive(Debug, Clone, Getters)]
 #[getset(get = "pub")]
-pub struct BasiliqStore<'a> {
-    pub(crate) ciboulette: ciboulette::CibouletteStore<'a>,
-    pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore<'a>,
+pub struct BasiliqStore {
+    pub(crate) ciboulette: ciboulette::CibouletteStore,
+    pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore,
     pub(crate) config: BasiliqStoreConfig,
 }
 
@@ -92,16 +91,16 @@ pub enum BasiliqStoreRelationshipType {
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipManyToManyData {
     bucket: BasiliqStoreTableIdentifier,
-    lfield_name: String,
-    ffield_name: String,
+    lfield_name: ArcStr,
+    ffield_name: ArcStr,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipData {
     ltable: BasiliqStoreTableIdentifier,
-    lfield_name: String,
+    lfield_name: ArcStr,
     ftable: BasiliqStoreTableIdentifier,
-    ffield_name: String,
+    ffield_name: ArcStr,
     type_: BasiliqStoreRelationshipType,
 }

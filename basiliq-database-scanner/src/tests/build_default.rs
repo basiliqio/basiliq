@@ -1,4 +1,5 @@
 use super::*;
+use std::ops::Deref;
 
 #[ciboulette2postgres_test]
 async fn empty_db(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
@@ -35,11 +36,11 @@ async fn simple_table_with_default_name(mut transaction: sqlx::Transaction<'_, s
     let table_by_alias = builder.get_table_by_alias("public__simple_table").unwrap();
     assert_eq!(table == table_by_alias, true);
     assert_eq!(
-        matches!(table.properties().properties().get("first_name"), Some(messy_json::MessyJson::String(x)) if x.optional()),
+        matches!(table.properties().properties().get("first_name").unwrap().deref(), messy_json::MessyJsonInner::String(x) if x.optional()),
         true
     );
     assert_eq!(
-        matches!(table.properties().properties().get("last_name"), Some(messy_json::MessyJson::String(x)) if x.optional()),
+        matches!(table.properties().properties().get("last_name").unwrap().deref(), messy_json::MessyJsonInner::String(x) if x.optional()),
         true
     );
     assert_eq!(table.properties().has_field("id"), false);

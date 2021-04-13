@@ -1,6 +1,6 @@
 use super::*;
 
-impl<'a> BasiliqStoreBuilder<'a> {
+impl BasiliqStoreBuilder {
     pub(crate) fn gen_config(&self) -> BasiliqStoreConfig {
         let mut resources: BTreeMap<String, BasiliqStoreResourceConfig> = BTreeMap::new();
 
@@ -11,7 +11,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 log::warn!("Duplicate resource name `{}`", alias);
                 continue;
             }
-            let relationships: BTreeMap<String, BasiliqStoreRelationshipsConfig> = table_builder
+            let relationships: BTreeMap<ArcStr, BasiliqStoreRelationshipsConfig> = table_builder
                 .relationships
                 .iter()
                 .map(|(k, v)| {
@@ -53,7 +53,7 @@ impl<'a> BasiliqStoreBuilder<'a> {
     }
 }
 
-impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder<'a> {
+impl BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder {
     fn basiliq_config_merge(
         &mut self,
         other: &BasiliqStoreConfig,
@@ -64,7 +64,7 @@ impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder
                 .insert(table_ident.clone(), resource_name.clone());
             match self.tables().get(&table_ident) {
                 Some(table) => {
-                    let mut new_rel: BTreeMap<String, BasiliqStoreRelationshipData> =
+                    let mut new_rel: BTreeMap<ArcStr, BasiliqStoreRelationshipData> =
                         table.relationships().clone();
 
                     for x in table.relationships().iter().merge_join_by(
@@ -74,7 +74,7 @@ impl<'a> BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder
                         match x {
                             EitherOrBoth::Both((k1, _v1), (k2, _v2)) => {
                                 new_rel
-                                    .remove(k1)
+                                    .remove(k1.as_str())
                                     .and_then(|x| new_rel.insert(k2.clone(), x));
                             }
                             EitherOrBoth::Left((_, v1)) => {

@@ -1,10 +1,10 @@
 use super::*;
 
-impl<'a> BasiliqStoreBuilder<'a> {
+impl BasiliqStoreBuilder {
     /// Take a first stab at parsing the relationships
     /// Every relationships will first be expressed as a OneToMany and ManyToOne relationships
     pub(super) fn build_relationships_base(
-        tables: &BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'_>>,
+        tables: &BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder>,
         relationships: BTreeMap<
             BasiliqStoreTableIdentifier,
             BTreeMap<String, (BasiliqStoreTableIdentifier, i16)>,
@@ -47,8 +47,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                     BasiliqStoreRelationshipData {
                         ltable: main_table_name.clone(),
                         ftable: rel_type.clone(),
-                        ffield_name: fkey_col_name.clone(),
-                        lfield_name: rel_key.clone(),
+                        ffield_name: ArcStr::from(&fkey_col_name),
+                        lfield_name: ArcStr::from(rel_key),
                         type_: BasiliqStoreRelationshipType::ManyToOne(false),
                     },
                 );
@@ -57,8 +57,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
                     BasiliqStoreRelationshipData {
                         ltable: rel_type.clone(),
                         ftable: main_table_name.clone(),
-                        ffield_name: rel_key.clone(),
-                        lfield_name: fkey_col_name.clone(),
+                        ffield_name: ArcStr::from(rel_key),
+                        lfield_name: ArcStr::from(&fkey_col_name),
                         type_: BasiliqStoreRelationshipType::OneToMany(false),
                     },
                 );

@@ -76,7 +76,7 @@ pub struct BasiliqStoreResourceConfig {
     pub(crate) enabled: bool,
     /// A map of the relationships
     #[getset(get_mut = "pub")]
-    pub(crate) relationships: BTreeMap<String, BasiliqStoreRelationshipsConfig>,
+    pub(crate) relationships: BTreeMap<ArcStr, BasiliqStoreRelationshipsConfig>,
 }
 
 impl BasiliqStoreConfigMergeable<BasiliqStoreResourceConfig> for BasiliqStoreResourceConfig {
@@ -87,7 +87,7 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreResourceConfig> for BasiliqStoreRes
         if self.target != other.target {
             return Err(BasiliqStoreConfigError::TargetConfigChange);
         }
-        let mut new_relationships: BTreeMap<String, BasiliqStoreRelationshipsConfig> =
+        let mut new_relationships: BTreeMap<ArcStr, BasiliqStoreRelationshipsConfig> =
             self.relationships.clone();
         self.enabled = other.enabled;
 
@@ -134,7 +134,7 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreResourceConfig> for BasiliqStoreRes
 pub struct BasiliqStoreRelationshipsThroughConfig {
     #[serde(flatten)]
     pub(crate) target: BasiliqStoreTableIdentifier,
-    pub(crate) field: String,
+    pub(crate) field: ArcStr,
 }
 
 /// The configuration of a store relationships
@@ -148,7 +148,7 @@ pub struct BasiliqStoreRelationshipsConfig {
     pub(crate) through: Option<BasiliqStoreRelationshipsThroughConfig>,
     #[getset(get_mut = "pub")]
     pub(crate) enabled: bool,
-    pub(crate) field: String,
+    pub(crate) field: ArcStr,
 }
 
 impl BasiliqStoreConfigMergeable<BasiliqStoreRelationshipsConfig>

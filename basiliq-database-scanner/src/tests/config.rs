@@ -81,7 +81,10 @@ async fn merging_some_informations_into_builder(
         .and_then(|v| {
             v.relationships_mut()
                 .remove_entry("peoples")
-                .and_then(|(_k, v2)| v.relationships_mut().insert("participant".to_string(), v2))
+                .and_then(|(_k, v2)| {
+                    v.relationships_mut()
+                        .insert(ArcStr::from("participant"), v2)
+                })
         }); // Rename the "peoples" relationships in "court_metrage" to "participant"
     if let Some(v) = config.resources_mut().get_mut("movies_staff") {
         *v.enabled_mut() = false; // Disable direct access to the relationships "movies_staff"

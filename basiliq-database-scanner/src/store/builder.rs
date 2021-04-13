@@ -10,15 +10,15 @@ use ciboulette2postgres::{
 use std::convert::TryFrom;
 #[derive(Debug, Clone, Getters, MutGetters)]
 #[getset(get = "pub", get_mut = "pub(crate)")]
-pub struct BasiliqStoreBuilder<'a> {
+pub struct BasiliqStoreBuilder {
     pub(crate) raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
-    pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>>,
+    pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable>,
     pub(crate) aliases: BiBTreeMap<BasiliqStoreTableIdentifier, String>,
     pub(crate) config: BasiliqStoreConfig,
 }
 
-impl<'a> BasiliqStoreBuilder<'a> {
-    pub fn build(self) -> Result<BasiliqStore<'a>, Ciboulette2SqlError> {
+impl BasiliqStoreBuilder {
+    pub fn build(self) -> Result<BasiliqStore, Ciboulette2SqlError> {
         let mut ciboulette_store_builder = CibouletteStoreBuilder::default();
         let mut ciboulette_table_store = Ciboulette2PostgresTableStore::default();
 
@@ -104,12 +104,14 @@ impl<'a> BasiliqStoreBuilder<'a> {
                 Arc::new(Ciboulette2PostgresTable::new(
                     Ciboulette2PostgresId::new_from_ciboulette_id_type(
                         *table.id_type(),
-                        table.id_name().as_str(),
+                        table.id_name(),
                     )?,
-                    Some(Ciboulette2PostgresSafeIdent::try_from(
-                        table.table().schema().name().clone(),
-                    )?),
-                    Ciboulette2PostgresSafeIdent::try_from(table.table().table().name().clone())?,
+                    Some(Ciboulette2PostgresSafeIdent::try_from(ArcStr::from(
+                        table.table().schema().name(),
+                    ))?),
+                    Ciboulette2PostgresSafeIdent::try_from(ArcStr::from(
+                        table.table().table().name(),
+                    ))?,
                     ciboulette_store.get_type(alias.as_str())?.clone(),
                 )),
             )
@@ -124,39 +126,42 @@ impl<'a> BasiliqStoreBuilder<'a> {
 
 #[derive(Debug, Clone, Getters)]
 #[getset(get = "pub")]
-pub struct BasiliqStoreTableBuilder<'a> {
+pub struct BasiliqStoreTableBuilder {
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
     pub(crate) id_type: CibouletteIdType,
     pub(crate) id_name: String,
-    pub(crate) properties: MessyJsonObject<'a>,
+    pub(crate) properties: MessyJsonObject,
 }
 
-impl<'a> BasiliqStoreTableBuilder<'a> {
-    pub fn build<I>(self, relationships: I) -> BasiliqStoreTable<'a>
+impl BasiliqStoreTableBuilder {
+    pub fn build<I>(self, relationships: I) -> BasiliqStoreTable
     where
         I: IntoIterator<Item = (String, BasiliqStoreRelationshipData)>,
     {
         BasiliqStoreTable {
             table: self.table,
             id_type: self.id_type,
-            id_name: self.id_name,
+            id_name: ArcStr::from(self.id_name),
             properties: self.properties,
-            relationships: relationships.into_iter().collect(),
+            relationships: relationships
+                .into_iter()
+                .map(|(k, v)| (ArcStr::from(k), v))
+                .collect(),
         }
     }
 }
 
 #[derive(Debug, Clone, Getters, PartialEq)]
 #[getset(get = "pub")]
-pub struct BasiliqStoreTable<'a> {
+pub struct BasiliqStoreTable {
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
     pub(crate) id_type: CibouletteIdType,
-    pub(crate) id_name: String,
-    pub(crate) relationships: BTreeMap<String, BasiliqStoreRelationshipData>,
-    pub(crate) properties: MessyJsonObject<'a>,
+    pub(crate) id_name: ArcStr,
+    pub(crate) relationships: BTreeMap<ArcStr, BasiliqStoreRelationshipData>,
+    pub(crate) properties: MessyJsonObject,
 }
 
-impl<'a> BasiliqStoreBuilder<'a> {
+impl BasiliqStoreBuilder {
     pub fn check_schema(table: &BasiliqDbScannedTable) -> Option<&BasiliqDbScannedTable> {
         match POSTGRES_SYSTEM_SCHEMA.contains(&table.schema().name().as_str())
 		// If in a system schema
@@ -166,11 +171,11 @@ impl<'a> BasiliqStoreBuilder<'a> {
 		}
     }
 
-    pub fn get_table(&self, ident: &BasiliqStoreTableIdentifier) -> Option<&'a BasiliqStoreTable> {
+    pub fn get_table(&self, ident: &BasiliqStoreTableIdentifier) -> Option<&BasiliqStoreTable> {
         self.tables().get(ident)
     }
 
-    pub fn get_table_by_alias(&self, alias: &str) -> Option<&'a BasiliqStoreTable> {
+    pub fn get_table_by_alias(&self, alias: &str) -> Option<&BasiliqStoreTable> {
         self.aliases()
             .get_by_right(alias)
             .and_then(|ident| self.tables().get(ident))
@@ -196,12 +201,12 @@ impl<'a> BasiliqStoreBuilder<'a> {
     fn extract_data_from_raw_tables(
         raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     ) -> (
-        BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
+        BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder>,
         BTreeSet<BasiliqStoreRelationshipData>,
     ) {
         let mut table_builder_store: BTreeMap<
             BasiliqStoreTableIdentifier,
-            BasiliqStoreTableBuilder<'_>,
+            BasiliqStoreTableBuilder,
         > = BTreeMap::new();
         let mut relationships: BTreeMap<
             BasiliqStoreTableIdentifier,
@@ -241,8 +246,8 @@ impl<'a> BasiliqStoreBuilder<'a> {
     /// Build the relationships
     fn build_relationships(
         relationships: BTreeSet<BasiliqStoreRelationshipData>,
-        table_builder_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder<'a>>,
-    ) -> BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable<'a>> {
+        table_builder_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTableBuilder>,
+    ) -> BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable> {
         let mut table_store: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable> =
             table_builder_store
                 .into_iter()
@@ -265,19 +270,21 @@ fn inserts_relationship(table: &mut BasiliqStoreTable, rel_data: BasiliqStoreRel
         rel_data.ftable().schema(),
         rel_data.ftable().table()
     );
-    match table.relationships.get(&base_name) {
+    match table.relationships.get(base_name.as_str()) {
         Some(x) if x == &rel_data => (),
         Some(_) => {
             let mut counter: usize = 0;
             let mut name = format!("{}_{}", base_name, counter);
-            while table.relationships.contains_key(&name) {
+            while table.relationships.contains_key(name.as_str()) {
                 counter += 1;
                 name = format!("{}_{}", base_name, counter);
             }
-            table.relationships.insert(name, rel_data);
+            table.relationships.insert(ArcStr::from(name), rel_data);
         }
         None => {
-            table.relationships.insert(base_name, rel_data);
+            table
+                .relationships
+                .insert(ArcStr::from(base_name), rel_data);
         }
     }
 }
