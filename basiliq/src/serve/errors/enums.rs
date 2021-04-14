@@ -6,7 +6,9 @@ macro_rules! error_id {
 		/// An enumeration of error ids to send to clients.
 		///
 		/// Every error in the 10000-19999 are client errors like: bad request, bad content type, utf8 errors and so on
-		/// Every error in the 20000-29999 are JSON:API errors
+		/// Every error in the 20000-29999 are JSON:API (Ciboulette) errors
+		/// Every error in the 30000-39999 are Ciboulette2Postgres errors
+		/// Every error in the 50000-59999 are server errors (IO, etc)
 		pub enum BasiliqErrorId
 		{
 			$(
@@ -47,12 +49,16 @@ error_id!(
     { BadContentType,												"E10000" },
     { BadMethod,													"E10001" },
     { BadHeader,													"E10002" },
-    { Utf8,															"E10003" },
-    { BadUrl,														"E10004" },
-    { BadJson,														"E10005" },
-    { BadUuid,														"E10006" },
-    { BadNumber,													"E10007" },
-    { BadUrlEncoded,												"E10008" },
+    { BadUrl,														"E10003" },
+    { BadJson,														"E10004" },
+    { BadUuid,														"E10005" },
+    { BadNumber,													"E10006" },
+    { BadUrlEncoded,												"E10007" },
+    { BadBigNumber,													"E10008" },
+    { ToUtf8,														"E10009" },
+    { FromUtf8,														"E10010" },
+    { BadRequest,													"E10011" },
+
     { CibouletteMainTypeClash,										"E20000" },
     { CibouletteUnknownType,										"E20001" },
     { CibouletteUnknownRelationship,								"E20002" },
@@ -82,5 +88,26 @@ error_id!(
     { CibouletteWrongIntention,										"E20025" },
     { CibouletteWrongPathType,										"E20026" },
     { CibouletteOutboundTooManyMainData,							"E20027" },
-    { CibouletteUnknownError,										"E20028" }
+    { CibouletteUnknownError,										"E20028" },
+
+    { Ciboulette2PostgresMissingRelationship,						"E30000" },
+    { Ciboulette2PostgresRequiredSingleRelationship,				"E30001" },
+    { Ciboulette2PostgresUnknownTable,								"E30002" },
+    { Ciboulette2PostgresEmptyRelValueError,						"E30003" },
+    { Ciboulette2PostgresNullCharIdent,								"E30004" },
+    { Ciboulette2PostgresUpdatingRelationships,						"E30005" },
+    { Ciboulette2PostgresUpdatingManyRelationships,					"E30006" },
+    { Ciboulette2PostgresUpdatingMainObject,						"E30007" },
+    { Ciboulette2PostgresMultiIdsForSingleRelationships,			"E30008" },
+    { Ciboulette2PostgresBulkRelationshipDelete,					"E30009" },
+    { Ciboulette2PostgresMissingRelationForOrdering,				"E30010" },
+    { Ciboulette2PostgresNonAsciiCharInIdent,						"E30011" },
+    { Ciboulette2PostgresProvidedIdOnInserts,						"E30012" },
+    { Ciboulette2PostgresMissingAttributes,							"E30013" },
+    { Ciboulette2PostgresSortingByMultiRel,							"E30014" },
+    { Ciboulette2PostgresUnknownError,								"E30015" },
+
+    { Io,															"E50000" },
+    { BufReaderInto,												"E50001" },
+    { HttpError,													"E50002" }
 );

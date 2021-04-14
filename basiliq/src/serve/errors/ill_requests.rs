@@ -36,14 +36,28 @@ pub fn handle_bad_url<'a>(err: url::ParseError) -> (hyper::StatusCode, Ciboulett
         },
     )
 }
-pub fn handle_bad_utf8<'a>(
+pub fn handle_bad_to_utf8<'a>(
     err: std::str::Utf8Error,
 ) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
     (
         hyper::StatusCode::BAD_REQUEST,
         CibouletteErrorObj {
-            id: Some(Cow::Borrowed(BasiliqErrorId::Utf8.id())),
-            title: Some(Cow::Borrowed(BasiliqErrorId::Utf8.title())),
+            id: Some(Cow::Borrowed(BasiliqErrorId::ToUtf8.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::ToUtf8.title())),
+            detail: Some(err.to_string().into()),
+            ..Default::default()
+        },
+    )
+}
+
+pub fn handle_bad_from_utf8<'a>(
+    err: std::string::FromUtf8Error,
+) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
+    (
+        hyper::StatusCode::BAD_REQUEST,
+        CibouletteErrorObj {
+            id: Some(Cow::Borrowed(BasiliqErrorId::FromUtf8.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::FromUtf8.title())),
             detail: Some(err.to_string().into()),
             ..Default::default()
         },
@@ -97,6 +111,57 @@ pub fn handle_bad_number<'a>(
             id: Some(Cow::Borrowed(BasiliqErrorId::BadNumber.id())),
             title: Some(Cow::Borrowed(BasiliqErrorId::BadNumber.title())),
             detail: Some(err.to_string().into()),
+            ..Default::default()
+        },
+    )
+}
+
+pub fn handle_io<'a>(err: std::io::Error) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
+    (
+        hyper::StatusCode::INTERNAL_SERVER_ERROR,
+        CibouletteErrorObj {
+            id: Some(Cow::Borrowed(BasiliqErrorId::Io.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::Io.title())),
+            detail: Some(err.to_string().into()),
+            ..Default::default()
+        },
+    )
+}
+
+pub fn handle_buf_error<'a>(
+    err: buf_redux::IntoInnerError<buf_redux::BufWriter<std::io::Cursor<Vec<u8>>>>,
+) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
+    (
+        hyper::StatusCode::INTERNAL_SERVER_ERROR,
+        CibouletteErrorObj {
+            id: Some(Cow::Borrowed(BasiliqErrorId::Io.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::Io.title())),
+            detail: Some(err.to_string().into()),
+            ..Default::default()
+        },
+    )
+}
+
+pub fn handle_bad_request<'a>(
+    err: hyper::http::Error,
+) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
+    (
+        hyper::StatusCode::BAD_REQUEST,
+        CibouletteErrorObj {
+            id: Some(Cow::Borrowed(BasiliqErrorId::Io.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::Io.title())),
+            detail: Some(err.to_string().into()),
+            ..Default::default()
+        },
+    )
+}
+
+pub fn handle_bad_method<'a>() -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
+    (
+        hyper::StatusCode::METHOD_NOT_ALLOWED,
+        CibouletteErrorObj {
+            id: Some(Cow::Borrowed(BasiliqErrorId::BadMethod.id())),
+            title: Some(Cow::Borrowed("Unsupported method")),
             ..Default::default()
         },
     )

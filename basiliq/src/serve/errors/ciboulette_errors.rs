@@ -109,7 +109,11 @@ pub fn handle_ciboulette_error<'a>(
             err
         ),
         CibouletteError::UnknownError(_) => {
-            cib_err!(StatusCode::BAD_REQUEST, CibouletteUnknownError, err)
+            cib_err!(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                CibouletteUnknownError,
+                err
+            )
         }
     }
 }

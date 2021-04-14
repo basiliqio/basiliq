@@ -6,11 +6,17 @@ pub fn convert_error_to_body(
     let (status, mut err_obj) = match err {
         BasiliqServerError::BadContentType => super::ill_requests::handle_bad_content_type(),
         BasiliqServerError::BadHeader(_, _) => super::ill_requests::handle_bad_header(err),
+        BasiliqServerError::BadMethod(_) => super::ill_requests::handle_bad_method(),
         BasiliqServerError::BadUrl(err) => super::ill_requests::handle_bad_url(err),
-        BasiliqServerError::Utf8(err) => super::ill_requests::handle_bad_utf8(err),
+        BasiliqServerError::Utf8(err) => super::ill_requests::handle_bad_to_utf8(err),
         BasiliqServerError::Json(err) => super::ill_requests::handle_bad_json(err),
+        BasiliqServerError::HyperError(err) => super::server_errors::handle_http_error(err),
+        BasiliqServerError::Http(err) => super::ill_requests::handle_bad_request(err),
         BasiliqServerError::CibouletteError(err) => {
             super::ciboulette_errors::handle_ciboulette_error(err)
+        }
+        BasiliqServerError::Ciboulette2PostgresError(err) => {
+            super::ciboulette2postgres_errors::handle_ciboulette2postgres_error(err)
         }
         _ => unimplemented!(),
     };
