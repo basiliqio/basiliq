@@ -41,3 +41,13 @@ features = ["sqlx_postgres"]
 git = "https://gitlab.com/basiliq/ciboulette.git"
 # path = "../../ciboulette"
 package = "ciboulette"
+
+[dev-dependencies.ciboulette2postgres_test_proc_macro]
+git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+package = "ciboulette2postgres_test_proc_macro"
+
+[dev-dependencies.basiliq_test_utils]
+version = "*"
+path = "../basiliq-test-utils"
+package = "basiliq_test_utils"
+features = [ "migrations" ]

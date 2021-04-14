@@ -14,6 +14,9 @@ pub mod handlers;
 pub mod server;
 pub mod status_code;
 
+#[cfg(test)]
+mod tests;
+
 use errors::obj::BasiliqServerError;
 
 #[derive(Clone, Debug, Getters)]
@@ -43,6 +46,21 @@ pub async fn build_server_state(
     })
 }
 
+pub(crate) async fn main_service(
+    state: Arc<BasiliqServerState>,
+    req: Request<Body>,
+) -> Result<Response<Body>, BasiliqServerError> {
+    use tracing::{span, Level};
+    let span = span!(Level::TRACE, "connection");
+    let _entered_span = span.enter();
+    let res = server::entry_server(state, req).await;
+    let res = match res {
+        Ok(res) => res,
+        Err(err) => errors::convert_error_to_body(err)?,
+    };
+    core::result::Result::<Response<Body>, BasiliqServerError>::Ok(res)
+}
+
 pub async fn serve(
     param: &BasiliqCliResult,
     opt: &BasiliqCliServerConfig,
@@ -54,19 +72,8 @@ pub async fn serve(
         let state = state.clone();
 
         async move {
-            Ok::<_, BasiliqServerError>(hyper::service::service_fn(move |x| {
-                let state = state.clone();
-                use tracing::{span, Level};
-                let span = span!(Level::TRACE, "connection");
-                let _entered_span = span.enter();
-                async move {
-                    let res = server::entry_server(state, x).await;
-                    let res = match res {
-                        Ok(res) => res,
-                        Err(err) => errors::convert_error_to_body(err)?,
-                    };
-                    core::result::Result::<Response<Body>, BasiliqServerError>::Ok(res)
-                }
+            Ok::<_, BasiliqServerError>(hyper::service::service_fn(move |req| {
+                main_service(state.clone(), req)
             }))
         }
     });

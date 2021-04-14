@@ -1,0 +1,6 @@
+CREATE TABLE comments(
+	id			UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
+	body		TEXT,
+	author		UUID NOT NULL REFERENCES peoples ON DELETE CASCADE,
+	articles	UUID NOT NULL REFERENCES articles ON DELETE CASCADE
+);

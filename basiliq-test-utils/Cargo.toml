@@ -1,0 +1,42 @@
+[package]
+name = "basiliq_test_utils"
+version = "0.1.0"
+authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+migrations = ["tokio", "refinery"]
+
+[dependencies.ciboulette2postgres_test_proc_macro]
+git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+package = "ciboulette2postgres_test_proc_macro"
+
+[dependencies.sqlx]
+features = ["runtime-tokio-rustls", "postgres", "uuid", "macros", "json"]
+version = "0.5"
+
+[dependencies.lazy_static]
+version = "1.4"
+
+[dependencies.uuid]
+features = [ "v4" ]
+version = "0.8"
+
+[dependencies.num_cpus]
+version = "1.3"
+
+[dependencies.anyhow]
+version = "1"
+
+[dependencies.refinery]
+version = "0.5.0"
+features = ["tokio", "tokio-postgres"]
+optional = true
+
+[dependencies.tokio]
+version = "1"
+features = ["full"]
+optional = true
+
