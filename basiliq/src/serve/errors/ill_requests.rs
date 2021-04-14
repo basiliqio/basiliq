@@ -148,8 +148,8 @@ pub fn handle_bad_request<'a>(
     (
         hyper::StatusCode::BAD_REQUEST,
         CibouletteErrorObj {
-            id: Some(Cow::Borrowed(BasiliqErrorId::Io.id())),
-            title: Some(Cow::Borrowed(BasiliqErrorId::Io.title())),
+            id: Some(Cow::Borrowed(BasiliqErrorId::BadRequest.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::BadRequest.title())),
             detail: Some(err.to_string().into()),
             ..Default::default()
         },

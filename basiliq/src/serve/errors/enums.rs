@@ -1,5 +1,4 @@
 use casey::snake;
-use thiserror::Error;
 
 macro_rules! error_id {
 	($( { $name:ident, $code:literal } ),+) => {

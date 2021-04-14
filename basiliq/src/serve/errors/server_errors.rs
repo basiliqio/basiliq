@@ -4,8 +4,8 @@ pub fn handle_http_error<'a>(err: hyper::Error) -> (hyper::StatusCode, Ciboulett
     (
         hyper::StatusCode::INTERNAL_SERVER_ERROR,
         CibouletteErrorObj {
-            id: Some(Cow::Borrowed(BasiliqErrorId::Io.id())),
-            title: Some(Cow::Borrowed(BasiliqErrorId::Io.title())),
+            id: Some(Cow::Borrowed(BasiliqErrorId::HttpError.id())),
+            title: Some(Cow::Borrowed(BasiliqErrorId::HttpError.title())),
             detail: Some(err.to_string().into()),
             ..Default::default()
         },
