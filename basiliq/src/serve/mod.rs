@@ -54,15 +54,18 @@ pub async fn serve(
         let state = state.clone();
 
         async move {
-            Ok::<_, std::convert::Infallible>(hyper::service::service_fn(move |x| {
+            Ok::<_, BasiliqServerError>(hyper::service::service_fn(move |x| {
                 let state = state.clone();
+                use tracing::{span, Level};
+                let span = span!(Level::TRACE, "connection");
+                let _entered_span = span.enter();
                 async move {
                     let res = server::entry_server(state, x).await;
                     let res = match res {
                         Ok(res) => res,
-                        Err(err) => unimplemented!(),
+                        Err(err) => errors::convert_error_to_body(err)?,
                     };
-                    core::result::Result::<Response<Body>, std::convert::Infallible>::Ok(res)
+                    core::result::Result::<Response<Body>, BasiliqServerError>::Ok(res)
                 }
             }))
         }

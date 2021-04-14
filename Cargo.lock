@@ -359,7 +359,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#1c2246fd0276973ef7d221cc1c2a72b0bc0c3654"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#1388037106769407d443ff41a03ee9c68f7adcd3"
 dependencies = [
  "arcstr",
  "getset",

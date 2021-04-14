@@ -18,7 +18,7 @@ pub fn convert_error_to_body(
         BasiliqServerError::Ciboulette2PostgresError(err) => {
             super::ciboulette2postgres_errors::handle_ciboulette2postgres_error(err)
         }
-        _ => unimplemented!(),
+        BasiliqServerError::DatabaseError(err) => super::database_errors::handle_db_error(err),
     };
 
     *err_obj.status_mut() = status.as_u16() as u64;

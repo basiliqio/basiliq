@@ -6,7 +6,7 @@ pub fn init_logging() {
         .unwrap_or_else(|| "basiliq=info,warn".to_string());
     let fmt_layer = tracing_subscriber::fmt::layer()
         .with_target(false)
-        .with_thread_names(true);
+        .with_timer(tracing_subscriber::fmt::time::ChronoUtc::rfc3339());
     let env_layer = tracing_subscriber::filter::EnvFilter::new(env_log);
     tracing_subscriber::registry()
         .with(env_layer)

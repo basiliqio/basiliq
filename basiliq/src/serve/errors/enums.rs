@@ -9,6 +9,7 @@ macro_rules! error_id {
 		/// Every error in the 20000-29999 are JSON:API (Ciboulette) errors
 		/// Every error in the 30000-39999 are Ciboulette2Postgres errors
 		/// Every error in the 50000-59999 are server errors (IO, etc)
+		#[derive(Copy, Debug, Clone)]
 		pub enum BasiliqErrorId
 		{
 			$(
@@ -23,7 +24,7 @@ macro_rules! error_id {
 				match self
 				{
 					$(
-						$name => {
+						BasiliqErrorId::$name => {
 							snake!(stringify!($name))
 						}
 					)*
@@ -35,7 +36,7 @@ macro_rules! error_id {
 				match self
 				{
 					$(
-						$name => {
+						BasiliqErrorId::$name => {
 							$code
 						}
 					)*
@@ -109,5 +110,7 @@ error_id!(
 
     { Io,															"E50000" },
     { BufReaderInto,												"E50001" },
-    { HttpError,													"E50002" }
+    { HttpError,													"E50002" },
+
+    { UnknownError,													"E99999" }
 );
