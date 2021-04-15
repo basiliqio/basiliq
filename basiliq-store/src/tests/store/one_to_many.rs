@@ -6,7 +6,7 @@ async fn many_to_one_relationships_check(mut transaction: sqlx::PgPool) {
     let store = setup_1_n(&mut transaction, None).await;
     let (_, rel) = store
         .ciboulette()
-        .get_rel("public__movies", "public__director")
+        .get_rel("public__movies", "director")
         .unwrap();
     match rel {
         CibouletteRelationshipOption::ManyToOne(rel) => {
@@ -18,7 +18,7 @@ async fn many_to_one_relationships_check(mut transaction: sqlx::PgPool) {
     };
     let (_, rel) = store
         .ciboulette()
-        .get_rel("public__movies", "public__director")
+        .get_rel("public__movies", "director")
         .unwrap();
     match rel {
         CibouletteRelationshipOption::ManyToOne(rel) => {

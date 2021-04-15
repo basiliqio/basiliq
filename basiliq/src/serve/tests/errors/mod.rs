@@ -1,7 +1,10 @@
 use super::*;
 use crate::serve::errors::BasiliqErrorId;
 use ciboulette::CibouletteErrorRequest;
+use serde_json::json;
 mod bad_requests;
+mod ciboulette_errors;
+
 use hyper::header::{self, HeaderValue};
 
 pub async fn handle_errors<'a>(

@@ -1,18 +1,6 @@
 use super::*;
 
 #[basiliq_test(run_migrations)]
-async fn unknown_resource(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(Method::GET, "/an_unknown_resource", Body::empty());
-
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-    handle_errors(resp, BasiliqErrorId::CibouletteUnknownType).await;
-}
-
-#[basiliq_test(run_migrations)]
 async fn bad_content_type(pool: sqlx::PgPool) {
     let state = prepare_basiliq_test(pool).await;
     let mut request = prepare_basiliq_request(Method::GET, "/an_unknown_resource", Body::empty());
