@@ -45,7 +45,7 @@ impl BasiliqStoreBuilder {
                                 v.ffield_name().clone(),
                                 v.optional(),
                             ),
-                            Some(rel_alias),
+                            Some(rel_alias.clone()),
                         )?;
                     }
                     BasiliqStoreRelationshipType::ManyToOne(_) => {
@@ -62,7 +62,7 @@ impl BasiliqStoreBuilder {
                                 v.lfield_name().clone(),
                                 v.optional(),
                             ),
-                            Some(rel_alias),
+                            Some(v.lfield_name().clone()),
                         )?;
                     }
                     BasiliqStoreRelationshipType::ManyToMany(opt) => {
