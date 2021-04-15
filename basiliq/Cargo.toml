@@ -42,12 +42,9 @@ git = "https://gitlab.com/basiliq/ciboulette.git"
 # path = "../../ciboulette"
 package = "ciboulette"
 
-[dev-dependencies.ciboulette2postgres_test_proc_macro]
-git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
-package = "ciboulette2postgres_test_proc_macro"
+[dependencies.lazy_static]
+version = "1.4"
 
-[dev-dependencies.basiliq_test_utils]
-version = "*"
-path = "../basiliq-test-utils"
-package = "basiliq_test_utils"
-features = [ "migrations" ]
+[dev-dependencies]
+basiliq_db_test_utils = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_utils" }
+basiliq_db_test_proc_macro = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_proc_macro" }

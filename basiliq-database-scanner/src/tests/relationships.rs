@@ -1,7 +1,8 @@
 use super::*;
 
-#[ciboulette2postgres_test]
-async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn one_to_many(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE director(
@@ -10,7 +11,7 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -22,13 +23,11 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 2);
     let director_table = builder
@@ -71,8 +70,9 @@ async fn one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     );
 }
 
-#[ciboulette2postgres_test]
-async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn multi_one_to_many(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE peoples(
@@ -81,7 +81,7 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -94,13 +94,11 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 2);
     let director_table = builder
@@ -156,8 +154,9 @@ async fn multi_one_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres
     );
 }
 
-#[ciboulette2postgres_test]
-async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn many_to_many(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE peoples(
@@ -166,7 +165,7 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -177,7 +176,7 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
 		);
 		"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -190,13 +189,11 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 3);
     let staff_table = builder
@@ -276,8 +273,9 @@ async fn many_to_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
     );
 }
 
-#[ciboulette2postgres_test]
-async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn many_many_to_many_many(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE peoples(
@@ -286,7 +284,7 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -297,7 +295,7 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
 		);
 		"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -312,13 +310,11 @@ async fn many_many_to_many_many(mut transaction: sqlx::Transaction<'_, sqlx::Pos
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 3);
     let staff_table = builder

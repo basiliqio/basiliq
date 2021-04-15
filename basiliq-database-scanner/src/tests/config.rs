@@ -1,6 +1,8 @@
 use super::*;
 
-async fn apply_migrations(transaction: &mut sqlx::Transaction<'_, sqlx::Postgres>) {
+async fn apply_migrations(pool: &mut sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
+
     sqlx::query!(
         r#"
 		CREATE TABLE peoples(
@@ -9,7 +11,7 @@ async fn apply_migrations(transaction: &mut sqlx::Transaction<'_, sqlx::Postgres
 		);
 	"#
     )
-    .execute(&mut *transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -20,7 +22,7 @@ async fn apply_migrations(transaction: &mut sqlx::Transaction<'_, sqlx::Postgres
 		);
 		"#
     )
-    .execute(&mut *transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
     sqlx::query!(
@@ -33,30 +35,26 @@ async fn apply_migrations(transaction: &mut sqlx::Transaction<'_, sqlx::Postgres
 		);
 	"#
     )
-    .execute(&mut *transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 }
 
-#[ciboulette2postgres_test]
-async fn config_default(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
-    apply_migrations(&mut transaction).await;
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+#[basiliq_test]
+async fn config_default(mut pool: sqlx::PgPool) {
+    apply_migrations(&mut pool).await;
+    let mut conn = pool.acquire().await.unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     let config = builder.gen_config();
     insta::assert_json_snapshot!(config);
 }
 
-#[ciboulette2postgres_test]
-async fn merging_some_informations_into_builder(
-    mut transaction: sqlx::Transaction<'_, sqlx::Postgres>,
-) {
-    apply_migrations(&mut transaction).await;
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+#[basiliq_test]
+async fn merging_some_informations_into_builder(mut pool: sqlx::PgPool) {
+    apply_migrations(&mut pool).await;
+    let mut conn = pool.acquire().await.unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let mut builder = BasiliqStoreBuilder::new(raw_table);
     let mut config = builder.gen_config();
     config

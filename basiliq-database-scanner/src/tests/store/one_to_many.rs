@@ -1,8 +1,8 @@
 use super::*;
 use serde_json::json;
 
-#[ciboulette2postgres_test]
-async fn many_to_one_relationships_check(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn many_to_one_relationships_check(mut transaction: sqlx::PgPool) {
     let store = setup_1_n(&mut transaction, None).await;
     let (_, rel) = store
         .ciboulette()
@@ -48,8 +48,8 @@ async fn many_to_one_relationships_check(mut transaction: sqlx::Transaction<'_, 
     );
 }
 
-#[ciboulette2postgres_test]
-async fn one_to_many_with_config(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn one_to_many_with_config(mut transaction: sqlx::PgPool) {
     let store = setup_1_n(
         &mut transaction,
         Some(

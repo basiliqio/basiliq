@@ -42,18 +42,15 @@ features = ["serde", "v4"]
 version = "0.8"
 
 [dev-dependencies]
-basiliq_test_utils = {version = "*", path = "../basiliq-test-utils", package = "basiliq_test_utils"}
 anyhow = "1"
 env_logger = "0.8"
+basiliq_db_test_utils = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_utils" }
+basiliq_db_test_proc_macro = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_proc_macro" }
 
 [dev-dependencies.cargo-husky]
 default-features = false
 features = ["precommit-hook", "run-cargo-check", "run-cargo-fmt"]
 version = "1"
-
-[dev-dependencies.ciboulette2postgres_test_proc_macro]
-git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
-package = "ciboulette2postgres_test_proc_macro"
 
 [dev-dependencies.insta]
 version = "1.7"

@@ -1,17 +1,18 @@
 use super::*;
 use std::ops::Deref;
 
-#[ciboulette2postgres_test]
-async fn empty_db(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
+#[basiliq_test]
+async fn empty_db(pool: sqlx::PgPool) {
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut pool.acquire().await.unwrap())
         .await
         .unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 0);
 }
 
-#[ciboulette2postgres_test]
-async fn simple_table_with_default_name(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_with_default_name(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -21,13 +22,11 @@ async fn simple_table_with_default_name(mut transaction: sqlx::Transaction<'_, s
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder
@@ -48,8 +47,9 @@ async fn simple_table_with_default_name(mut transaction: sqlx::Transaction<'_, s
     assert_eq!(matches!(table.id_type(), CibouletteIdType::Text), true);
 }
 
-#[ciboulette2postgres_test]
-async fn simple_table_with_no_field(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_with_no_field(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -57,13 +57,11 @@ async fn simple_table_with_no_field(mut transaction: sqlx::Transaction<'_, sqlx:
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder

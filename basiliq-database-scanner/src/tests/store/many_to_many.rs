@@ -1,9 +1,9 @@
 use super::*;
 use serde_json::json;
 
-#[ciboulette2postgres_test]
-async fn many_to_many_relationships_check(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
-    let store = setup_n_m(&mut transaction, None).await;
+#[basiliq_test]
+async fn many_to_many_relationships_check(mut pool: sqlx::PgPool) {
+    let store = setup_n_m(&mut pool, None).await;
     let (_, rel) = store
         .ciboulette()
         .get_rel("public__movies", "public__peoples")
@@ -91,10 +91,8 @@ async fn many_to_many_relationships_check(mut transaction: sqlx::Transaction<'_,
     );
 }
 
-#[ciboulette2postgres_test]
-async fn many_to_many_relationships_check_with_config(
-    mut transaction: sqlx::Transaction<'_, sqlx::Postgres>,
-) {
+#[basiliq_test]
+async fn many_to_many_relationships_check_with_config(mut transaction: sqlx::PgPool) {
     let store = setup_n_m(
         &mut transaction,
         Some(

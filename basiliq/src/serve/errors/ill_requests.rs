@@ -161,7 +161,7 @@ pub fn handle_bad_method<'a>() -> (hyper::StatusCode, CibouletteErrorObj<'a>) {
         hyper::StatusCode::METHOD_NOT_ALLOWED,
         CibouletteErrorObj {
             id: Some(Cow::Borrowed(BasiliqErrorId::BadMethod.id())),
-            title: Some(Cow::Borrowed("Unsupported method")),
+            title: Some(Cow::Borrowed(BasiliqErrorId::BadMethod.title())),
             ..Default::default()
         },
     )

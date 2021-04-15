@@ -119,16 +119,17 @@ name = "basiliq"
 version = "0.1.0"
 dependencies = [
  "basiliq_database_scanner",
- "basiliq_test_utils",
+ "basiliq_db_test_proc_macro",
+ "basiliq_db_test_utils",
  "buf_redux",
  "bytes",
  "casey",
  "ciboulette",
  "ciboulette2postgres",
- "ciboulette2postgres_test_proc_macro",
  "clap",
  "getset",
  "hyper",
+ "lazy_static",
  "paste",
  "serde",
  "serde_json",
@@ -151,12 +152,12 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "arcstr",
- "basiliq_test_utils",
+ "basiliq_db_test_proc_macro",
+ "basiliq_db_test_utils",
  "bimap",
  "cargo-husky",
  "ciboulette",
  "ciboulette2postgres",
- "ciboulette2postgres_test_proc_macro",
  "env_logger 0.8.3",
  "getset",
  "insta",
@@ -173,11 +174,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "basiliq_test_utils"
+name = "basiliq_db_test_proc_macro"
 version = "0.1.0"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#1fcdf141ff448a0b6fe63fb92d09621e84a05ad3"
+dependencies = [
+ "basiliq_db_test_utils",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "basiliq_db_test_utils"
+version = "0.1.0"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#1fcdf141ff448a0b6fe63fb92d09621e84a05ad3"
 dependencies = [
  "anyhow",
- "ciboulette2postgres_test_proc_macro",
  "lazy_static",
  "num_cpus",
  "refinery",
@@ -374,7 +386,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#1388037106769407d443ff41a03ee9c68f7adcd3"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#190529be5e1de39c87598da3ec253b7ec3c9e623"
 dependencies = [
  "arcstr",
  "getset",
@@ -394,7 +406,7 @@ dependencies = [
 [[package]]
 name = "ciboulette2postgres"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#bfc973c9b54b4f1a919ece7c50052ff8117c6b82"
+source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#fe9c33ff1b25eaf84f7f08b92275f084f486794f"
 dependencies = [
  "arcstr",
  "bigdecimal",
@@ -410,16 +422,6 @@ dependencies = [
  "sqlx",
  "thiserror",
  "uuid",
-]
-
-[[package]]
-name = "ciboulette2postgres_test_proc_macro"
-version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#bfc973c9b54b4f1a919ece7c50052ff8117c6b82"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]

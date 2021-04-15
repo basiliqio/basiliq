@@ -28,6 +28,22 @@ pub struct BasiliqServerState {
     base_url: url::Url,
 }
 
+impl BasiliqServerState {
+    pub fn new(
+        db_pool: sqlx::PgPool,
+        store: BasiliqStore,
+        dns_resolver: trust_dns_resolver::TokioAsyncResolver,
+        base_url: url::Url,
+    ) -> Self {
+        BasiliqServerState {
+            db_pool,
+            store,
+            dns_resolver,
+            base_url,
+        }
+    }
+}
+
 pub async fn build_server_state(
     param: &BasiliqCliResult,
     opt: &BasiliqCliServerConfig,
@@ -38,12 +54,12 @@ pub async fn build_server_state(
     let store_builder =
         crate::config::check::create_store_builder_pool(&pool, opt.config_file().clone()).await?;
     let dns_resolver = trust_dns_resolver::TokioAsyncResolver::tokio_from_system_conf()?;
-    Ok(BasiliqServerState {
-        db_pool: pool,
-        store: store_builder.build()?,
+    Ok(BasiliqServerState::new(
+        pool,
+        store_builder.build()?,
         dns_resolver,
-        base_url: url::Url::parse("http://localhost:4444/").unwrap(), //FIXME
-    })
+        url::Url::parse("http://localhost:4444/").unwrap(),
+    ))
 }
 
 pub(crate) async fn main_service(
@@ -77,6 +93,9 @@ pub async fn serve(
             }))
         }
     });
-    Server::bind(&socket_addr).serve(make_svc).await?;
+    Server::bind(&socket_addr)
+        .http2_only(false)
+        .serve(make_svc)
+        .await?;
     Ok(())
 }

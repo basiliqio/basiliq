@@ -1,7 +1,8 @@
 use super::*;
 
-#[ciboulette2postgres_test]
-async fn simple_table_serial_id(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_serial_id(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -11,13 +12,11 @@ async fn simple_table_serial_id(mut transaction: sqlx::Transaction<'_, sqlx::Pos
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder
@@ -30,8 +29,9 @@ async fn simple_table_serial_id(mut transaction: sqlx::Transaction<'_, sqlx::Pos
     assert_eq!(matches!(table.id_type(), CibouletteIdType::Number), true);
 }
 
-#[ciboulette2postgres_test]
-async fn simple_table_big_serial_id(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_big_serial_id(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -41,13 +41,11 @@ async fn simple_table_big_serial_id(mut transaction: sqlx::Transaction<'_, sqlx:
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder
@@ -60,8 +58,9 @@ async fn simple_table_big_serial_id(mut transaction: sqlx::Transaction<'_, sqlx:
     assert_eq!(matches!(table.id_type(), CibouletteIdType::Number), true);
 }
 
-#[ciboulette2postgres_test]
-async fn simple_table_uuid_id(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_uuid_id(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -71,13 +70,11 @@ async fn simple_table_uuid_id(mut transaction: sqlx::Transaction<'_, sqlx::Postg
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder
@@ -90,8 +87,9 @@ async fn simple_table_uuid_id(mut transaction: sqlx::Transaction<'_, sqlx::Postg
     assert_eq!(matches!(table.id_type(), CibouletteIdType::Uuid), true);
 }
 
-#[ciboulette2postgres_test]
-async fn simple_table_text_id(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_text_id(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -101,13 +99,11 @@ async fn simple_table_text_id(mut transaction: sqlx::Transaction<'_, sqlx::Postg
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder
@@ -120,8 +116,9 @@ async fn simple_table_text_id(mut transaction: sqlx::Transaction<'_, sqlx::Postg
     assert_eq!(matches!(table.id_type(), CibouletteIdType::Text), true);
 }
 
-#[ciboulette2postgres_test]
-async fn simple_table_varchar_id(mut transaction: sqlx::Transaction<'_, sqlx::Postgres>) {
+#[basiliq_test]
+async fn simple_table_varchar_id(pool: sqlx::PgPool) {
+    let mut conn = pool.acquire().await.unwrap();
     sqlx::query!(
         r#"
 		CREATE TABLE simple_table(
@@ -131,13 +128,11 @@ async fn simple_table_varchar_id(mut transaction: sqlx::Transaction<'_, sqlx::Po
 		);
 	"#
     )
-    .execute(&mut transaction)
+    .execute(&mut *conn)
     .await
     .unwrap();
 
-    let raw_table = BasiliqDbScannedTable::scan_db(&mut transaction)
-        .await
-        .unwrap();
+    let raw_table = BasiliqDbScannedTable::scan_db(&mut *conn).await.unwrap();
     let builder = BasiliqStoreBuilder::new(raw_table);
     assert_eq!(builder.tables().len(), 1);
     let table = builder

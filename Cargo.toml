@@ -1,6 +1,5 @@
 [workspace]
 members = [
-	"basiliq-test-utils",
     "basiliq-database-scanner",
 	"basiliq"
 ]

@@ -11,7 +11,6 @@ use std::convert::TryFrom;
 #[derive(Debug, Clone, Getters, MutGetters)]
 #[getset(get = "pub", get_mut = "pub(crate)")]
 pub struct BasiliqStoreBuilder {
-    pub(crate) raw_tables: Vec<Arc<BasiliqDbScannedTable>>,
     pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable>,
     pub(crate) aliases: BiBTreeMap<BasiliqStoreTableIdentifier, String>,
     pub(crate) config: BasiliqStoreConfig,
@@ -183,12 +182,10 @@ impl BasiliqStoreBuilder {
 
     /// Create a new builder
     pub fn new(raw_tables: Vec<Arc<BasiliqDbScannedTable>>) -> Self {
-        let (table_builder_store, relationships) =
-            Self::extract_data_from_raw_tables(raw_tables.clone());
+        let (table_builder_store, relationships) = Self::extract_data_from_raw_tables(raw_tables);
         let aliases = Self::build_alias_map(&table_builder_store);
         let table_store = Self::build_relationships(relationships, table_builder_store);
         let mut builder = BasiliqStoreBuilder {
-            raw_tables,
             tables: table_store,
             aliases,
             config: BasiliqStoreConfig::default(),
