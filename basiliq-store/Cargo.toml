@@ -1,7 +1,7 @@
 [package]
 authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
 edition = "2018"
-name = "basiliq_database_scanner"
+name = "basiliq_store"
 version = "0.1.0"
 [dependencies]
 bimap = "0.6.0"

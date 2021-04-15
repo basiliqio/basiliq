@@ -8,7 +8,7 @@ pub enum BasiliqError {
     #[error(transparent)]
     Ciboulette(#[from] ciboulette::CibouletteError),
     #[error(transparent)]
-    BasiliqStoreConfigError(#[from] basiliq_database_scanner::BasiliqStoreConfigError),
+    BasiliqStoreConfigError(#[from] basiliq_store::BasiliqStoreConfigError),
     #[error(transparent)]
     Sqlx(#[from] sqlx::Error),
     #[error(transparent)]

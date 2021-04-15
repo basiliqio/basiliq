@@ -1,6 +1,6 @@
 use super::BasiliqServerState;
-use basiliq_database_scanner::{BasiliqDbScannedTable, BasiliqStore, BasiliqStoreBuilder};
 use basiliq_db_test_proc_macro::basiliq_test;
+use basiliq_store::{BasiliqDbScannedTable, BasiliqStore, BasiliqStoreBuilder};
 use lazy_static::__Deref;
 use std::sync::{Arc, RwLock};
 mod errors;

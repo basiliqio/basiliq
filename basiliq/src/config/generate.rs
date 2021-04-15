@@ -1,6 +1,6 @@
 use super::*;
 use crate::cli::config::generate::BasiliqCliGenerateConfig;
-use basiliq_database_scanner::{BasiliqDbScannedTable, BasiliqStoreBuilder};
+use basiliq_store::{BasiliqDbScannedTable, BasiliqStoreBuilder};
 use std::fs::OpenOptions;
 use tracing::{error, info};
 

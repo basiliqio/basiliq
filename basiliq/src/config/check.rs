@@ -1,6 +1,6 @@
 use super::*;
 use crate::cli::config::check::BasiliqCliCheckConfig;
-use basiliq_database_scanner::{
+use basiliq_store::{
     BasiliqDbScannedTable, BasiliqStoreBuilder, BasiliqStoreConfig, BasiliqStoreConfigMergeable,
 };
 use std::fs::File;

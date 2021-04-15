@@ -1,6 +1,6 @@
 use super::*;
 use crate::cli::serve::BasiliqCliServerConfig;
-use basiliq_database_scanner::BasiliqStore;
+use basiliq_store::BasiliqStore;
 use getset::Getters;
 use std::sync::Arc;
 use tracing::info;

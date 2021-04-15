@@ -118,9 +118,9 @@ checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
 name = "basiliq"
 version = "0.1.0"
 dependencies = [
- "basiliq_database_scanner",
  "basiliq_db_test_proc_macro",
  "basiliq_db_test_utils",
+ "basiliq_store",
  "buf_redux",
  "bytes",
  "casey",
@@ -147,7 +147,32 @@ dependencies = [
 ]
 
 [[package]]
-name = "basiliq_database_scanner"
+name = "basiliq_db_test_proc_macro"
+version = "0.1.0"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#1fcdf141ff448a0b6fe63fb92d09621e84a05ad3"
+dependencies = [
+ "basiliq_db_test_utils",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "basiliq_db_test_utils"
+version = "0.1.0"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#1fcdf141ff448a0b6fe63fb92d09621e84a05ad3"
+dependencies = [
+ "anyhow",
+ "lazy_static",
+ "num_cpus",
+ "refinery",
+ "sqlx",
+ "tokio",
+ "uuid",
+]
+
+[[package]]
+name = "basiliq_store"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -169,31 +194,6 @@ dependencies = [
  "sqlx",
  "src",
  "thiserror",
- "tokio",
- "uuid",
-]
-
-[[package]]
-name = "basiliq_db_test_proc_macro"
-version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#1fcdf141ff448a0b6fe63fb92d09621e84a05ad3"
-dependencies = [
- "basiliq_db_test_utils",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "basiliq_db_test_utils"
-version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#1fcdf141ff448a0b6fe63fb92d09621e84a05ad3"
-dependencies = [
- "anyhow",
- "lazy_static",
- "num_cpus",
- "refinery",
- "sqlx",
  "tokio",
  "uuid",
 ]

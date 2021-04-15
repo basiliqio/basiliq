@@ -1,11 +1,11 @@
 ---
-source: basiliq-database-scanner/src/tests/config.rs
-expression: builder.config()
+source: basiliq-store/src/tests/config.rs
+expression: config
 
 ---
 {
   "resources": {
-    "court_metrage": {
+    "public__movies": {
       "target": {
         "schema": "public",
         "table": "movies"
@@ -35,7 +35,32 @@ expression: builder.config()
         }
       }
     },
-    "employee": {
+    "public__movies_staff": {
+      "target": {
+        "schema": "public",
+        "table": "movies_staff"
+      },
+      "enabled": true,
+      "relationships": {
+        "public__movies": {
+          "target": {
+            "schema": "public",
+            "table": "movies"
+          },
+          "enabled": true,
+          "field": "id"
+        },
+        "public__peoples": {
+          "target": {
+            "schema": "public",
+            "table": "peoples"
+          },
+          "enabled": true,
+          "field": "id"
+        }
+      }
+    },
+    "public__peoples": {
       "target": {
         "schema": "public",
         "table": "peoples"
@@ -62,31 +87,6 @@ expression: builder.config()
           },
           "enabled": true,
           "field": "person"
-        }
-      }
-    },
-    "movies_staff": {
-      "target": {
-        "schema": "public",
-        "table": "movies_staff"
-      },
-      "enabled": false,
-      "relationships": {
-        "public__movies": {
-          "target": {
-            "schema": "public",
-            "table": "movies"
-          },
-          "enabled": true,
-          "field": "id"
-        },
-        "public__peoples": {
-          "target": {
-            "schema": "public",
-            "table": "peoples"
-          },
-          "enabled": true,
-          "field": "id"
         }
       }
     }

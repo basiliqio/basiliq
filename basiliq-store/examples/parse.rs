@@ -1,4 +1,4 @@
-use basiliq_database_scanner::*;
+use basiliq_store::*;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

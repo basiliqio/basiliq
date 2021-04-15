@@ -9,7 +9,7 @@ version = "0.1.0"
 better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
 
 [dependencies]
-basiliq_database_scanner = {version = "*", path = "../basiliq-database-scanner", package = "basiliq_database_scanner"}
+basiliq_store = {version = "*", path = "../basiliq-store", package = "basiliq_store"}
 clap = {version = "2", features = ["yaml"]}
 tracing = { version = "0.1", features = [ "log" ] }
 tracing-log = { version = "0.1", features = [ "env_logger" ] }
