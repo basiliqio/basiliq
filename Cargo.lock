@@ -149,7 +149,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_proc_macro"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#be0608a04ed858bdebe3059cf1052f0c6d3f1147"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#4de78fd78518d959af51aeb4ed8942cf205d4f97"
 dependencies = [
  "basiliq_db_test_utils",
  "proc-macro2",
@@ -160,7 +160,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_utils"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#be0608a04ed858bdebe3059cf1052f0c6d3f1147"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#4de78fd78518d959af51aeb4ed8942cf205d4f97"
 dependencies = [
  "anyhow",
  "lazy_static",
@@ -386,7 +386,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#bdb9dc2228679f639e80dc6e33d844fc4673a6a2"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#3aa4d92cf181db03c2ff9ebc739a7b362cda5111"
 dependencies = [
  "arcstr",
  "getset",
@@ -406,7 +406,7 @@ dependencies = [
 [[package]]
 name = "ciboulette2postgres"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#2d16ea824d3f36a57775fc67ffb3ca9edf5fea45"
+source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#1649038e2a215854ae4dcf3a4099fc3b1479c79f"
 dependencies = [
  "arcstr",
  "bigdecimal",
