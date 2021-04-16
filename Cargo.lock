@@ -129,7 +129,9 @@ dependencies = [
  "clap",
  "getset",
  "hyper",
+ "insta",
  "lazy_static",
+ "messy_json",
  "paste",
  "serde",
  "serde_json",
@@ -1135,6 +1137,8 @@ checksum = "c4a1b21a2971cea49ca4613c0e9fe8225ecaf5de64090fddc6002284726e9244"
 dependencies = [
  "console",
  "lazy_static",
+ "pest",
+ "pest_derive",
  "serde",
  "serde_json",
  "serde_yaml",

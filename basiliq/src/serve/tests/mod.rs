@@ -4,6 +4,7 @@ use basiliq_store::{BasiliqDbScannedTable, BasiliqStore, BasiliqStoreBuilder};
 use lazy_static::__Deref;
 use std::sync::{Arc, RwLock};
 mod errors;
+mod requests;
 use hyper::{Body, Method, Request, Response, StatusCode};
 
 const BASE_URL_TEST_SERVER: &str = "http://myservice.com";

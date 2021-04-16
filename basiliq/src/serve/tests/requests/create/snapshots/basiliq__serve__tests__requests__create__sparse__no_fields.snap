@@ -1,0 +1,9 @@
+---
+source: basiliq/src/serve/tests/requests/create/sparse.rs
+expression: res
+
+---
+{
+  "type": "public__peoples",
+  "id": "[uuid]"
+}

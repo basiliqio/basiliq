@@ -1,0 +1,12 @@
+---
+source: basiliq/src/serve/tests/requests/create/relationships.rs
+expression: res
+
+---
+{
+  "type": "public__favorite_color",
+  "id": "[uuid]",
+  "attributes": {
+    "color": "rot"
+  }
+}

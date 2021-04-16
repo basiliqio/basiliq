@@ -1,0 +1,16 @@
+---
+source: basiliq/src/serve/tests/requests/create/relationships.rs
+expression: res
+
+---
+{
+  "type": "public__peoples",
+  "id": "[uuid]",
+  "attributes": {
+    "age": null,
+    "first-name": "AAAAA",
+    "gender": null,
+    "last-name": "BBBBBBB",
+    "twitter": null
+  }
+}

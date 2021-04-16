@@ -1,0 +1,16 @@
+---
+source: basiliq/src/serve/tests/requests/create/normal.rs
+expression: res
+
+---
+{
+  "type": "public__peoples",
+  "id": "[uuid]",
+  "attributes": {
+    "age": 22,
+    "first-name": "Francis",
+    "gender": "M",
+    "last-name": "it's me",
+    "twitter": "@myhandle"
+  }
+}

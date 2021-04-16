@@ -30,7 +30,7 @@ impl BasiliqStoreBuilder {
             )?;
         }
         self.insert_many_to_many(&mut ciboulette_store_builder, &mut already_built_rel)?;
-        self.insert_one_to_many(&mut ciboulette_store_builder, already_built_rel)?;
+        self.insert_one_to_many(&mut ciboulette_store_builder, &mut already_built_rel)?;
         let ciboulette_store = ciboulette_store_builder.build()?;
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             ciboulette_table_store.add_table(
@@ -85,63 +85,68 @@ impl BasiliqStoreBuilder {
     fn insert_one_to_many(
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
-        already_built_rel: BTreeSet<(ArcStr, ArcStr, ArcStr)>,
+        already_built_rel: &mut BTreeSet<(ArcStr, ArcStr, ArcStr)>,
     ) -> Result<(), Ciboulette2SqlError> {
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             for (rel_alias, v) in table.relationships() {
-                match v.type_() {
+                let (one_type, alias_one, many_type, alias_many, many_table_key) = match v.type_() {
                     BasiliqStoreRelationshipType::OneToMany(_) => {
-                        let one_type = ciboulette_store_builder.get_type(alias)?.clone();
-                        let many_type = ciboulette_store_builder
-                            .get_type(self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                        let many_alias =
+                            self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
                                 Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
-                            })?)?
-                            .clone();
-                        if already_built_rel.contains(&(
-                            one_type.name().clone(),
+                            })?;
+                        let many_type = ciboulette_store_builder.get_type(&many_alias)?.clone();
+                        let one_type = ciboulette_store_builder.get_type(alias)?.clone();
+                        let one_name = one_type.name().clone();
+                        (
+                            one_type,
+                            one_name,
+                            many_type,
+                            rel_alias.clone(),
                             v.ffield_name().clone(),
-                            many_type.name().clone(),
-                        )) {
-                            // Already exists
-                            continue;
-                        }
-                        ciboulette_store_builder.add_one_to_many_rel_no_reverse(
-                            CibouletteRelationshipOneToManyOptionBuilder::new(
-                                one_type,
-                                many_type,
-                                v.ffield_name().clone(),
-                                v.optional(),
-                            ),
-                            Some(rel_alias.clone()),
-                        )?;
+                        )
                     }
                     BasiliqStoreRelationshipType::ManyToOne(_) => {
-                        let many_type = ciboulette_store_builder.get_type(alias)?.clone();
-                        let one_type = ciboulette_store_builder
-                            .get_type(self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                        let one_alias =
+                            self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
                                 Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
-                            })?)?
-                            .clone();
-                        if already_built_rel.contains(&(
-                            one_type.name().clone(),
+                            })?;
+                        let one_type = ciboulette_store_builder.get_type(&one_alias)?.clone();
+                        let many_type = ciboulette_store_builder.get_type(alias)?.clone();
+                        let many_name = many_type.name().clone();
+                        (
+                            one_type,
+                            rel_alias.clone(),
+                            many_type,
+                            many_name,
                             v.lfield_name().clone(),
-                            many_type.name().clone(),
-                        )) {
-                            // Already exists
-                            continue;
-                        }
-                        ciboulette_store_builder.add_many_to_one_rel_no_reverse(
-                            CibouletteRelationshipOneToManyOptionBuilder::new(
-                                one_type,
-                                many_type,
-                                v.lfield_name().clone(),
-                                v.optional(),
-                            ),
-                            Some(v.lfield_name().clone()),
-                        )?;
+                        )
                     }
                     BasiliqStoreRelationshipType::ManyToMany(_) => continue,
+                };
+                if already_built_rel.contains(&(
+                    one_type.name().clone(),
+                    many_table_key.clone(),
+                    many_type.name().clone(),
+                )) {
+                    // Already exists
+                    continue;
                 }
+                already_built_rel.insert((
+                    one_type.name().clone(),
+                    many_table_key.clone(),
+                    many_type.name().clone(),
+                ));
+                ciboulette_store_builder.add_one_to_many_rel(
+                    CibouletteRelationshipOneToManyOptionBuilder::new(
+                        one_type,
+                        many_type,
+                        many_table_key,
+                        v.optional(),
+                    ),
+                    Some(alias_one),
+                    Some(alias_many),
+                )?;
             }
         }
         Ok(())

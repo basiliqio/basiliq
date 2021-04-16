@@ -33,13 +33,11 @@ buf_redux = { version = "0.8" }
 
 [dependencies.ciboulette2postgres]
 git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
-# path = "../../ciboulette2postgres"
 package = "ciboulette2postgres"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]
 git = "https://gitlab.com/basiliq/ciboulette.git"
-# path = "../../ciboulette"
 package = "ciboulette"
 
 [dependencies.lazy_static]
@@ -48,3 +46,5 @@ version = "1.4"
 [dev-dependencies]
 basiliq_db_test_utils = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_utils" }
 basiliq_db_test_proc_macro = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_proc_macro" }
+messy_json = { git = "https://gitlab.com/basiliq/messy_json.git" }
+insta = { version = "1.7", features = [ "redactions" ] }

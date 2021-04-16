@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/sparse.rs
+expression: res
+
+---
+{
+  "type": "public__peoples",
+  "id": "[uuid]",
+  "attributes": {
+    "first-name": "Francis",
+    "gender": "M"
+  }
+}
