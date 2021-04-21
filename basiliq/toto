@@ -1,0 +1,29 @@
+
+running 1 test
+test serve::tests::requests::create::relationships::multi_rel ... FAILED
+
+failures:
+
+---- serve::tests::requests::create::relationships::multi_rel stdout ----
+public__people-article
+public__comments
+public__people-article
+public__peoples
+public__comments
+public__peoples
+public__favorite_color
+public__people-article
+public__articles
+public__comments
+public__articles
+public__people-article
+public__comments
+thread 'serve::tests::requests::create::relationships::multi_rel' panicked at 'called `Result::unwrap()` on an `Err` value: Database(PgDatabaseError { severity: Error, code: "42712", message: "WITH query name \"cte_rel_articles_data\" specified more than once", detail: None, hint: None, position: Some(Original(1754)), where: None, schema: None, table: None, column: None, data_type: None, constraint: None, file: Some("parse_cte.c"), line: Some(134), routine: Some("transformWithClause") })', basiliq/src/serve/handlers/mod.rs:22:10
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    serve::tests::requests::create::relationships::multi_rel
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.48s
+

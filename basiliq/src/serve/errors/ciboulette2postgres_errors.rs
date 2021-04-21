@@ -48,16 +48,6 @@ pub fn handle_ciboulette2postgres_error<'a>(
             Ciboulette2PostgresNullCharIdent,
             err
         ),
-        Ciboulette2SqlError::UpdatingRelationships => cib2postgres_err!(
-            StatusCode::FORBIDDEN,
-            Ciboulette2PostgresUpdatingRelationships,
-            err
-        ),
-        Ciboulette2SqlError::UpdatingManyRelationships => cib2postgres_err!(
-            StatusCode::FORBIDDEN,
-            Ciboulette2PostgresUpdatingManyRelationships,
-            err
-        ),
         Ciboulette2SqlError::UpdatingMainObject => cib2postgres_err!(
             StatusCode::FORBIDDEN,
             Ciboulette2PostgresUpdatingMainObject,
@@ -68,9 +58,9 @@ pub fn handle_ciboulette2postgres_error<'a>(
             Ciboulette2PostgresMultiIdsForSingleRelationships,
             err
         ),
-        Ciboulette2SqlError::BulkRelationshipDelete => cib2postgres_err!(
+        Ciboulette2SqlError::ManyRelationshipDirectWrite => cib2postgres_err!(
             StatusCode::FORBIDDEN,
-            Ciboulette2PostgresBulkRelationshipDelete,
+            Ciboulette2PostgresManyRelationshipDirectWrite,
             err
         ),
         Ciboulette2SqlError::MissingRelationForOrdering(_) => cib2postgres_err!(

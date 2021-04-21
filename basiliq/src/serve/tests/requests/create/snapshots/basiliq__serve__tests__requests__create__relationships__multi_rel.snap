@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/relationships.rs
+expression: res
+
+---
+{
+  "type": "public__articles",
+  "id": "[uuid]",
+  "attributes": {
+    "body": "Holaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "title": "Hallo!"
+  }
+}

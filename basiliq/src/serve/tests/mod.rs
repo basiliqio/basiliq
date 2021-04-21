@@ -5,6 +5,8 @@ use lazy_static::__Deref;
 use std::sync::{Arc, RwLock};
 mod errors;
 mod requests;
+use crate::serve::errors::BasiliqErrorId;
+use ciboulette::CibouletteErrorRequest;
 use hyper::{Body, Method, Request, Response, StatusCode};
 
 const BASE_URL_TEST_SERVER: &str = "http://myservice.com";
@@ -47,4 +49,18 @@ pub fn prepare_basiliq_request(method: Method, uri: &str, body: Body) -> Request
         .uri(format!("{}{}", BASE_URL_TEST_SERVER, uri))
         .body(body)
         .unwrap()
+}
+
+pub async fn handle_errors<'a>(
+    response: Response<Body>,
+    expected_code: BasiliqErrorId,
+) -> ciboulette::CibouletteErrorObj<'a> {
+    let bytes = hyper::body::to_bytes(response.into_body()).await.unwrap();
+    let obj: CibouletteErrorRequest = serde_json::from_slice(&bytes).unwrap();
+    assert_eq!(obj.errors().id().as_ref().unwrap(), expected_code.id());
+    assert_eq!(
+        obj.errors().title().as_ref().unwrap(),
+        expected_code.title()
+    );
+    obj.errors
 }
