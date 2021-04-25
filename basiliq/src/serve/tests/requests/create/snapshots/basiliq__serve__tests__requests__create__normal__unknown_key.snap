@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/normal.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "BadJson",
+    "detail": "The key `AAAAAAA` is unknown. The expected keys were `[ age, first-name, gender, last-name, twitter ]` at line 1 column 55"
+  }
+}

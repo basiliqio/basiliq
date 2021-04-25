@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/misc.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 403,
+    "title": "Ciboulette2PostgresSortingByMultiRel",
+    "detail": "Trying to sort type `public__articles` using its one-to-many relationships to `public__articles`"
+  }
+}

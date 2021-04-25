@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/normal.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "CibouletteMainTypeClash",
+    "detail": "The main type in the path and in the body are not the same"
+  }
+}

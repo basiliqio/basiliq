@@ -11,6 +11,6 @@ async fn nested_sorting(pool: sqlx::PgPool) {
     let resp = crate::serve::main_service(state.clone(), request)
         .await
         .unwrap();
-    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
+    assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     handle_errors(resp, BasiliqErrorId::Ciboulette2PostgresSortingByMultiRel).await;
 }

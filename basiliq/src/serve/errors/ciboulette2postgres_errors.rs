@@ -84,7 +84,7 @@ pub fn handle_ciboulette2postgres_error<'a>(
             err
         ),
         Ciboulette2SqlError::SortingByMultiRel(_, _) => cib2postgres_err!(
-            StatusCode::BAD_REQUEST,
+            StatusCode::FORBIDDEN,
             Ciboulette2PostgresSortingByMultiRel,
             err
         ),

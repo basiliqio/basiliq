@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/normal.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "BadJson",
+    "detail": "Missing key `last-name` at line 1 column 24"
+  }
+}
