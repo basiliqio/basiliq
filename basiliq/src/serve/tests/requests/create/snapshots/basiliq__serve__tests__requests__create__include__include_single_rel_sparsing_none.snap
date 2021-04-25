@@ -1,0 +1,35 @@
+---
+source: basiliq/src/serve/tests/requests/create/include.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "public__peoples",
+    "id": "[uuid]",
+    "attributes": {
+      "age": null,
+      "first-name": "AAAAA",
+      "gender": null,
+      "last-name": "BBBBBBB",
+      "twitter": null
+    },
+    "relationships": {
+      "public__favorite_color": {
+        "data": {
+          "type": "public__favorite_color",
+          "id": "[uuid]"
+        }
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "public__favorite_color",
+      "id": "[uuid]"
+    }
+  ]
+}

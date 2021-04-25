@@ -145,7 +145,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_proc_macro"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#4de78fd78518d959af51aeb4ed8942cf205d4f97"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#eb38d777322a4be374160b73ab480b73a7025e88"
 dependencies = [
  "basiliq_db_test_utils",
  "proc-macro2",
@@ -156,7 +156,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_utils"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#4de78fd78518d959af51aeb4ed8942cf205d4f97"
+source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#eb38d777322a4be374160b73ab480b73a7025e88"
 dependencies = [
  "anyhow",
  "lazy_static",
@@ -2548,9 +2548,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-postgres"
-version = "0.7.1"
+version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98779a950cb6ef76f8ad71c411176115c5c1200a83eeeca4dd9f61e3fc4836c8"
+checksum = "2d2b1383c7e4fb9a09e292c7c6afb7da54418d53b045f1c1fac7a911411a2b8b"
 dependencies = [
  "async-trait",
  "byteorder",

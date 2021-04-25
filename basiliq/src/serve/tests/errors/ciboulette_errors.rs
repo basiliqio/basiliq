@@ -67,6 +67,7 @@ async fn unknown_fields(pool: sqlx::PgPool) {
     assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
     handle_errors(resp, BasiliqErrorId::CibouletteUnknownField).await;
 }
+
 #[basiliq_test(run_migrations)]
 async fn no_data(pool: sqlx::PgPool) {
     let state = prepare_basiliq_test(pool).await;

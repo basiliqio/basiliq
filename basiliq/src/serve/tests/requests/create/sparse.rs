@@ -1,159 +1,57 @@
 use super::*;
 
-#[basiliq_test(run_migrations)]
-async fn no_fields(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?fields[public__peoples]=",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "Francis",
-                        "last-name": "it's me",
-                        "twitter": "@myhandle",
-                        "gender": "M",
-                        "age": 22
-                    })
-                })
+lazy_static::lazy_static! {
+    pub static ref CREATE_BODY: serde_json::Value =
+    json!({
+        "data": json!({
+            "type": "public__peoples",
+            "attributes": json!({
+                "first-name": "Francis",
+                "last-name": "it's me",
+                "twitter": "@myhandle",
+                "gender": "M",
+                "age": 22
             })
-            .to_string(),
-        ),
-    );
-
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-
-    assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
-    crate::test_json!(res);
+        })
+    });
 }
 
-#[basiliq_test(run_migrations)]
-async fn one_fields(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?fields[public__peoples]=first-name",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "Francis",
-                        "last-name": "it's me",
-                        "twitter": "@myhandle",
-                        "gender": "M",
-                        "age": 22
-                    })
-                })
-            })
-            .to_string(),
-        ),
-    );
+crate::run_test_request!(
+    no_fields,
+    Method::POST,
+    "/public__peoples?fields[public__peoples]=",
+    201,
+    CREATE_BODY.clone()
+);
 
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
+crate::run_test_request!(
+    one_fields,
+    Method::POST,
+    "/public__peoples?fields[public__peoples]=first-name",
+    201,
+    CREATE_BODY.clone()
+);
 
-    assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
-    crate::test_json!(res);
-}
+crate::run_test_request!(
+    multi_fields,
+    Method::POST,
+    "/public__peoples?fields[public__peoples]=first-name,gender",
+    201,
+    CREATE_BODY.clone()
+);
 
-#[basiliq_test(run_migrations)]
-async fn multi_fields(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?fields[public__peoples]=first-name,gender",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "Francis",
-                        "last-name": "it's me",
-                        "twitter": "@myhandle",
-                        "gender": "M",
-                        "age": 22
-                    })
-                })
-            })
-            .to_string(),
-        ),
-    );
+crate::run_test_request!(
+    unknown_fields,
+    Method::POST,
+    "/public__peoples?fields[public__peoples]=AAAAAAAAAAAAA",
+    400,
+    CREATE_BODY.clone()
+);
 
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-
-    assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
-    crate::test_json!(res);
-}
-
-#[basiliq_test(run_migrations)]
-async fn unknown_fields(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?fields[public__peoples]=AAAAAAAAAAAAA",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "Francis",
-                        "last-name": "it's me",
-                        "twitter": "@myhandle",
-                        "gender": "M",
-                        "age": 22
-                    })
-                })
-            })
-            .to_string(),
-        ),
-    );
-
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-
-    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-    handle_errors(resp, BasiliqErrorId::CibouletteUnknownField).await;
-}
-
-#[basiliq_test(run_migrations)]
-async fn unknown_type(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?fields[AAAAAAAAAAAAAA]=gender",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "Francis",
-                        "last-name": "it's me",
-                        "twitter": "@myhandle",
-                        "gender": "M",
-                        "age": 22
-                    })
-                })
-            })
-            .to_string(),
-        ),
-    );
-
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-
-    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-    handle_errors(resp, BasiliqErrorId::CibouletteUnknownType).await;
-}
+crate::run_test_request!(
+    unknown_type,
+    Method::POST,
+    "/public__peoples?fields[AAAAAAAAAAAAAA]=gender",
+    400,
+    CREATE_BODY.clone()
+);

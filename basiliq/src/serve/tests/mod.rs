@@ -5,10 +5,12 @@ use lazy_static::__Deref;
 use std::sync::{Arc, RwLock};
 mod errors;
 mod requests;
+#[macro_use]
 mod run_test;
 use crate::serve::errors::BasiliqErrorId;
 use ciboulette::CibouletteErrorRequest;
 use hyper::{Body, Method, Request, Response, StatusCode};
+pub use run_test::run_request;
 
 const BASE_URL_TEST_SERVER: &str = "http://myservice.com";
 
@@ -68,8 +70,11 @@ pub async fn handle_errors<'a>(
 
 pub fn check_uuid<'store, 'b>(
     value: insta::internals::Content,
-    _path: insta::internals::ContentPath<'store>,
+    path: insta::internals::ContentPath<'store>,
 ) -> &'b str {
+    if path.to_string().as_str() == ".errors.id" {
+        return "[error id]";
+    }
     assert_eq!(
         value
             .as_str()

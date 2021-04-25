@@ -1,7 +1,19 @@
 use super::*;
 
-#[basiliq_test(run_migrations)]
-async fn include_single_rel(pool: sqlx::PgPool) {
+lazy_static::lazy_static! {
+    pub static ref CREATE_BODY: serde_json::Value =
+    json!({
+        "data": json!({
+            "type": "public__peoples",
+            "attributes": json!({
+                "first-name": "AAAAA",
+                "last-name": "BBBBBBB"
+            })
+        })
+    });
+}
+
+async fn create_with_favorite_color(pool: sqlx::PgPool, query: &str) {
     let state = prepare_basiliq_test(pool).await;
     let request = prepare_basiliq_request(
         Method::POST,
@@ -34,7 +46,7 @@ async fn include_single_rel(pool: sqlx::PgPool) {
         .clone();
     let request = prepare_basiliq_request(
         Method::POST,
-        "/public__peoples?include=public__favorite_color",
+        query,
         Body::from(
             json!({
                 "data": json!({
@@ -64,58 +76,41 @@ async fn include_single_rel(pool: sqlx::PgPool) {
     crate::test_json!(res);
 }
 
-#[basiliq_test(run_migrations)]
-async fn include_multi_rel_m2m(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
+crate::run_test_request!(
+    include_multi_rel_m2m,
+    Method::POST,
+    "/public__peoples?include=public__people-article",
+    201,
+    CREATE_BODY.clone()
+);
 
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?include=public__people-article",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "AAAAA",
-                        "last-name": "BBBBBBB"
-                    })
-                })
-            })
-            .to_string(),
-        ),
-    );
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-    assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
-    crate::test_json!(res);
+crate::run_test_request!(
+    include_multi_rel_m2o,
+    Method::POST,
+    "/public__peoples?include=public__articles",
+    201,
+    CREATE_BODY.clone()
+);
+
+#[basiliq_test(run_migrations)]
+async fn include_single_rel(pool: sqlx::PgPool) {
+    create_with_favorite_color(pool, "/public__peoples?include=public__favorite_color").await;
 }
 
 #[basiliq_test(run_migrations)]
-async fn include_multi_rel_m2o(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
+async fn include_single_rel_sparsing_all(pool: sqlx::PgPool) {
+    create_with_favorite_color(
+        pool,
+        "/public__peoples?include=public__favorite_color&fields[public__favorite_color]=color",
+    )
+    .await;
+}
 
-    let request = prepare_basiliq_request(
-        Method::POST,
-        "/public__peoples?include=public__articles",
-        Body::from(
-            json!({
-                "data": json!({
-                    "type": "public__peoples",
-                    "attributes": json!({
-                        "first-name": "AAAAA",
-                        "last-name": "BBBBBBB"
-                    })
-                })
-            })
-            .to_string(),
-        ),
-    );
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-    assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
-    crate::test_json!(res);
+#[basiliq_test(run_migrations)]
+async fn include_single_rel_sparsing_none(pool: sqlx::PgPool) {
+    create_with_favorite_color(
+        pool,
+        "/public__peoples?include=public__favorite_color&fields[public__favorite_color]=",
+    )
+    .await;
 }
