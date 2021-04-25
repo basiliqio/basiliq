@@ -37,9 +37,6 @@ pub fn handle_ciboulette_error<'a>(
         CibouletteError::UnknownField(_, _) => {
             cib_err!(StatusCode::BAD_REQUEST, CibouletteUnknownField, err)
         }
-        CibouletteError::NestedSorting => {
-            cib_err!(StatusCode::BAD_REQUEST, CibouletteNestedSorting, err)
-        }
         CibouletteError::NoData => cib_err!(StatusCode::BAD_REQUEST, CibouletteNoData, err),
         CibouletteError::MissingId => cib_err!(StatusCode::BAD_REQUEST, CibouletteMissingId, err),
         CibouletteError::NoCompound => cib_err!(StatusCode::BAD_REQUEST, CibouletteNoCompound, err),

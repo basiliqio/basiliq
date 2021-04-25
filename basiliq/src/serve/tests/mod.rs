@@ -5,6 +5,7 @@ use lazy_static::__Deref;
 use std::sync::{Arc, RwLock};
 mod errors;
 mod requests;
+mod run_test;
 use crate::serve::errors::BasiliqErrorId;
 use ciboulette::CibouletteErrorRequest;
 use hyper::{Body, Method, Request, Response, StatusCode};
@@ -63,4 +64,20 @@ pub async fn handle_errors<'a>(
         expected_code.title()
     );
     obj.errors
+}
+
+pub fn check_uuid<'store, 'b>(
+    value: insta::internals::Content,
+    _path: insta::internals::ContentPath<'store>,
+) -> &'b str {
+    assert_eq!(
+        value
+            .as_str()
+            .unwrap()
+            .chars()
+            .filter(|&c| c == '-')
+            .count(),
+        4
+    );
+    "[uuid]"
 }

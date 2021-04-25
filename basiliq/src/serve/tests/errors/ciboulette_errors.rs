@@ -67,22 +67,6 @@ async fn unknown_fields(pool: sqlx::PgPool) {
     assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
     handle_errors(resp, BasiliqErrorId::CibouletteUnknownField).await;
 }
-
-#[basiliq_test(run_migrations)]
-async fn nested_sorting(pool: sqlx::PgPool) {
-    let state = prepare_basiliq_test(pool).await;
-    let request = prepare_basiliq_request(
-        Method::GET,
-        "/public__peoples?sort=articles.comments.body",
-        Body::empty(),
-    );
-    let resp = crate::serve::main_service(state.clone(), request)
-        .await
-        .unwrap();
-    assert_eq!(resp.status(), StatusCode::BAD_REQUEST);
-    handle_errors(resp, BasiliqErrorId::CibouletteNestedSorting).await;
-}
-
 #[basiliq_test(run_migrations)]
 async fn no_data(pool: sqlx::PgPool) {
     let state = prepare_basiliq_test(pool).await;

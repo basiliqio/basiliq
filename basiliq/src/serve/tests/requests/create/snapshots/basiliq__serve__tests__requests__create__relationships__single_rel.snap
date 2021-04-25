@@ -4,9 +4,14 @@ expression: res
 
 ---
 {
-  "type": "public__favorite_color",
-  "id": "[uuid]",
-  "attributes": {
-    "color": "rot"
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "public__favorite_color",
+    "id": "[uuid]",
+    "attributes": {
+      "color": "rot"
+    }
   }
 }

@@ -63,9 +63,9 @@ pub fn handle_ciboulette2postgres_error<'a>(
             Ciboulette2PostgresManyRelationshipDirectWrite,
             err
         ),
-        Ciboulette2SqlError::MissingRelationForOrdering(_) => cib2postgres_err!(
+        Ciboulette2SqlError::MissingRelationForSorting(_) => cib2postgres_err!(
             StatusCode::BAD_REQUEST,
-            Ciboulette2PostgresMissingRelationForOrdering,
+            Ciboulette2PostgresMissingRelationForSorting,
             err
         ),
         Ciboulette2SqlError::NonAsciiCharInIdent(_) => cib2postgres_err!(

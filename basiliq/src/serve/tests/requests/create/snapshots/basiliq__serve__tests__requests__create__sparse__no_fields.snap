@@ -4,6 +4,11 @@ expression: res
 
 ---
 {
-  "type": "public__peoples",
-  "id": "[uuid]"
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "public__peoples",
+    "id": "[uuid]"
+  }
 }

@@ -25,6 +25,7 @@ async fn exec_query<'request>(
     let response_elements = Ciboulette2PostgresRow::build_response_elements(
         rows,
         state.store().ciboulette(),
+        inbound_request.expected_type(),
         Some(rows_nb),
     )?;
     let accumulator = CibouletteOutboundRequestDataBuilder::new(inbound_request, response_elements);

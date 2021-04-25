@@ -1,5 +1,5 @@
 ---
-source: basiliq/src/serve/tests/requests/create/normal.rs
+source: basiliq/src/serve/tests/requests/create/include.rs
 expression: res
 
 ---
@@ -12,9 +12,9 @@ expression: res
     "id": "[uuid]",
     "attributes": {
       "age": null,
-      "first-name": "Francis",
+      "first-name": "AAAAA",
       "gender": null,
-      "last-name": "it's me",
+      "last-name": "BBBBBBB",
       "twitter": null
     }
   }

@@ -4,10 +4,15 @@ expression: res
 
 ---
 {
-  "type": "public__peoples",
-  "id": "[uuid]",
-  "attributes": {
-    "first-name": "Francis",
-    "gender": "M"
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "public__peoples",
+    "id": "[uuid]",
+    "attributes": {
+      "first-name": "Francis",
+      "gender": "M"
+    }
   }
 }
