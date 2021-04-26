@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/create/paths.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "CibouletteWrongPathType",
+    "detail": "Wrong path type, got TypeId, expected [Type]"
+  }
+}
