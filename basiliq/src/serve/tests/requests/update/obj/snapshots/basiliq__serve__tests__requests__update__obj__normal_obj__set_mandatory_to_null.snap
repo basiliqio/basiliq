@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/update/obj/normal_obj.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "BadJson",
+    "detail": "Can't force mandatory key to null `first-name` at line 1 column 19"
+  }
+}

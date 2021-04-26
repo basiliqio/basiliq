@@ -36,7 +36,7 @@ async fn create_with_favorite_color(pool: sqlx::PgPool, query: &str) {
         .unwrap();
 
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     let color_id = res
         .as_object()
         .and_then(|x| x.get("data"))
@@ -72,7 +72,7 @@ async fn create_with_favorite_color(pool: sqlx::PgPool, query: &str) {
         .await
         .unwrap();
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     crate::test_json!(res);
 }
 

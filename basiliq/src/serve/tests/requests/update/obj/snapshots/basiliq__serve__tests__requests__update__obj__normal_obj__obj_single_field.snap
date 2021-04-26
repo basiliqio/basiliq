@@ -1,0 +1,21 @@
+---
+source: basiliq/src/serve/tests/requests/update/obj/normal_obj.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": {
+    "type": "public__peoples",
+    "id": "[uuid]",
+    "attributes": {
+      "age": 22,
+      "first-name": "OH NO",
+      "gender": "M",
+      "last-name": "Le Roy",
+      "twitter": null
+    }
+  }
+}

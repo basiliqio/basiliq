@@ -15,7 +15,7 @@ async fn create_people(pool: sqlx::PgPool, val: Value, expected_status: StatusCo
         .unwrap();
 
     assert_eq!(resp.status(), expected_status);
-    handle_create(resp).await
+    handle_response(resp).await
 }
 
 #[basiliq_test(run_migrations)]

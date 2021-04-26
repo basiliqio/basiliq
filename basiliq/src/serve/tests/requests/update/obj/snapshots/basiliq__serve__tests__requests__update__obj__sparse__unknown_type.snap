@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/update/obj/sparse.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "CibouletteUnknownType",
+    "detail": "The json:api type `AAAAAAAAAAAAAA` is unknown."
+  }
+}

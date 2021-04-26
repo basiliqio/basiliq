@@ -371,7 +371,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#3bc418042701703ac5bb6bf9091412614f4bd610"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#43a1ce81fcc5ebaaf58c1d5d6baa423c9e752b47"
 dependencies = [
  "arcstr",
  "getset",
@@ -1335,7 +1335,7 @@ dependencies = [
 [[package]]
 name = "messy_json"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/messy_json.git#f0ef40cb120d40a534c466c13d0df685db8e8a7f"
+source = "git+https://gitlab.com/basiliq/messy_json.git#5932e7b5d475ef2de7ff570e2da8320391ad010e"
 dependencies = [
  "arcstr",
  "itertools",

@@ -24,7 +24,7 @@ async fn single_rel(pool: sqlx::PgPool) {
         .unwrap();
 
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     crate::test_json!(res);
     let color_id = res
         .as_object()
@@ -61,7 +61,7 @@ async fn single_rel(pool: sqlx::PgPool) {
         .await
         .unwrap();
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     crate::test_json!(res);
 }
 
@@ -90,7 +90,7 @@ async fn multi_rel_m2m(pool: sqlx::PgPool) {
         .unwrap();
 
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     crate::test_json!(res);
     let articles_id = res
         .as_object()
@@ -159,7 +159,7 @@ async fn multi_rel_m2o(pool: sqlx::PgPool) {
         .unwrap();
 
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     crate::test_json!(res);
     let articles_id = res
         .as_object()
@@ -228,7 +228,7 @@ async fn multi_rel_m2o_through_m2m(pool: sqlx::PgPool) {
         .unwrap();
 
     assert_eq!(resp.status(), StatusCode::CREATED);
-    let res = handle_create(resp).await;
+    let res = handle_response(resp).await;
     crate::test_json!(res);
     let articles_id = res
         .as_object()
