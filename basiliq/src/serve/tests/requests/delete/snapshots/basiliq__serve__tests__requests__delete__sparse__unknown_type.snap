@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/delete/sparse.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "E20001",
+    "status": 400,
+    "title": "CibouletteUnknownType",
+    "detail": "The json:api type `AAAAAAAAAAAAAA` is unknown."
+  }
+}

@@ -1,0 +1,11 @@
+---
+source: basiliq/src/serve/tests/requests/delete/sparse.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": null
+}

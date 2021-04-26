@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/delete/sparse.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "E20003",
+    "status": 400,
+    "title": "CibouletteUnknownField",
+    "detail": "No field AAAAAAAAAAAAA for type public__peoples."
+  }
+}

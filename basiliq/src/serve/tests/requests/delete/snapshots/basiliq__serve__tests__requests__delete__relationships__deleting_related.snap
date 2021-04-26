@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/delete/relationships.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "E20009",
+    "status": 400,
+    "title": "CibouletteWrongPathType",
+    "detail": "Wrong path type, got TypeIdRelated, expected [TypeId]"
+  }
+}
