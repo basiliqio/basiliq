@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/update/rel/sparse.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 400,
+    "title": "CibouletteUnknownField",
+    "detail": "No field AAAAAAAAAAAAA for type public__favorite_color."
+  }
+}

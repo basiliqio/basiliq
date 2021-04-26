@@ -26,7 +26,7 @@ lazy_static::lazy_static! {
 
 crate::run_test_request!(
     type_related,
-    Method::POST,
+    Method::PATCH,
     format!(
         "/public__peoples/{}/public__articles",
         PEOPLES_IDS[0].to_string()
@@ -37,7 +37,7 @@ crate::run_test_request!(
 
 crate::run_test_request!(
     type_id,
-    Method::POST,
+    Method::PATCH,
     format!("/public__peoples/{}", PEOPLES_IDS[0].to_string()),
     400,
     CREATE_BODY_PEOPLES.clone()
@@ -45,7 +45,7 @@ crate::run_test_request!(
 
 crate::run_test_request!(
     type_relationships,
-    Method::POST,
+    Method::PATCH,
     format!(
         "/public__peoples/{}/relationships/public__articles",
         PEOPLES_IDS[0].to_string()

@@ -2,6 +2,7 @@ use super::*;
 use serde_json::{json, Value};
 mod create;
 mod update;
+use basiliq_db_test_utils::*;
 
 #[macro_export]
 macro_rules! test_json {

@@ -1,0 +1,11 @@
+---
+source: basiliq/src/serve/tests/requests/update/rel/normal_rel.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": null
+}

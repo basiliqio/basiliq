@@ -1,5 +1,5 @@
 ---
-source: basiliq/src/serve/tests/requests/update/obj/path.rs
+source: basiliq/src/serve/tests/requests/update/rel/path.rs
 expression: res
 
 ---

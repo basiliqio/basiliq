@@ -7,7 +7,7 @@ expression: res
   "errors": {
     "id": "[error id]",
     "status": 400,
-    "title": "CibouletteWrongPathType",
-    "detail": "Wrong path type, got TypeIdRelationship, expected [Type]"
+    "title": "CibouletteMissingId",
+    "detail": "Missing `id` field for a resource identifier"
   }
 }

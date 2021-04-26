@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/update/rel/normal_rel.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "[error id]",
+    "status": 403,
+    "title": "Ciboulette2PostgresManyRelationshipDirectWrite",
+    "detail": "Directly inserting/updating one-to-many or many-to-many relationships is forbidden"
+  }
+}

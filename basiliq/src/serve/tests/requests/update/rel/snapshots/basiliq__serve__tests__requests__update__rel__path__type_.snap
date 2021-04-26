@@ -1,5 +1,5 @@
 ---
-source: basiliq/src/serve/tests/requests/update/obj/path.rs
+source: basiliq/src/serve/tests/requests/update/rel/path.rs
 expression: res
 
 ---
@@ -8,6 +8,6 @@ expression: res
     "id": "[error id]",
     "status": 400,
     "title": "CibouletteWrongPathType",
-    "detail": "Wrong path type, got TypeIdRelated, expected [TypeId]"
+    "detail": "Wrong path type, got Type, expected [TypeId]"
   }
 }

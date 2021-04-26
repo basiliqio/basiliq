@@ -2,6 +2,6 @@ use super::*;
 
 mod include;
 mod misc;
-mod normal_obj;
+mod normal_rel;
 mod path;
 mod sparse;
