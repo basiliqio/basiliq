@@ -1,8 +1,6 @@
 use super::*;
 
 mod include;
-mod misc;
-mod normal_rel;
-mod path;
+mod normal;
 mod sort;
 mod sparse;

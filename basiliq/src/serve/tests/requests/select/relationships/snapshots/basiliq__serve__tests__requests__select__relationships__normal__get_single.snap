@@ -1,0 +1,16 @@
+---
+source: basiliq/src/serve/tests/requests/select/relationships/normal.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__favorite_color",
+      "id": "9302b136-69ef-4f0d-b907-10593ff7e578"
+    }
+  ]
+}

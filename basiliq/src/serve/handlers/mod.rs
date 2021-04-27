@@ -23,14 +23,15 @@ async fn exec_query<'request>(
     let rows = Ciboulette2PostgresRow::from_raw(&raw_rows)?;
     let rows_nb = rows.len();
     // println!("{}", query);
-    // println!("{:#?}", rows);
+    println!("{:#?}", rows);
     // println!("{}", inbound_request.expected_type().name());
     let response_elements = Ciboulette2PostgresRow::build_response_elements(
         rows,
         state.store().ciboulette(),
-        inbound_request.expected_type(),
+        inbound_request.anchor_type(),
         Some(rows_nb),
     )?;
+    println!("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOHHHHHHHHHHHHHHHHHHHHHHH MYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOD");
     let accumulator = CibouletteOutboundRequestDataBuilder::new(inbound_request, response_elements);
     let response: CibouletteOutboundRequest<&serde_json::value::RawValue> = accumulator.build()?;
     let res = Body::from(bytes::Bytes::from(serde_json::to_string(&response)?));

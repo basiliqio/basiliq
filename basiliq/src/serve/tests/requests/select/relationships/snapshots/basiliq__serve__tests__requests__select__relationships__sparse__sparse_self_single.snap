@@ -1,0 +1,20 @@
+---
+source: basiliq/src/serve/tests/requests/select/relationships/sparse.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__articles",
+      "id": "fdf715dd-8772-498c-8196-6f4ccb64edef"
+    },
+    {
+      "type": "public__articles",
+      "id": "2dbf5d1a-b029-4456-af6b-339c75b1089c"
+    }
+  ]
+}
