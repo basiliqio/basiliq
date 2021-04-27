@@ -22,6 +22,9 @@ async fn exec_query<'request>(
         .unwrap();
     let rows = Ciboulette2PostgresRow::from_raw(&raw_rows)?;
     let rows_nb = rows.len();
+    // println!("{}", query);
+    // println!("{:#?}", rows);
+    // println!("{}", inbound_request.expected_type().name());
     let response_elements = Ciboulette2PostgresRow::build_response_elements(
         rows,
         state.store().ciboulette(),

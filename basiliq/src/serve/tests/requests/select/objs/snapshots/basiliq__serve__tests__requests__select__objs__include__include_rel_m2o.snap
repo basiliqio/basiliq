@@ -1,0 +1,92 @@
+---
+source: basiliq/src/serve/tests/requests/select/objs/include.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__peoples",
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f",
+      "attributes": {
+        "age": 22,
+        "first-name": "Francis",
+        "gender": "M",
+        "last-name": "Le Roy",
+        "twitter": null
+      },
+      "relationships": {
+        "public__favorite_color": {
+          "data": {
+            "type": "public__favorite_color",
+            "id": "9302b136-69ef-4f0d-b907-10593ff7e578"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__peoples",
+      "id": "777cc565-c66b-4942-ab44-8fc5f194b804",
+      "attributes": {
+        "age": 34,
+        "first-name": "Somebody",
+        "gender": "F",
+        "last-name": "Wuhu",
+        "twitter": "@randomhandle"
+      },
+      "relationships": {
+        "public__favorite_color": {
+          "data": {
+            "type": "public__favorite_color",
+            "id": "aad8943c-ef9e-4dd2-8b6b-b2b1e61d17eb"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__peoples",
+      "id": "961e543a-4b22-4d48-a8e5-c1eafada950f",
+      "attributes": {
+        "age": null,
+        "first-name": "AAAAAAAA",
+        "gender": null,
+        "last-name": "BBBBBBBBB",
+        "twitter": null
+      },
+      "relationships": {
+        "public__favorite_color": {
+          "data": {
+            "type": "public__favorite_color",
+            "id": "90f99944-3340-4f87-b07d-b2ddf64be1ff"
+          }
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "public__favorite_color",
+      "id": "90f99944-3340-4f87-b07d-b2ddf64be1ff",
+      "attributes": {
+        "color": "green"
+      }
+    },
+    {
+      "type": "public__favorite_color",
+      "id": "9302b136-69ef-4f0d-b907-10593ff7e578",
+      "attributes": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "public__favorite_color",
+      "id": "aad8943c-ef9e-4dd2-8b6b-b2b1e61d17eb",
+      "attributes": {
+        "color": "blue"
+      }
+    }
+  ]
+}

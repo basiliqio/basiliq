@@ -1,0 +1,162 @@
+---
+source: basiliq/src/serve/tests/requests/select/objs/include.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__peoples",
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f",
+      "attributes": {
+        "age": 22,
+        "first-name": "Francis",
+        "gender": "M",
+        "last-name": "Le Roy",
+        "twitter": null
+      },
+      "relationships": {
+        "public__articles": {
+          "data": [
+            {
+              "type": "public__articles",
+              "id": "fdf715dd-8772-498c-8196-6f4ccb64edef"
+            },
+            {
+              "type": "public__articles",
+              "id": "2dbf5d1a-b029-4456-af6b-339c75b1089c"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "public__peoples",
+      "id": "777cc565-c66b-4942-ab44-8fc5f194b804",
+      "attributes": {
+        "age": 34,
+        "first-name": "Somebody",
+        "gender": "F",
+        "last-name": "Wuhu",
+        "twitter": "@randomhandle"
+      },
+      "relationships": {
+        "public__articles": {
+          "data": {
+            "type": "public__articles",
+            "id": "46c4fe50-8c56-4f26-935e-56ccfa496bb5"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__peoples",
+      "id": "961e543a-4b22-4d48-a8e5-c1eafada950f",
+      "attributes": {
+        "age": null,
+        "first-name": "AAAAAAAA",
+        "gender": null,
+        "last-name": "BBBBBBBBB",
+        "twitter": null
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "public__articles",
+      "id": "2dbf5d1a-b029-4456-af6b-339c75b1089c",
+      "attributes": {
+        "body": "Yeah I know ! Right ?!",
+        "title": "Oh my g**"
+      },
+      "relationships": {
+        "public__comments": {
+          "data": {
+            "type": "public__comments",
+            "id": "c2add83b-6f58-45a2-bf62-3ebc05c46192"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__articles",
+      "id": "46c4fe50-8c56-4f26-935e-56ccfa496bb5",
+      "attributes": {
+        "body": "They feast on the blood of the departed draw their powers",
+        "title": "Why devs require sacrifices"
+      },
+      "relationships": {
+        "public__comments": {
+          "data": {
+            "type": "public__comments",
+            "id": "6ae9938f-d490-4707-b138-770c2a52465f"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__articles",
+      "id": "fdf715dd-8772-498c-8196-6f4ccb64edef",
+      "attributes": {
+        "body": "Yes",
+        "title": "How to dead"
+      },
+      "relationships": {
+        "public__comments": {
+          "data": {
+            "type": "public__comments",
+            "id": "59f58abd-c9db-4074-9c34-ac33e9c838ce"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__comments",
+      "id": "59f58abd-c9db-4074-9c34-ac33e9c838ce",
+      "attributes": {
+        "body": "Wasnt convinced..."
+      },
+      "relationships": {
+        "public__peoples": {
+          "data": {
+            "type": "public__peoples",
+            "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__comments",
+      "id": "6ae9938f-d490-4707-b138-770c2a52465f",
+      "attributes": {
+        "body": "It was great !"
+      },
+      "relationships": {
+        "public__peoples": {
+          "data": {
+            "type": "public__peoples",
+            "id": "777cc565-c66b-4942-ab44-8fc5f194b804"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__comments",
+      "id": "c2add83b-6f58-45a2-bf62-3ebc05c46192",
+      "attributes": {
+        "body": "Vous savez, moi je ne crois pas qu\"il y ait de bonne ou de mauvaise situation. Moi, si je devais résumer ma vie aujourd\"hui avec vous, je dirais que c\"est d\"abord des rencontres. Des gens qui m\"ont tendu la main, peut-être à un moment où je ne pouvais pas, où j\"étais seul chez moi."
+      },
+      "relationships": {
+        "public__peoples": {
+          "data": {
+            "type": "public__peoples",
+            "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f"
+          }
+        }
+      }
+    }
+  ]
+}

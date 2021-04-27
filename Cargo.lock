@@ -371,7 +371,7 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#43a1ce81fcc5ebaaf58c1d5d6baa423c9e752b47"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#03cc2e67d2bc92ed01da3790eac4e01af84ea7fa"
 dependencies = [
  "arcstr",
  "getset",
@@ -391,7 +391,7 @@ dependencies = [
 [[package]]
 name = "ciboulette2postgres"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#d7d5e492ddba1c2119643dc27bf4ab728ccb2bcf"
+source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#ae38791f2286158a8a67eaeb3d979a51693270af"
 dependencies = [
  "arcstr",
  "bigdecimal",
@@ -1193,9 +1193,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.93"
+version = "0.2.94"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9385f66bf6105b241aa65a61cb923ef20efc665cb9f9bb50ac2f0c4b7f378d41"
+checksum = "18794a8ad5b29321f790b55d93dfba91e125cb1a9edbd4f8e3150acc771c1a5e"
 
 [[package]]
 name = "libgit2-sys"

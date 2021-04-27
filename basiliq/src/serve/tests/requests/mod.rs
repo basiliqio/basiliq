@@ -2,6 +2,7 @@ use super::*;
 use serde_json::{json, Value};
 mod create;
 mod delete;
+mod select;
 mod update;
 
 use basiliq_db_test_utils::*;

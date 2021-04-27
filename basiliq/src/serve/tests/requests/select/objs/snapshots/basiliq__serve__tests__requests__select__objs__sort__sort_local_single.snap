@@ -1,0 +1,45 @@
+---
+source: basiliq/src/serve/tests/requests/select/objs/sort.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__peoples",
+      "id": "961e543a-4b22-4d48-a8e5-c1eafada950f",
+      "attributes": {
+        "age": null,
+        "first-name": "AAAAAAAA",
+        "gender": null,
+        "last-name": "BBBBBBBBB",
+        "twitter": null
+      }
+    },
+    {
+      "type": "public__peoples",
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f",
+      "attributes": {
+        "age": 22,
+        "first-name": "Francis",
+        "gender": "M",
+        "last-name": "Le Roy",
+        "twitter": null
+      }
+    },
+    {
+      "type": "public__peoples",
+      "id": "777cc565-c66b-4942-ab44-8fc5f194b804",
+      "attributes": {
+        "age": 34,
+        "first-name": "Somebody",
+        "gender": "F",
+        "last-name": "Wuhu",
+        "twitter": "@randomhandle"
+      }
+    }
+  ]
+}

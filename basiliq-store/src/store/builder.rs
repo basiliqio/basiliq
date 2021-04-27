@@ -29,8 +29,8 @@ impl BasiliqStoreBuilder {
                 table.properties().clone(),
             )?;
         }
-        self.insert_many_to_many(&mut ciboulette_store_builder, &mut already_built_rel)?;
         self.insert_one_to_many(&mut ciboulette_store_builder, &mut already_built_rel)?;
+        self.insert_many_to_many(&mut ciboulette_store_builder)?;
         let ciboulette_store = ciboulette_store_builder.build()?;
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             ciboulette_table_store.add_table(
@@ -60,7 +60,6 @@ impl BasiliqStoreBuilder {
     fn insert_many_to_many(
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
-        already_built_rel: &mut BTreeSet<(ArcStr, ArcStr, ArcStr)>,
     ) -> Result<(), Ciboulette2SqlError> {
         for table in self.tables().values() {
             for (rel_alias, rel_data) in table.relationships() {
@@ -68,7 +67,6 @@ impl BasiliqStoreBuilder {
                     BasiliqStoreRelationshipType::ManyToMany(rel_opt) => {
                         self.inserts_many_to_many_routine(
                             // Insert many to many rels
-                            already_built_rel,
                             ciboulette_store_builder,
                             rel_opt,
                             rel_data,
@@ -154,7 +152,6 @@ impl BasiliqStoreBuilder {
 
     fn inserts_many_to_many_routine(
         &self,
-        already_built_rel: &mut BTreeSet<(ArcStr, ArcStr, ArcStr)>,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
         rel_opt: &BasiliqStoreRelationshipManyToManyData,
         rel_data: &BasiliqStoreRelationshipData,
@@ -175,20 +172,7 @@ impl BasiliqStoreBuilder {
             .ok_or_else(|| Ciboulette2SqlError::UnknownTable(rel_data.ftable().to_string()))?;
         let ltable_type = ciboulette_store_builder.get_type(ltype_alias)?.clone();
         let rtable_type = ciboulette_store_builder.get_type(rtype_alias)?.clone();
-        {
-            // Cache the already built M2O rels, so we don't overwrite them later
-            already_built_rel.insert((
-                ltable_type.name().clone(),
-                rel_opt.lfield_name().clone(),
-                bucket_type.name().clone(),
-            ));
-            already_built_rel.insert((
-                bucket_type.name().clone(),
-                rel_opt.ffield_name().clone(),
-                ltable_type.name().clone(),
-            ));
-        }
-        ciboulette_store_builder.add_many_to_many_rel_no_reverse(
+        ciboulette_store_builder.add_many_to_many_rel_no_reverse_direct_only(
             ltype_alias,
             (rtype_alias, Some(rel_alias)),
             CibouletteRelationshipManyToManyOptionBuilder::new(
