@@ -1,0 +1,50 @@
+---
+source: basiliq/src/serve/tests/requests/select/related/sparse.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__articles",
+      "id": "fdf715dd-8772-498c-8196-6f4ccb64edef",
+      "attributes": {
+        "body": "Yes",
+        "title": "How to dead"
+      },
+      "relationships": {
+        "public__peoples": {
+          "data": {
+            "type": "public__peoples",
+            "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f"
+          }
+        }
+      }
+    },
+    {
+      "type": "public__articles",
+      "id": "2dbf5d1a-b029-4456-af6b-339c75b1089c",
+      "attributes": {
+        "body": "Yeah I know ! Right ?!",
+        "title": "Oh my g**"
+      },
+      "relationships": {
+        "public__peoples": {
+          "data": {
+            "type": "public__peoples",
+            "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f"
+          }
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "public__peoples",
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f"
+    }
+  ]
+}

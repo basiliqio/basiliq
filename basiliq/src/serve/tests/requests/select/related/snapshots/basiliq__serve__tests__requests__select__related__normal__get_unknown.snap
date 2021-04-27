@@ -1,0 +1,13 @@
+---
+source: basiliq/src/serve/tests/requests/select/related/normal.rs
+expression: res
+
+---
+{
+  "errors": {
+    "id": "E20002",
+    "status": 400,
+    "title": "CibouletteUnknownRelationship",
+    "detail": "No relationship `public__articles` for type `public__favorite_color`."
+  }
+}

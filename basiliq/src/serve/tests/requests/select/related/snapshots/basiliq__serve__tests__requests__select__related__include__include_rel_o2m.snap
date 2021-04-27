@@ -1,0 +1,64 @@
+---
+source: basiliq/src/serve/tests/requests/select/related/include.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__articles",
+      "id": "fdf715dd-8772-498c-8196-6f4ccb64edef",
+      "attributes": {
+        "body": "Yes",
+        "title": "How to dead"
+      },
+      "relationships": {
+        "public__people-article": {
+          "data": [
+            {
+              "type": "public__people-article",
+              "id": "f77b0017-1dfd-4ea1-b036-b228289f89e0"
+            },
+            {
+              "type": "public__people-article",
+              "id": "538d2b60-cb73-4b7d-bc39-cceac6abecb8"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "public__articles",
+      "id": "2dbf5d1a-b029-4456-af6b-339c75b1089c",
+      "attributes": {
+        "body": "Yeah I know ! Right ?!",
+        "title": "Oh my g**"
+      },
+      "relationships": {
+        "public__people-article": {
+          "data": {
+            "type": "public__people-article",
+            "id": "f0523b1e-30df-418d-83dc-876e4c78cfa9"
+          }
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "public__people-article",
+      "id": "538d2b60-cb73-4b7d-bc39-cceac6abecb8"
+    },
+    {
+      "type": "public__people-article",
+      "id": "f0523b1e-30df-418d-83dc-876e4c78cfa9"
+    },
+    {
+      "type": "public__people-article",
+      "id": "f77b0017-1dfd-4ea1-b036-b228289f89e0"
+    }
+  ]
+}

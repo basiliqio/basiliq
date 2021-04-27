@@ -1,0 +1,23 @@
+---
+source: basiliq/src/serve/tests/requests/select/related/sort.rs
+expression: res
+
+---
+{
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "data": [
+    {
+      "type": "public__peoples",
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f",
+      "attributes": {
+        "age": 22,
+        "first-name": "Francis",
+        "gender": "M",
+        "last-name": "Le Roy",
+        "twitter": null
+      }
+    }
+  ]
+}
