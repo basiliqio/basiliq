@@ -16,17 +16,19 @@ arcstr = "1"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]
-git = "https://gitlab.com/basiliq/ciboulette.git"
+git = "https://github.com/basiliqio/ciboulette.git"
+branch = "main"
 # path = "../../ciboulette"
 package = "ciboulette"
 
 [dependencies.ciboulette2postgres]
-git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+git = "https://github.com/basiliqio/ciboulette2postgres.git"
+branch = "main"
 # path = "../../ciboulette2postgres"
 package = "ciboulette2postgres"
 
 [dependencies.messy_json]
-# git = "https://gitlab.com/basiliq/messy_json.git"
+# git = "https://github.com/basiliqio/messy_json.git"
 version = "0.2"
 features = ["uuid"]
 
@@ -45,8 +47,8 @@ version = "0.8"
 [dev-dependencies]
 anyhow = "1"
 env_logger = "0.8"
-basiliq_db_test_utils = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_utils" }
-basiliq_db_test_proc_macro = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_proc_macro" }
+basiliq_db_test_utils = { git = "https://github.com/basiliqio/basiliq_db_test_utils.git", branch = "main", package = "basiliq_db_test_utils" }
+basiliq_db_test_proc_macro = { git = "https://github.com/basiliqio/basiliq_db_test_utils.git",  branch = "main", package = "basiliq_db_test_proc_macro" }
 
 [dev-dependencies.cargo-husky]
 default-features = false

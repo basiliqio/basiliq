@@ -7,6 +7,7 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
+# Revert all transactions, allowing to expose this service 
 demo = []
 
 [dependencies]
@@ -33,19 +34,21 @@ serde_urlencoded = "0.7"
 buf_redux = { version = "0.8" }
 
 [dependencies.ciboulette2postgres]
-git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
+git = "https://github.com/basiliqio/ciboulette2postgres.git"
+branch = "main"
 package = "ciboulette2postgres"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]
-git = "https://gitlab.com/basiliq/ciboulette.git"
+branch = "main"
+git = "https://github.com/basiliqio/ciboulette.git"
 package = "ciboulette"
 
 [dependencies.lazy_static]
 version = "1.4"
 
 [dev-dependencies]
-basiliq_db_test_utils = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_utils" }
-basiliq_db_test_proc_macro = { git = "https://gitlab.com/basiliq/basiliq_db_test_utils.git",  package = "basiliq_db_test_proc_macro" }
-messy_json = { git = "https://gitlab.com/basiliq/messy_json.git" }
+basiliq_db_test_utils = { git = "https://github.com/basiliqio/basiliq_db_test_utils.git", branch = "main", package = "basiliq_db_test_utils" }
+basiliq_db_test_proc_macro = { git = "https://github.com/basiliqio/basiliq_db_test_utils.git", branch = "main", package = "basiliq_db_test_proc_macro" }
+messy_json = { git = "https://github.com/basiliqio/messy_json.git", branch = "main" }
 insta = { version = "1.7", features = [ "redactions" ] }

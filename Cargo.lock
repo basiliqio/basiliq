@@ -125,7 +125,7 @@ dependencies = [
  "hyper",
  "insta",
  "lazy_static",
- "messy_json 0.2.0 (git+https://gitlab.com/basiliq/messy_json.git)",
+ "messy_json 0.2.1",
  "paste",
  "serde",
  "serde_json",
@@ -145,7 +145,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_proc_macro"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#903b69c944879b3d4a2cce305583ae10f3d0df03"
+source = "git+https://github.com/basiliqio/basiliq_db_test_utils.git?branch=main#3ce72bfa386c4b4cd360d55125a951fff47bdb81"
 dependencies = [
  "basiliq_db_test_utils",
  "proc-macro2",
@@ -156,7 +156,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_utils"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/basiliq_db_test_utils.git#903b69c944879b3d4a2cce305583ae10f3d0df03"
+source = "git+https://github.com/basiliqio/basiliq_db_test_utils.git?branch=main#3ce72bfa386c4b4cd360d55125a951fff47bdb81"
 dependencies = [
  "anyhow",
  "lazy_static",
@@ -184,7 +184,7 @@ dependencies = [
  "insta",
  "itertools",
  "log",
- "messy_json 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "messy_json 0.2.0",
  "serde",
  "serde_json",
  "sqlx",
@@ -370,15 +370,15 @@ dependencies = [
 
 [[package]]
 name = "ciboulette"
-version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#a6c7f8fc617a3286fd725d32c4a3ee3344085b25"
+version = "0.1.1"
+source = "git+https://github.com/basiliqio/ciboulette.git?branch=main#10b23f7953fd1e14c2f4f769523c7f43c83fa5d2"
 dependencies = [
  "arcstr",
  "getset",
  "indexmap",
  "itertools",
  "lazy_static",
- "messy_json 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "messy_json 0.2.0",
  "petgraph",
  "serde",
  "serde_json",
@@ -392,7 +392,7 @@ dependencies = [
 [[package]]
 name = "ciboulette2postgres"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#32699d056df6584e469ba4c9962b0fad2f0a56b2"
+source = "git+https://github.com/basiliqio/ciboulette2postgres.git?branch=main#77ff53109ab181a77f956cd70264c5b9ea829b8e"
 dependencies = [
  "arcstr",
  "bigdecimal",
@@ -400,7 +400,7 @@ dependencies = [
  "ciboulette",
  "getset",
  "itertools",
- "messy_json 0.2.0 (git+https://gitlab.com/basiliq/messy_json.git)",
+ "messy_json 0.2.0",
  "numtoa",
  "petgraph",
  "serde",
@@ -1349,14 +1349,13 @@ dependencies = [
 
 [[package]]
 name = "messy_json"
-version = "0.2.0"
-source = "git+https://gitlab.com/basiliq/messy_json.git#a054eb03170709e9276101658d38f6aed1ef2a22"
+version = "0.2.1"
+source = "git+https://github.com/basiliqio/messy_json.git?branch=main#5ffa98149a09ff2f7c243baeccbfd3bba40b80f9"
 dependencies = [
  "arcstr",
  "itertools",
  "serde",
  "serde_json",
- "uuid",
 ]
 
 [[package]]
