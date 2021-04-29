@@ -106,8 +106,12 @@ subcommands:
       args:
         - config:
             help: config file
-            required: true
+            required: false
             index: 1
+        - dynamic_config:
+            help: just in time config
+            short: D
+            long: dynamic-config
         - bind_port:
             short: P
             help: The port on which to start the server. Default to 8080

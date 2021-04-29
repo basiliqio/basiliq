@@ -37,14 +37,16 @@ pub async fn create_store_builder_single_conn(
 
 pub async fn create_store_builder_pool(
     pool: &sqlx::PgPool,
-    config_path: PathBuf,
+    config_path: Option<PathBuf>,
 ) -> Result<BasiliqStoreBuilder, BasiliqError> {
-    let read_config = read_config_from_file(config_path)?;
     // let connection = conn.acquire().await?;
     info!("Scanning the database...");
     let mut builder =
         BasiliqStoreBuilder::new(BasiliqDbScannedTable::scan_db_pool(pool.clone()).await?);
-    builder.basiliq_config_merge(&read_config)?;
+    if let Some(config_path) = config_path {
+        let read_config = read_config_from_file(config_path)?;
+        builder.basiliq_config_merge(&read_config)?;
+    }
     info!("Configuration is valid.");
     Ok(builder)
 }
