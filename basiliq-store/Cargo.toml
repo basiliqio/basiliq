@@ -33,7 +33,7 @@ version = "0.2"
 features = ["uuid"]
 
 [dependencies.sqlx]
-features = ["runtime-tokio-rustls", "postgres", "uuid", "macros", "json"]
+features = ["runtime-tokio-rustls", "postgres", "uuid", "macros", "json", "offline"]
 version = "0.5"
 
 [dependencies.tokio]
