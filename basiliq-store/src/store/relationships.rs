@@ -74,17 +74,21 @@ impl BasiliqStoreBuilder {
                         optional: !lkey_col.column().non_null(),
                     },
                 );
-                res.insert(
-                    // Insert the OneToMany relationship from the foreign type to the main type
-                    BasiliqStoreRelationshipData {
-                        ltable: rel_type.clone(),
-                        ftable: main_table_name.clone(),
-                        ffield_name: ArcStr::from(rel_key),
-                        lfield_name: ArcStr::from(fkey_col.column().name()),
-                        type_: BasiliqStoreRelationshipType::OneToMany(false),
-                        optional: !lkey_col.column().non_null(),
-                    },
-                );
+                if ltable != ftable
+                // No need to insert both if it's a self reference
+                {
+                    res.insert(
+                        // Insert the OneToMany relationship from the foreign type to the main type
+                        BasiliqStoreRelationshipData {
+                            ltable: rel_type.clone(),
+                            ftable: main_table_name.clone(),
+                            ffield_name: ArcStr::from(rel_key),
+                            lfield_name: ArcStr::from(fkey_col.column().name()),
+                            type_: BasiliqStoreRelationshipType::OneToMany(false),
+                            optional: !lkey_col.column().non_null(),
+                        },
+                    );
+                }
             }
         }
         res

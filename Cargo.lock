@@ -125,7 +125,7 @@ dependencies = [
  "hyper",
  "insta",
  "lazy_static",
- "messy_json",
+ "messy_json 0.2.0 (git+https://gitlab.com/basiliq/messy_json.git)",
  "paste",
  "serde",
  "serde_json",
@@ -184,7 +184,7 @@ dependencies = [
  "insta",
  "itertools",
  "log",
- "messy_json",
+ "messy_json 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde",
  "serde_json",
  "sqlx",
@@ -371,13 +371,14 @@ dependencies = [
 [[package]]
 name = "ciboulette"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette.git#03cc2e67d2bc92ed01da3790eac4e01af84ea7fa"
+source = "git+https://gitlab.com/basiliq/ciboulette.git#a6c7f8fc617a3286fd725d32c4a3ee3344085b25"
 dependencies = [
  "arcstr",
  "getset",
+ "indexmap",
  "itertools",
  "lazy_static",
- "messy_json",
+ "messy_json 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "petgraph",
  "serde",
  "serde_json",
@@ -391,7 +392,7 @@ dependencies = [
 [[package]]
 name = "ciboulette2postgres"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#ae38791f2286158a8a67eaeb3d979a51693270af"
+source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#32699d056df6584e469ba4c9962b0fad2f0a56b2"
 dependencies = [
  "arcstr",
  "bigdecimal",
@@ -399,7 +400,7 @@ dependencies = [
  "ciboulette",
  "getset",
  "itertools",
- "messy_json",
+ "messy_json 0.2.0 (git+https://gitlab.com/basiliq/messy_json.git)",
  "numtoa",
  "petgraph",
  "serde",
@@ -1081,6 +1082,7 @@ checksum = "824845a0bf897a9042383849b02c1bc219c2383772efcd5c6f9766fa4b81aef3"
 dependencies = [
  "autocfg",
  "hashbrown",
+ "serde",
 ]
 
 [[package]]
@@ -1334,8 +1336,21 @@ dependencies = [
 
 [[package]]
 name = "messy_json"
-version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/messy_json.git#5932e7b5d475ef2de7ff570e2da8320391ad010e"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cf78a414c675efb9ff4c773756310bd6573f6f725c7d830101fbbe037c532de"
+dependencies = [
+ "arcstr",
+ "itertools",
+ "serde",
+ "serde_json",
+ "uuid",
+]
+
+[[package]]
+name = "messy_json"
+version = "0.2.0"
+source = "git+https://gitlab.com/basiliq/messy_json.git#a054eb03170709e9276101658d38f6aed1ef2a22"
 dependencies = [
  "arcstr",
  "itertools",
@@ -1466,9 +1481,9 @@ checksum = "77af24da69f9d9341038eba93a073b1fdaaa1b788221b00a69bce9e762cb32de"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.61"
+version = "0.9.62"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "313752393519e876837e09e1fa183ddef0be7735868dced3196f4472d536277f"
+checksum = "fa52160d45fa2e7608d504b7c3a3355afed615e6d8b627a74458634ba21b69bd"
 dependencies = [
  "autocfg",
  "cc",
@@ -1800,9 +1815,9 @@ dependencies = [
 
 [[package]]
 name = "redox_syscall"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8270314b5ccceb518e7e578952f0b72b88222d02e8f77f5ecf7abbb673539041"
+checksum = "85dd92e586f7355c633911e11f77f3d12f04b1b1bd76a198bd34ae3af8341ef2"
 dependencies = [
  "bitflags",
 ]
@@ -2371,9 +2386,9 @@ checksum = "1e81da0851ada1f3e9d4312c704aa4f8806f0f9d69faaf8df2f3464b4a9437c2"
 
 [[package]]
 name = "syn"
-version = "1.0.70"
+version = "1.0.71"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9505f307c872bab8eb46f77ae357c8eba1fdacead58ee5a850116b1d7f82883"
+checksum = "ad184cc9470f9117b2ac6817bfe297307418819ba40552f9b3846f05c33d5373"
 dependencies = [
  "proc-macro2",
  "quote",

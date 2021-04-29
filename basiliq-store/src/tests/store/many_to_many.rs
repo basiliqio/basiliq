@@ -31,9 +31,9 @@ async fn many_to_many_relationships_check(mut pool: sqlx::PgPool) {
         .unwrap();
     match rel {
         CibouletteRelationshipOption::OneToMany(rel) => {
-            assert_eq!(rel.many_table().name(), "public__movie_staff");
-            assert_eq!(rel.many_table_key(), "movie");
-            assert_eq!(rel.one_table().name(), "public__movies")
+            assert_eq!(rel.many_resource().name(), "public__movie_staff");
+            assert_eq!(rel.many_resource_key(), "movie");
+            assert_eq!(rel.one_resource().name(), "public__movies")
         }
         _ => panic!("Wrong rel type"),
     };
@@ -65,9 +65,9 @@ async fn many_to_many_relationships_check(mut pool: sqlx::PgPool) {
         .unwrap();
     match rel {
         CibouletteRelationshipOption::OneToMany(rel) => {
-            assert_eq!(rel.many_table().name(), "public__movie_staff");
-            assert_eq!(rel.many_table_key(), "staff");
-            assert_eq!(rel.one_table().name(), "public__peoples")
+            assert_eq!(rel.many_resource().name(), "public__movie_staff");
+            assert_eq!(rel.many_resource_key(), "staff");
+            assert_eq!(rel.one_resource().name(), "public__peoples")
         }
         _ => panic!("Wrong rel type"),
     };
@@ -210,9 +210,9 @@ async fn many_to_many_relationships_check_with_config(mut transaction: sqlx::PgP
     let (_, rel) = store.ciboulette().get_rel("movies", "movie_staff").unwrap();
     match rel {
         CibouletteRelationshipOption::OneToMany(rel) => {
-            assert_eq!(rel.many_table().name(), "movie_staff");
-            assert_eq!(rel.many_table_key(), "movie");
-            assert_eq!(rel.one_table().name(), "movies")
+            assert_eq!(rel.many_resource().name(), "movie_staff");
+            assert_eq!(rel.many_resource_key(), "movie");
+            assert_eq!(rel.one_resource().name(), "movies")
         }
         _ => panic!("Wrong rel type"),
     };
@@ -241,9 +241,9 @@ async fn many_to_many_relationships_check_with_config(mut transaction: sqlx::PgP
         .unwrap();
     match rel {
         CibouletteRelationshipOption::OneToMany(rel) => {
-            assert_eq!(rel.many_table().name(), "movie_staff");
-            assert_eq!(rel.many_table_key(), "staff");
-            assert_eq!(rel.one_table().name(), "peoples")
+            assert_eq!(rel.many_resource().name(), "movie_staff");
+            assert_eq!(rel.many_resource_key(), "staff");
+            assert_eq!(rel.one_resource().name(), "peoples")
         }
         _ => panic!("Wrong rel type"),
     };

@@ -45,7 +45,7 @@ pub async fn entry_server(
     )?;
     let body = hyper::body::to_bytes(req.into_body()).await?;
     let body_str = Some(std::str::from_utf8(&body)?);
-    let ciboulette_request_builder = ciboulette::CibouletteInboundRequestBuilder::new(
+    let ciboulette_request_builder = ciboulette::CibouletteRequestBuilder::new(
         intention,
         &req_url,
         match body.is_empty() {

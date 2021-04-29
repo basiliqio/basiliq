@@ -7,4 +7,5 @@ mod complex_types;
 mod config;
 mod id;
 mod relationships;
+mod self_rel;
 mod store;

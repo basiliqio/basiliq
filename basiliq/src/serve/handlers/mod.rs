@@ -10,7 +10,7 @@ pub mod update;
 
 async fn exec_query<'request>(
     state: &Arc<BasiliqServerState>,
-    inbound_request: &'request dyn CibouletteInboundRequestCommons<'request>,
+    inbound_request: &'request dyn CibouletteRequestCommons<'request>,
     query: String,
     params: Ciboulette2SqlArguments<'request>,
 ) -> Result<Response<Body>, BasiliqServerError> {
@@ -22,18 +22,14 @@ async fn exec_query<'request>(
         .unwrap();
     let rows = Ciboulette2PostgresRow::from_raw(&raw_rows)?;
     let rows_nb = rows.len();
-    // println!("{}", query);
-    println!("{:#?}", rows);
-    // println!("{}", inbound_request.expected_type().name());
     let response_elements = Ciboulette2PostgresRow::build_response_elements(
         rows,
         state.store().ciboulette(),
         inbound_request.anchor_type(),
         Some(rows_nb),
     )?;
-    println!("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOHHHHHHHHHHHHHHHHHHHHHHH MYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOD");
-    let accumulator = CibouletteOutboundRequestDataBuilder::new(inbound_request, response_elements);
-    let response: CibouletteOutboundRequest<&serde_json::value::RawValue> = accumulator.build()?;
+    let accumulator = CibouletteResponseDataBuilder::new(inbound_request, response_elements);
+    let response: CibouletteResponse<&serde_json::value::RawValue> = accumulator.build()?;
     let res = Body::from(bytes::Bytes::from(serde_json::to_string(&response)?));
     transaction.commit().await?;
     Ok(Response::builder()
@@ -47,7 +43,7 @@ async fn exec_query<'request>(
 
 pub async fn handle_request(
     state: &Arc<BasiliqServerState>,
-    req: CibouletteInboundRequest<'_>,
+    req: CibouletteRequest<'_>,
 ) -> Result<Response<Body>, BasiliqServerError> {
     match *req.intention() {
         CibouletteIntention::Create => {

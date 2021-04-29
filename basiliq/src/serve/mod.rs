@@ -50,10 +50,10 @@ pub async fn build_server_state(
 ) -> Result<BasiliqServerState, BasiliqError> {
     let pool =
         crate::database::pool::get_connection_pool(param.database_connection_infos()).await?;
-    info!("Building store...");
     let store_builder =
         crate::config::check::create_store_builder_pool(&pool, opt.config_file().clone()).await?;
     let dns_resolver = trust_dns_resolver::TokioAsyncResolver::tokio_from_system_conf()?;
+    info!("Building store...");
     Ok(BasiliqServerState::new(
         pool,
         store_builder.build()?,

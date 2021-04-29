@@ -10,9 +10,9 @@ async fn many_to_one_relationships_check(mut transaction: sqlx::PgPool) {
         .unwrap();
     match rel {
         CibouletteRelationshipOption::ManyToOne(rel) => {
-            assert_eq!(rel.many_table().name(), "public__movies");
-            assert_eq!(rel.many_table_key(), "director");
-            assert_eq!(rel.one_table().name(), "public__director");
+            assert_eq!(rel.many_resource().name(), "public__movies");
+            assert_eq!(rel.many_resource_key(), "director");
+            assert_eq!(rel.one_resource().name(), "public__director");
         }
         _ => panic!("Wrong rel type"),
     };
@@ -22,9 +22,9 @@ async fn many_to_one_relationships_check(mut transaction: sqlx::PgPool) {
         .unwrap();
     match rel {
         CibouletteRelationshipOption::ManyToOne(rel) => {
-            assert_eq!(rel.many_table().name(), "public__movies");
-            assert_eq!(rel.many_table_key(), "director");
-            assert_eq!(rel.one_table().name(), "public__director");
+            assert_eq!(rel.many_resource().name(), "public__movies");
+            assert_eq!(rel.many_resource_key(), "director");
+            assert_eq!(rel.one_resource().name(), "public__director");
         }
         _ => panic!("Wrong rel type"),
     };
@@ -98,18 +98,18 @@ async fn one_to_many_with_config(mut transaction: sqlx::PgPool) {
     let (_, rel) = store.ciboulette().get_rel("director", "movies").unwrap();
     match rel {
         CibouletteRelationshipOption::OneToMany(rel) => {
-            assert_eq!(rel.many_table().name(), "movies");
-            assert_eq!(rel.many_table_key(), "director");
-            assert_eq!(rel.one_table().name(), "director");
+            assert_eq!(rel.many_resource().name(), "movies");
+            assert_eq!(rel.many_resource_key(), "director");
+            assert_eq!(rel.one_resource().name(), "director");
         }
         _ => panic!("Wrong rel type"),
     };
     let (_, rel) = store.ciboulette().get_rel("movies", "director").unwrap();
     match rel {
         CibouletteRelationshipOption::ManyToOne(rel) => {
-            assert_eq!(rel.many_table().name(), "movies");
-            assert_eq!(rel.many_table_key(), "director");
-            assert_eq!(rel.one_table().name(), "director");
+            assert_eq!(rel.many_resource().name(), "movies");
+            assert_eq!(rel.many_resource_key(), "director");
+            assert_eq!(rel.one_resource().name(), "director");
         }
         _ => panic!("Wrong rel type"),
     };

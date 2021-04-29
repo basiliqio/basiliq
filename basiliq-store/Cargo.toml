@@ -26,7 +26,8 @@ git = "https://gitlab.com/basiliq/ciboulette2postgres.git"
 package = "ciboulette2postgres"
 
 [dependencies.messy_json]
-git = "https://gitlab.com/basiliq/messy_json.git"
+# git = "https://gitlab.com/basiliq/messy_json.git"
+version = "0.2"
 features = ["uuid"]
 
 [dependencies.sqlx]
