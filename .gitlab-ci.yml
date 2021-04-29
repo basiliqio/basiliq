@@ -33,6 +33,7 @@ build_debug:
 
 build_release:
   stage: build
+  image: ekidd/rust-musl-builder
   needs:
    - basic_checks
   artifacts:
