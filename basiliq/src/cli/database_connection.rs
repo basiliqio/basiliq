@@ -21,7 +21,7 @@ macro_rules! fill_database_url_option_number {
 }
 
 pub fn gen_database_url(cli_matches: &ArgMatches) -> PgConnectOptions {
-    let env_database_url = std::env::var("BASILIQ_DATABASE_URL")
+    let env_database_url = std::env::var("DATABASE_URL")
         .ok()
         .map(|x| PgConnectOptions::from_str(x.as_str()))
         .transpose()
