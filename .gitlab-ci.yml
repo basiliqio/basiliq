@@ -1,0 +1,113 @@
+default:
+  image: registry.gitlab.com/basiliqio/dockerfiles
+
+variables:
+  RUSTFLAGS: -C link-dead-code
+
+stages:
+  - checks
+  - build
+  - test
+  - pack
+
+basic_checks:
+  stage: checks
+  before_script:
+    - mkdir -p .git/hooks
+  script:
+    - cargo fmt -- --check
+    - cargo clippy -- -D warnings
+
+build_debug:
+  stage: build
+  needs:
+   - basic_checks
+  artifacts:
+    paths:
+      - tests_exe/
+    expire_in: 1 week
+  before_script:
+    - mkdir -p .git/hooks
+    - mkdir tests_exe
+  script:
+    - cargo build --all-targets
+    - cargo test --no-run --message-format=json | jq -r .executable | grep -ve "^null$" | xargs -I{} cp {} tests_exe
+
+build_release:
+  stage: build
+  needs:
+   - basic_checks
+  artifacts:
+    paths:
+      - basiliq
+    expire_in: 1 week
+  before_script:
+    - mkdir -p .git/hooks
+  script:
+    - cargo build --release
+    - cp target/release/basiliq basiliq_test
+
+cargo_tests:
+  stage: test
+  services:
+    - name: postgres:latest
+      alias: postgres
+  needs:
+   - build_debug
+  dependencies:
+   - build_debug
+  variables:
+    POSTGRES_DB: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_HOST_AUTH_METHOD: trust
+    DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+    BASILIQ_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
+    NAME: ciboulette2postgres
+  before_script:
+    - mkdir -p .git/hooks
+  script:
+    - for file in test_exe/* ;
+      do
+        echo "Running $file";
+        mkdir -p "target/cov/$(basename $file)";
+        kcov "target/cov/$(basename $file)" --exclude-pattern="/.cargo,/usr/lib,$PWD/src/tests,$PWD/src/builder/tests" $file;
+      done
+    - bash <(curl -s https://codecov.io/bash) -t $CODECOV_TOKEN -s target/cov
+
+kaniko_master:
+  stage: pack
+  except:
+    variables:
+      - $CI_COMMIT_TAG
+  needs:
+    - cargo_tests
+    - build_release
+  dependencies:
+    - build_release
+  only:
+    refs:
+      - master
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE/basiliq:$CI_COMMIT_REF_NAME --destination $CI_REGISTRY_IMAGE/basiliq:latest --build-arg DEPLOY_USERNAME=$DEPLOY_USERNAME --build-arg DEPLOY_PASSWORD=$DEPLOY_PASSWORD
+
+kaniko_tag:
+  stage: pack
+  needs:
+    - cargo_tests
+    - build_release
+  dependencies:
+    - build_release
+  only:
+    variables:
+      - $CI_COMMIT_TAG
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --destination $CI_REGISTRY_IMAGE/basiliq:$CI_COMMIT_TAG --build-arg DEPLOY_USERNAME=$DEPLOY_USERNAME --build-arg DEPLOY_PASSWORD=$DEPLOY_PASSWORD
