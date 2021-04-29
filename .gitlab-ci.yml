@@ -12,7 +12,6 @@ stages:
 
 basic_checks:
   stage: checks
-  image: registry.gitlab.com/basiliqio/dockerfiles
   before_script:
     - mkdir -p .git/hooks
   script:
@@ -47,6 +46,7 @@ build_release:
 
 cargo_tests:
   stage: test
+  image: registry.gitlab.com/basiliqio/dockerfiles
   services:
     - name: postgres:latest
       alias: postgres
@@ -63,8 +63,9 @@ cargo_tests:
     NAME: ciboulette2postgres
   before_script:
     - mkdir -p .git/hooks
+    - mkdir -p target/cov/
   script:
-    - for file in test_exe/* ;
+    - for file in tests_exe/* ;
       do
         echo "Running $file";
         mkdir -p "target/cov/$(basename $file)";
