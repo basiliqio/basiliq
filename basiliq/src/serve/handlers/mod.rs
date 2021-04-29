@@ -8,6 +8,22 @@ pub mod delete;
 pub mod read;
 pub mod update;
 
+#[allow(unused_variables)]
+async fn finish_tx<'a, 'response>(
+    response: &CibouletteResponse<'response, &serde_json::value::RawValue>,
+    tx: sqlx::Transaction<'a, sqlx::Postgres>,
+) -> Result<(), BasiliqServerError> {
+    #[allow(unreachable_code)]
+    #[cfg(not(feature = "demo"))]
+    match response.status().is_success() {
+        true => Ok(tx.commit().await?),
+        false => Ok(tx.rollback().await?),
+    }
+    #[cfg(feature = "demo")]
+    #[allow(unreachable_code)]
+    return Ok(tx.rollback().await?);
+}
+
 async fn exec_query<'request>(
     state: &Arc<BasiliqServerState>,
     inbound_request: &'request dyn CibouletteRequestCommons<'request>,
@@ -31,7 +47,7 @@ async fn exec_query<'request>(
     let accumulator = CibouletteResponseDataBuilder::new(inbound_request, response_elements);
     let response: CibouletteResponse<&serde_json::value::RawValue> = accumulator.build()?;
     let res = Body::from(bytes::Bytes::from(serde_json::to_string(&response)?));
-    transaction.commit().await?;
+    finish_tx(&response, transaction).await?;
     Ok(Response::builder()
         .header(
             hyper::header::CONTENT_TYPE,

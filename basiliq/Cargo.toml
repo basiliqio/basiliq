@@ -7,6 +7,7 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
+demo = []
 
 [dependencies]
 basiliq_store = {version = "*", path = "../basiliq-store", package = "basiliq_store"}

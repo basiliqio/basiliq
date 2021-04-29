@@ -111,7 +111,6 @@ impl BasiliqStoreBuilder {
                             })?;
                         let one_type = ciboulette_store_builder.get_type(&one_alias)?.clone();
                         let many_type = ciboulette_store_builder.get_type(alias)?.clone();
-                        println!("OUILLE");
                         let many_name = many_type.name().clone();
                         (
                             one_type,
@@ -131,9 +130,7 @@ impl BasiliqStoreBuilder {
                     // Already exists
                     continue;
                 }
-                println!("{} -> {}", alias_one, alias_many);
                 if v.ltable() == v.ftable() {
-                    println!("SELF REF");
                     ciboulette_store_builder.add_one_to_many_rel_no_reverse(
                         CibouletteRelationshipOneToManyOptionBuilder::new(
                             one_type,
@@ -145,7 +142,6 @@ impl BasiliqStoreBuilder {
                         Some(alias_one), // We limit to ManyToOne only for self rel
                     )?;
                 } else {
-                    println!("OTHER REF");
                     ciboulette_store_builder.add_one_to_many_rel(
                         CibouletteRelationshipOneToManyOptionBuilder::new(
                             one_type,
