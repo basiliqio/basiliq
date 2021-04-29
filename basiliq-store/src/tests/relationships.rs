@@ -3,25 +3,25 @@ use super::*;
 #[basiliq_test]
 async fn one_to_many(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE director(
 			id			UUID PRIMARY KEY,
 			name		TEXT NOT NULL
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies(
 			id			UUID PRIMARY KEY,
 			title		TEXT NOT NULL,
 			director	UUID NOT NULL REFERENCES director(id) ON DELETE CASCADE
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
@@ -73,18 +73,18 @@ async fn one_to_many(pool: sqlx::PgPool) {
 #[basiliq_test]
 async fn multi_one_to_many(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE peoples(
 			id			UUID PRIMARY KEY,
 			name		TEXT NOT NULL
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies(
 			id			UUID PRIMARY KEY,
@@ -92,7 +92,7 @@ async fn multi_one_to_many(pool: sqlx::PgPool) {
 			director	UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE,
 			publisher	UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
@@ -157,29 +157,29 @@ async fn multi_one_to_many(pool: sqlx::PgPool) {
 #[basiliq_test]
 async fn many_to_many(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE peoples(
 			id			UUID PRIMARY KEY,
 			name		TEXT NOT NULL
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies(
 			id			UUID PRIMARY KEY,
 			title		TEXT NOT NULL
 		);
-		"#
+		"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies_staff(
 			id			UUID PRIMARY KEY,
@@ -187,7 +187,7 @@ async fn many_to_many(pool: sqlx::PgPool) {
 			person		UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE,
 			movies		UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
@@ -276,29 +276,29 @@ async fn many_to_many(pool: sqlx::PgPool) {
 #[basiliq_test]
 async fn many_many_to_many_many(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE peoples(
 			id			UUID PRIMARY KEY,
 			name		TEXT NOT NULL
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies(
 			id			UUID PRIMARY KEY,
 			title		TEXT NOT NULL
 		);
-		"#
+		"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies_staff(
 			id				UUID PRIMARY KEY,
@@ -308,7 +308,7 @@ async fn many_many_to_many_many(pool: sqlx::PgPool) {
 			movies			UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
 			making_of		UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await

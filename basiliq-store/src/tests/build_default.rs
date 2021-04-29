@@ -13,14 +13,14 @@ async fn empty_db(pool: sqlx::PgPool) {
 #[basiliq_test]
 async fn simple_table_with_default_name(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE simple_table(
 			id			VARCHAR(10) PRIMARY KEY,
 			first_name	TEXT,
 			last_name	TEXT
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
@@ -50,12 +50,12 @@ async fn simple_table_with_default_name(pool: sqlx::PgPool) {
 #[basiliq_test]
 async fn simple_table_with_no_field(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE simple_table(
 			id			VARCHAR(10) PRIMARY KEY
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await

@@ -3,29 +3,29 @@ use super::*;
 async fn apply_migrations(pool: &mut sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
 
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE peoples(
 			id			UUID PRIMARY KEY,
 			name		TEXT NOT NULL
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies(
 			id			UUID PRIMARY KEY,
 			title		TEXT NOT NULL
 		);
-		"#
+		"#,
     )
     .execute(&mut *conn)
     .await
     .unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE movies_staff(
 			id			UUID PRIMARY KEY,
@@ -33,7 +33,7 @@ async fn apply_migrations(pool: &mut sqlx::PgPool) {
 			person		UUID NOT NULL REFERENCES peoples(id) ON DELETE CASCADE,
 			movies		UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await

@@ -3,14 +3,14 @@ use super::*;
 #[basiliq_test]
 async fn self_rel_once(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE person(
 			id			UUID PRIMARY KEY,
 			name		TEXT NOT NULL,
 			mom			UUID REFERENCES person(id) ON DELETE CASCADE	
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await
@@ -41,7 +41,7 @@ async fn self_rel_once(pool: sqlx::PgPool) {
 async fn self_rel_multi(pool: sqlx::PgPool) {
     let mut conn = pool.acquire().await.unwrap();
     let valid_keys = &["dad", "mom"];
-    sqlx::query!(
+    sqlx::query(
         r#"
 		CREATE TABLE person(
 			id			UUID PRIMARY KEY,
@@ -49,7 +49,7 @@ async fn self_rel_multi(pool: sqlx::PgPool) {
 			mom			UUID REFERENCES person(id) ON DELETE CASCADE,
 			dad			UUID REFERENCES person(id) ON DELETE CASCADE	
 		);
-	"#
+	"#,
     )
     .execute(&mut *conn)
     .await

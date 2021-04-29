@@ -38,13 +38,12 @@ build_release:
    - basic_checks
   artifacts:
     paths:
-      - basiliq
+      - target/release/basiliq
     expire_in: 1 week
   before_script:
     - mkdir -p .git/hooks
   script:
     - cargo build --release
-    - cp target/release/basiliq basiliq_test
 
 cargo_tests:
   stage: test
@@ -61,7 +60,6 @@ cargo_tests:
     POSTGRES_PASSWORD: postgres
     POSTGRES_HOST_AUTH_METHOD: trust
     DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-    BASILIQ_DATABASE_URL: postgres://postgres:postgres@postgres/postgres
     NAME: ciboulette2postgres
   before_script:
     - mkdir -p .git/hooks
@@ -86,7 +84,7 @@ kaniko_master:
     - build_release
   only:
     refs:
-      - master
+      - main
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
