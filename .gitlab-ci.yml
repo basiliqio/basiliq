@@ -12,6 +12,7 @@ stages:
 
 basic_checks:
   stage: checks
+  image: registry.gitlab.com/basiliqio/dockerfiles
   before_script:
     - mkdir -p .git/hooks
   script:
@@ -20,8 +21,6 @@ basic_checks:
 
 build_debug:
   stage: build
-  needs:
-   - basic_checks
   artifacts:
     paths:
       - tests_exe/

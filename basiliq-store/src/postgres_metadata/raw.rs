@@ -1,7 +1,9 @@
 use getset::{CopyGetters, Getters};
 use serde::{Deserialize, Serialize};
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerSchemaRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -13,7 +15,9 @@ pub struct BasiliqDbScannerSchemaRaw {
     usage: bool,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerRoleRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -33,7 +37,9 @@ pub enum BasiliqDbScannerTableType {
     View = 118,         // v
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerTableRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -59,7 +65,9 @@ pub struct BasiliqDbScannerTableRaw {
     delete_perm: bool,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerColumnRaw {
     #[getset(get = "pub")]
     name: String,
@@ -116,7 +124,9 @@ pub enum BasiliqDbScannerTypeCategory {
     Unknown = 88,        // X
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerTypeRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -140,7 +150,9 @@ pub struct BasiliqDbScannerTypeRaw {
     dimensions: u32,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerPrimaryKeyRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -156,7 +168,9 @@ pub struct BasiliqDbScannerPrimaryKeyRaw {
     columns: Vec<i16>,
 }
 
-#[derive(Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(
+    Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
+)]
 pub struct BasiliqDbScannerForeignKeyRaw {
     #[getset(get_copy = "pub")]
     id: u32,
@@ -184,12 +198,11 @@ pub async fn read_schemas<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerSchem
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    Ok(sqlx::query_file_as_unchecked!(
-        BasiliqDbScannerSchemaRaw,
-        "discovery_queries/get_schemas.sql"
-    ) // Unchecked because of COALESCE
-    .fetch_all(db_conn)
-    .await?)
+    Ok(
+        sqlx::query_as(include_str!("../../discovery_queries/get_schemas.sql")) // Unchecked because of COALESCE
+            .fetch_all(db_conn)
+            .await?,
+    )
 }
 
 pub async fn read_tables<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerTableRaw>, sqlx::Error>
@@ -197,12 +210,9 @@ where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
     Ok(
-        sqlx::query_file_as_unchecked!(
-            BasiliqDbScannerTableRaw,
-            "discovery_queries/get_tables.sql"
-        )
-        .fetch_all(db_conn)
-        .await?,
+        sqlx::query_as(include_str!("../../discovery_queries/get_tables.sql"))
+            .fetch_all(db_conn)
+            .await?,
     )
 }
 
@@ -212,7 +222,7 @@ where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
     Ok(
-        sqlx::query_file_as_unchecked!(BasiliqDbScannerRoleRaw, "discovery_queries/get_roles.sql")
+        sqlx::query_as(include_str!("../../discovery_queries/get_roles.sql"))
             .fetch_all(db_conn)
             .await?,
     )
@@ -222,12 +232,11 @@ pub async fn read_columns<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerColum
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    Ok(sqlx::query_file_as_unchecked!(
-        BasiliqDbScannerColumnRaw,
-        "discovery_queries/get_columns.sql"
+    Ok(
+        sqlx::query_as(include_str!("../../discovery_queries/get_columns.sql"))
+            .fetch_all(db_conn)
+            .await?,
     )
-    .fetch_all(db_conn)
-    .await?)
 }
 
 pub async fn read_types<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerTypeRaw>, sqlx::Error>
@@ -235,7 +244,7 @@ where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
     Ok(
-        sqlx::query_file_as_unchecked!(BasiliqDbScannerTypeRaw, "discovery_queries/get_types.sql")
+        sqlx::query_as(include_str!("../../discovery_queries/get_types.sql"))
             .fetch_all(db_conn)
             .await?,
     )
@@ -247,12 +256,11 @@ pub async fn read_primary_keys<'a, E>(
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    Ok(sqlx::query_file_as_unchecked!(
-        BasiliqDbScannerPrimaryKeyRaw,
-        "discovery_queries/get_primary_keys.sql"
+    Ok(
+        sqlx::query_as(include_str!("../../discovery_queries/get_primary_keys.sql"))
+            .fetch_all(db_conn)
+            .await?,
     )
-    .fetch_all(db_conn)
-    .await?)
 }
 pub async fn read_foreign_keys<'a, E>(
     db_conn: E,
@@ -260,10 +268,9 @@ pub async fn read_foreign_keys<'a, E>(
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
 {
-    Ok(sqlx::query_file_as_unchecked!(
-        BasiliqDbScannerForeignKeyRaw,
-        "discovery_queries/get_foreign_keys.sql"
+    Ok(
+        sqlx::query_as(include_str!("../../discovery_queries/get_foreign_keys.sql"))
+            .fetch_all(db_conn)
+            .await?,
     )
-    .fetch_all(db_conn)
-    .await?)
 }
