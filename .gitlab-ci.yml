@@ -38,13 +38,13 @@ build_release:
    - basic_checks
   artifacts:
     paths:
-      - target/release/basiliq
+      - target/x86_64-unknown-linux-musl/release/basiliq
     expire_in: 1 week
   before_script:
     - mkdir -p .git/hooks
   script:
     - cargo build --release
-
+  
 cargo_tests:
   stage: test
   image: registry.gitlab.com/basiliqio/dockerfiles
