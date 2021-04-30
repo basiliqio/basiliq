@@ -145,7 +145,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_proc_macro"
 version = "0.1.0"
-source = "git+https://github.com/basiliqio/basiliq_db_test_utils.git?branch=main#9e3801187171920416ec77e56dbd3d3c2fdf8675"
+source = "git+https://github.com/basiliqio/basiliq_db_test_utils.git?branch=main#6105e1315131462bc8b547864a3f96bc9248b942"
 dependencies = [
  "basiliq_db_test_utils",
  "proc-macro2",
@@ -156,7 +156,7 @@ dependencies = [
 [[package]]
 name = "basiliq_db_test_utils"
 version = "0.1.0"
-source = "git+https://github.com/basiliqio/basiliq_db_test_utils.git?branch=main#9e3801187171920416ec77e56dbd3d3c2fdf8675"
+source = "git+https://github.com/basiliqio/basiliq_db_test_utils.git?branch=main#6105e1315131462bc8b547864a3f96bc9248b942"
 dependencies = [
  "anyhow",
  "lazy_static",
