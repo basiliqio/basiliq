@@ -78,7 +78,7 @@ pub struct BasiliqDbScannerColumnRaw {
     #[getset(get_copy = "pub")]
     type_: u32,
     #[getset(get_copy = "pub")]
-    dimensions: u32,
+    dimensions: i32,
     #[getset(get_copy = "pub")]
     non_null: bool,
     #[getset(get_copy = "pub")]
@@ -147,7 +147,7 @@ pub struct BasiliqDbScannerTypeRaw {
     #[getset(get = "pub")]
     category: BasiliqDbScannerTypeCategory,
     #[getset(get_copy = "pub")]
-    dimensions: u32,
+    dimensions: i32,
 }
 
 #[derive(
