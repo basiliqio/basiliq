@@ -9,9 +9,6 @@ settings:
   - SubcommandRequiredElseHelp
 
 args:
-  - demo_mode:
-      long: demo
-      help: start in demo mode, rolling back every database query
   - dbhost:
       short: h
       long: dbhost
@@ -112,6 +109,10 @@ subcommands:
   - serve:
       about: Start basiliq's server
       args:
+        - demo_mode:
+            long: demo
+            help: start in demo mode, rolling back every database query
+            takes_value: false
         - config:
             help: config file
             required: false

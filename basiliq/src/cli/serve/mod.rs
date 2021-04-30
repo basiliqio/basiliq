@@ -32,7 +32,7 @@ pub async fn handle_cli(
                 .transpose()
                 .expect("The port should've been a valid u16 number")
                 .unwrap_or(8080),
-            demo_mode: cli_matches.is_present("demo"),
+            demo_mode: cli_matches.is_present("demo_mode"),
             config_file: match cli_matches.value_of("config") {
                 Some(config) => Some(
                     PathBuf::from_str(config)
