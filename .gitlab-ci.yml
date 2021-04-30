@@ -9,7 +9,8 @@ stages:
   - build
   - test
   - pack
-  - deploy_prepare
+  - prepare-deploy
+  - deploy
 
 basic_checks:
   stage: checks
@@ -95,6 +96,28 @@ kaniko_master:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE/basiliq:$CI_COMMIT_REF_NAME --destination $CI_REGISTRY_IMAGE/basiliq:latest --build-arg DEPLOY_USERNAME=$DEPLOY_USERNAME --build-arg DEPLOY_PASSWORD=$DEPLOY_PASSWORD
 
+kaniko_heroku:
+  stage: prepare-deploy
+  except:
+    variables:
+      - $CI_COMMIT_TAG
+  needs:
+    - cargo_tests
+    - build_release
+    - kaniko_master
+  dependencies:
+    - build_release
+  only:
+    refs:
+      - main
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"registry.heroku.com\":{\"username\":\"_\",\"password\":\"$HEROKU_API_KEY\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.heroku --destination registry.heroku.com/demo-basiliq/web:latest
+
+
 kaniko_tag:
   stage: pack
   needs:
@@ -112,15 +135,13 @@ kaniko_tag:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --destination $CI_REGISTRY_IMAGE/basiliq:$CI_COMMIT_TAG --build-arg DEPLOY_USERNAME=$DEPLOY_USERNAME --build-arg DEPLOY_PASSWORD=$DEPLOY_PASSWORD
 
-# copy_image_to_heroku:
-#   stage: deploy_prepare
-#   only:
-#     refs:
-#       - main
-#   image:
-#     name: gcr.io/go-containerregistry/crane:debug
-#     entrypoint: [""]
-#   script:
-#     - crane auth login -u _ -p $HEROKU_API_KEY registry.heroku.com
-#     - crane auth login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY 
-#     - crane cp $CI_REGISTRY_IMAGE/basiliq:latest registry.heroku.com/basiliq-demo/web
+copy_image_to_heroku:
+  stage: deploy
+  needs:
+   - kaniko_heroku
+  only:
+    refs:
+      - main
+  image: buddy/heroku-cli
+  script:
+    - heroku container:release -a basiliq-demo web
