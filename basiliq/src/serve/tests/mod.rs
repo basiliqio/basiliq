@@ -7,7 +7,7 @@ mod errors;
 mod requests;
 #[macro_use]
 mod run_test;
-use crate::serve::errors::BasiliqErrorId;
+use crate::{cli::serve::BasiliqCliServerConfig, serve::errors::BasiliqErrorId};
 use ciboulette::CibouletteErrorRequest;
 use hyper::{Body, Method, Request, Response, StatusCode};
 pub use run_test::run_request;
@@ -43,6 +43,12 @@ pub async fn prepare_basiliq_test(mut pool: sqlx::PgPool) -> Arc<BasiliqServerSt
         store,
         trust_dns_resolver::TokioAsyncResolver::tokio_from_system_conf().unwrap(),
         url::Url::parse(BASE_URL_TEST_SERVER).unwrap(),
+        BasiliqCliServerConfig {
+            bind_address: "127.0.0.1".into(),
+            bind_port: 8080,
+            config_file: None,
+            demo_mode: false,
+        },
     ))
 }
 

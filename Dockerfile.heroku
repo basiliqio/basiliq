@@ -1,3 +1,9 @@
-FROM registry.gitlab.com/basiliqio/basiliq/basiliq
+FROM registry.gitlab.com/basiliqio/basiliq/basiliq AS bin
 
-CMD [ "-P", "$PORT", "-H", "0.0.0.0", "--dynamic-config" ]
+FROM busybox
+
+COPY --from=bin /app/basiliq /app/basiliq
+
+COPY utils/heroku_entry.sh /app/entry.sh
+
+CMD [ "/app/entry.sh" ]

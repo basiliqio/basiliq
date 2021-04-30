@@ -4,7 +4,7 @@ pub mod check;
 pub mod generate;
 
 pub async fn handle_cli(
-    connect_option: PgConnectOptions,
+    connect_option: BasiliqDbConnectionOption,
     cli_matches: &ArgMatches<'_>,
 ) -> Option<BasiliqCliResult> {
     match cli_matches.subcommand() {

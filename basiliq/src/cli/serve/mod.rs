@@ -6,15 +6,17 @@ use tracing::error;
 #[derive(Clone, Debug, Getters, CopyGetters)]
 pub struct BasiliqCliServerConfig {
     #[getset(get = "pub")]
-    bind_address: String,
+    pub(crate) bind_address: String,
     #[getset(get_copy = "pub")]
-    bind_port: u16,
+    pub(crate) bind_port: u16,
     #[getset(get = "pub")]
-    config_file: Option<PathBuf>,
+    pub(crate) config_file: Option<PathBuf>,
+    #[getset(get_copy = "pub")]
+    pub(crate) demo_mode: bool,
 }
 
 pub async fn handle_cli(
-    connect_option: PgConnectOptions,
+    connect_option: BasiliqDbConnectionOption,
     cli_matches: &ArgMatches<'_>,
 ) -> Option<BasiliqCliResult> {
     Some(BasiliqCliResult {
@@ -30,6 +32,7 @@ pub async fn handle_cli(
                 .transpose()
                 .expect("The port should've been a valid u16 number")
                 .unwrap_or(8080),
+            demo_mode: cli_matches.is_present("demo"),
             config_file: match cli_matches.value_of("config") {
                 Some(config) => Some(
                     PathBuf::from_str(config)

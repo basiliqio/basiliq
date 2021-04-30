@@ -7,8 +7,6 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [features]
 better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
-# Revert all transactions, allowing to expose this service 
-demo = []
 
 [dependencies]
 basiliq_store = {version = "*", path = "../basiliq-store", package = "basiliq_store"}
@@ -32,6 +30,7 @@ paste = "1.0"
 uuid = "0.8"
 serde_urlencoded = "0.7"
 buf_redux = { version = "0.8" }
+num_cpus = "1.13.0"
 
 [dependencies.ciboulette2postgres]
 git = "https://github.com/basiliqio/ciboulette2postgres.git"

@@ -115,7 +115,7 @@ kaniko_heroku:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"registry.heroku.com\":{\"username\":\"_\",\"password\":\"$HEROKU_API_KEY\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.heroku --destination registry.heroku.com/demo-basiliq/web:latest
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.heroku --destination registry.heroku.com/basiliq-demo/web:latest
 
 
 kaniko_tag:

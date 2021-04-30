@@ -3,7 +3,7 @@ use crate::cli::serve::BasiliqCliServerConfig;
 use basiliq_store::BasiliqStore;
 use getset::Getters;
 use std::sync::Arc;
-use tracing::info;
+use tracing::{info, log::warn};
 
 use hyper::server::conn::AddrStream;
 use hyper::{Body, Request, Response, Server};
@@ -26,6 +26,7 @@ pub struct BasiliqServerState {
     store: BasiliqStore,
     dns_resolver: trust_dns_resolver::TokioAsyncResolver,
     base_url: url::Url,
+    config: BasiliqCliServerConfig,
 }
 
 impl BasiliqServerState {
@@ -34,19 +35,21 @@ impl BasiliqServerState {
         store: BasiliqStore,
         dns_resolver: trust_dns_resolver::TokioAsyncResolver,
         base_url: url::Url,
+        config: BasiliqCliServerConfig,
     ) -> Self {
         BasiliqServerState {
             db_pool,
             store,
             dns_resolver,
             base_url,
+            config,
         }
     }
 }
 
 pub async fn build_server_state(
     param: &BasiliqCliResult,
-    opt: &BasiliqCliServerConfig,
+    opt: BasiliqCliServerConfig,
 ) -> Result<BasiliqServerState, BasiliqError> {
     let pool =
         crate::database::pool::get_connection_pool(param.database_connection_infos()).await?;
@@ -54,11 +57,15 @@ pub async fn build_server_state(
         crate::config::check::create_store_builder_pool(&pool, opt.config_file().clone()).await?;
     let dns_resolver = trust_dns_resolver::TokioAsyncResolver::tokio_from_system_conf()?;
     info!("Building store...");
+    if opt.demo_mode() {
+        warn!("Starting in demo mode !");
+    }
     Ok(BasiliqServerState::new(
         pool,
         store_builder.build()?,
         dns_resolver,
         url::Url::parse("http://localhost:4444/").unwrap(),
+        opt,
     ))
 }
 
@@ -79,11 +86,11 @@ pub(crate) async fn main_service(
 
 pub async fn serve(
     param: &BasiliqCliResult,
-    opt: &BasiliqCliServerConfig,
+    opt: BasiliqCliServerConfig,
 ) -> Result<(), BasiliqError> {
     let state = Arc::new(build_server_state(param, opt).await?);
-    let ip_addr = addr::get_bind_address(state.dns_resolver(), &opt).await?;
-    let socket_addr = std::net::SocketAddr::new(ip_addr, opt.bind_port());
+    let ip_addr = addr::get_bind_address(state.dns_resolver(), &state.config()).await?;
+    let socket_addr = std::net::SocketAddr::new(ip_addr, state.config().bind_port());
     let make_svc = hyper::service::make_service_fn(|_socket: &AddrStream| {
         let state = state.clone();
 

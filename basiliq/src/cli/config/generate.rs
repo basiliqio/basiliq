@@ -10,7 +10,7 @@ pub struct BasiliqCliGenerateConfig {
 }
 
 pub async fn handle_cli(
-    connect_option: PgConnectOptions,
+    connect_option: BasiliqDbConnectionOption,
     cli_matches: &ArgMatches<'_>,
 ) -> Option<BasiliqCliResult> {
     let out_file = match cli_matches.value_of("output") {

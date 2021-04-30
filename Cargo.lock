@@ -126,6 +126,7 @@ dependencies = [
  "insta",
  "lazy_static",
  "messy_json 0.2.1 (git+https://github.com/basiliqio/messy_json.git?branch=main)",
+ "num_cpus",
  "paste",
  "serde",
  "serde_json",

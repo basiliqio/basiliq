@@ -49,3 +49,15 @@ pub fn gen_database_url(cli_matches: &ArgMatches) -> PgConnectOptions {
     };
     base_database_url
 }
+
+pub fn gen_db_connection_options(cli_matches: &ArgMatches) -> BasiliqDbConnectionOption {
+    let connection_option = gen_database_url(cli_matches);
+    let pool_max_connections = cli_matches
+        .value_of("dbconn_nb")
+        .map(|x| usize::from_str_radix(x, 10).expect("A valid, positive, natural number"));
+
+    BasiliqDbConnectionOption {
+        connection_option,
+        pool_max_connections,
+    }
+}

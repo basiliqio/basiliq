@@ -9,6 +9,9 @@ settings:
   - SubcommandRequiredElseHelp
 
 args:
+  - demo_mode:
+      long: demo
+      help: start in demo mode, rolling back every database query
   - dbhost:
       short: h
       long: dbhost
@@ -46,6 +49,11 @@ args:
   - dbssl_root_cert:
       long: dbroot_cert
       help: database root certificate
+      takes_value: true
+  - dbconn_nb:
+      long: dbconn_number
+      short: N
+      help: database connection number certificate
       takes_value: true
   - dbssl_mode:
       long: dbssl_mode
