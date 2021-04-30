@@ -1,1 +1,1 @@
-web: ./target/release/basiliq serve -P $PORT -D
+web: ./app/basiliq serve -P $PORT -D
