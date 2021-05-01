@@ -1,6 +1,6 @@
 use super::*;
 use ciboulette::*;
-use ciboulette2postgres::*;
+use ciboulette2pg::*;
 use std::convert::TryFrom;
 
 pub mod create;
@@ -26,7 +26,7 @@ async fn exec_query<'request>(
     state: &Arc<BasiliqServerState>,
     inbound_request: &'request dyn CibouletteRequestCommons<'request>,
     query: String,
-    params: Ciboulette2SqlArguments<'request>,
+    params: Ciboulette2PgArguments<'request>,
 ) -> Result<Response<Body>, BasiliqServerError> {
     let mut transaction = state.db_pool().begin().await?;
 
@@ -34,9 +34,9 @@ async fn exec_query<'request>(
         .fetch_all(&mut *transaction)
         .await
         .unwrap();
-    let rows = Ciboulette2PostgresRow::from_raw(&raw_rows)?;
+    let rows = Ciboulette2PgRow::from_raw(&raw_rows)?;
     let rows_nb = rows.len();
-    let response_elements = Ciboulette2PostgresRow::build_response_elements(
+    let response_elements = Ciboulette2PgRow::build_response_elements(
         rows,
         state.store().ciboulette(),
         inbound_request.anchor_type(),

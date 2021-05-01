@@ -63,7 +63,7 @@ cargo_tests:
     POSTGRES_PASSWORD: postgres
     POSTGRES_HOST_AUTH_METHOD: trust
     DATABASE_URL: postgres://postgres:postgres@postgres/postgres
-    NAME: ciboulette2postgres
+    NAME: Ciboulette2Pg
   before_script:
     - mkdir -p .git/hooks
     - mkdir -p target/cov/

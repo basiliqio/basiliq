@@ -77,7 +77,7 @@ dependencies = [
  "anyhow",
  "cargo-husky",
  "ciboulette",
- "ciboulette2postgres",
+ "Ciboulette2Pg",
  "env_logger",
  "getset",
  "itertools",
@@ -212,9 +212,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "ciboulette2postgres"
+name = "Ciboulette2Pg"
 version = "0.1.0"
-source = "git+https://gitlab.com/basiliq/ciboulette2postgres.git#aec92db2f73b64f23179b58ed77105783c3c7625"
+source = "git+https://gitlab.com/basiliq/Ciboulette2Pg.git#aec92db2f73b64f23179b58ed77105783c3c7625"
 dependencies = [
  "bigdecimal",
  "buf_redux",

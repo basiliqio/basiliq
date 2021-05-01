@@ -119,7 +119,7 @@ dependencies = [
  "bytes",
  "casey",
  "ciboulette",
- "ciboulette2postgres",
+ "ciboulette2pg",
  "clap",
  "getset",
  "hyper",
@@ -179,7 +179,7 @@ dependencies = [
  "bimap",
  "cargo-husky",
  "ciboulette",
- "ciboulette2postgres",
+ "ciboulette2pg",
  "env_logger 0.8.3",
  "getset",
  "insta",
@@ -391,9 +391,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "ciboulette2postgres"
+name = "ciboulette2pg"
 version = "0.1.0"
-source = "git+https://github.com/basiliqio/ciboulette2postgres.git?branch=main#01a7736f3b69fe114e010d8ac5d840bfc63f2253"
+source = "git+https://github.com/basiliqio/ciboulette2pg.git?branch=main#bb2b6a286b93d97f4707f50942190dd66bc53d87"
 dependencies = [
  "arcstr",
  "bigdecimal",

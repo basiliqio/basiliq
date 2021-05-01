@@ -24,5 +24,5 @@ pub enum BasiliqServerError {
     #[error(transparent)]
     CibouletteError(#[from] ciboulette::CibouletteError),
     #[error(transparent)]
-    Ciboulette2PostgresError(#[from] ciboulette2postgres::Ciboulette2SqlError),
+    Ciboulette2PgError(#[from] ciboulette2pg::Ciboulette2PgError),
 }

@@ -21,11 +21,11 @@ branch = "main"
 # path = "../../ciboulette"
 package = "ciboulette"
 
-[dependencies.ciboulette2postgres]
-git = "https://github.com/basiliqio/ciboulette2postgres.git"
+[dependencies.ciboulette2pg]
+git = "https://github.com/basiliqio/ciboulette2pg.git"
 branch = "main"
-# path = "../../ciboulette2postgres"
-package = "ciboulette2postgres"
+# path = "../../ciboulette2pg"
+package = "ciboulette2pg"
 
 [dependencies.messy_json]
 # git = "https://github.com/basiliqio/messy_json.git"

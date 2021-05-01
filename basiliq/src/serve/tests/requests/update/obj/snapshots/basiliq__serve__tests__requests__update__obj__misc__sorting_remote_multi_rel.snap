@@ -7,7 +7,7 @@ expression: res
   "errors": {
     "id": "[error id]",
     "status": 403,
-    "title": "Ciboulette2PostgresSortingByMultiRel",
+    "title": "Ciboulette2PgSortingByMultiRel",
     "detail": "Trying to sort type `public__articles` using its one-to-many relationships to `public__articles`"
   }
 }

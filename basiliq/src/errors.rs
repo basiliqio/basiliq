@@ -4,7 +4,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum BasiliqError {
     #[error(transparent)]
-    Ciboulette2Postgres(#[from] ciboulette2postgres::Ciboulette2SqlError),
+    Ciboulette2Pg(#[from] ciboulette2pg::Ciboulette2PgError),
     #[error(transparent)]
     Ciboulette(#[from] ciboulette::CibouletteError),
     #[error(transparent)]

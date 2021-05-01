@@ -33,7 +33,7 @@ pub use config::{
 #[getset(get = "pub")]
 pub struct BasiliqStore {
     pub(crate) ciboulette: ciboulette::CibouletteStore,
-    pub(crate) tables: ciboulette2postgres::Ciboulette2PostgresTableStore,
+    pub(crate) tables: ciboulette2pg::Ciboulette2PgTableStore,
     pub(crate) config: BasiliqStoreConfig,
 }
 

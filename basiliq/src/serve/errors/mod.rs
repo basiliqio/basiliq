@@ -1,4 +1,4 @@
-mod ciboulette2postgres_errors;
+mod ciboulette2pg_errors;
 mod ciboulette_errors;
 mod database_errors;
 mod enums;

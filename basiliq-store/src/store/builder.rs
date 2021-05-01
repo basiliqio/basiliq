@@ -3,9 +3,9 @@ use ciboulette::{
     CibouletteRelationshipManyToManyOptionBuilder, CibouletteRelationshipOneToManyOptionBuilder,
     CibouletteStoreBuilder,
 };
-use ciboulette2postgres::{
-    Ciboulette2PostgresId, Ciboulette2PostgresSafeIdent, Ciboulette2PostgresTable,
-    Ciboulette2PostgresTableStore, Ciboulette2SqlError,
+use ciboulette2pg::{
+    Ciboulette2PgError, Ciboulette2PgId, Ciboulette2PgSafeIdent, Ciboulette2PgTable,
+    Ciboulette2PgTableStore,
 };
 use std::convert::TryFrom;
 #[derive(Debug, Clone, Getters, MutGetters)]
@@ -17,9 +17,9 @@ pub struct BasiliqStoreBuilder {
 }
 
 impl BasiliqStoreBuilder {
-    pub fn build(self) -> Result<BasiliqStore, Ciboulette2SqlError> {
+    pub fn build(self) -> Result<BasiliqStore, Ciboulette2PgError> {
         let mut ciboulette_store_builder = CibouletteStoreBuilder::default();
-        let mut ciboulette_table_store = Ciboulette2PostgresTableStore::default();
+        let mut ciboulette_table_store = Ciboulette2PgTableStore::default();
         let mut already_built_rel: BTreeSet<(ArcStr, ArcStr, ArcStr)> = BTreeSet::new();
 
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
@@ -34,18 +34,16 @@ impl BasiliqStoreBuilder {
         let ciboulette_store = ciboulette_store_builder.build()?;
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             ciboulette_table_store.add_table(
-                alias.clone(),
-                Arc::new(Ciboulette2PostgresTable::new(
-                    Ciboulette2PostgresId::new_from_ciboulette_id_type(
+                ArcStr::from(alias),
+                Arc::new(Ciboulette2PgTable::new(
+                    Ciboulette2PgId::new_from_ciboulette_id_type(
                         *table.id_type(),
                         table.id_name(),
                     )?,
-                    Some(Ciboulette2PostgresSafeIdent::try_from(ArcStr::from(
+                    Some(Ciboulette2PgSafeIdent::try_from(ArcStr::from(
                         table.table().schema().name(),
                     ))?),
-                    Ciboulette2PostgresSafeIdent::try_from(ArcStr::from(
-                        table.table().table().name(),
-                    ))?,
+                    Ciboulette2PgSafeIdent::try_from(ArcStr::from(table.table().table().name()))?,
                     ciboulette_store.get_type(alias.as_str())?.clone(),
                 )),
             )
@@ -60,7 +58,7 @@ impl BasiliqStoreBuilder {
     fn insert_many_to_many(
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
-    ) -> Result<(), Ciboulette2SqlError> {
+    ) -> Result<(), Ciboulette2PgError> {
         for table in self.tables().values() {
             for (rel_alias, rel_data) in table.relationships() {
                 match rel_data.type_() {
@@ -84,14 +82,14 @@ impl BasiliqStoreBuilder {
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
         already_built_rel: &mut BTreeSet<(ArcStr, ArcStr, ArcStr)>,
-    ) -> Result<(), Ciboulette2SqlError> {
+    ) -> Result<(), Ciboulette2PgError> {
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             for (rel_alias, v) in table.relationships() {
                 let (one_type, alias_one, many_type, alias_many, many_table_key) = match v.type_() {
                     BasiliqStoreRelationshipType::OneToMany(_) => {
                         let many_alias =
                             self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
-                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
+                                Ciboulette2PgError::UnknownTable(v.ftable().to_string())
                             })?;
                         let many_type = ciboulette_store_builder.get_type(&many_alias)?.clone();
                         let one_type = ciboulette_store_builder.get_type(alias)?.clone();
@@ -107,7 +105,7 @@ impl BasiliqStoreBuilder {
                     BasiliqStoreRelationshipType::ManyToOne(_) => {
                         let one_alias =
                             self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
-                                Ciboulette2SqlError::UnknownTable(v.ftable().to_string())
+                                Ciboulette2PgError::UnknownTable(v.ftable().to_string())
                             })?;
                         let one_type = ciboulette_store_builder.get_type(&one_alias)?.clone();
                         let many_type = ciboulette_store_builder.get_type(alias)?.clone();
@@ -164,20 +162,20 @@ impl BasiliqStoreBuilder {
         rel_opt: &BasiliqStoreRelationshipManyToManyData,
         rel_data: &BasiliqStoreRelationshipData,
         rel_alias: &ArcStr,
-    ) -> Result<(), Ciboulette2SqlError> {
+    ) -> Result<(), Ciboulette2PgError> {
         let bucket_alias = self
             .aliases()
             .get_by_left(rel_opt.bucket())
-            .ok_or_else(|| Ciboulette2SqlError::UnknownTable(rel_data.ftable().to_string()))?;
+            .ok_or_else(|| Ciboulette2PgError::UnknownTable(rel_data.ftable().to_string()))?;
         let bucket_type = ciboulette_store_builder.get_type(bucket_alias)?.clone();
         let ltype_alias = self
             .aliases()
             .get_by_left(rel_data.ltable())
-            .ok_or_else(|| Ciboulette2SqlError::UnknownTable(rel_data.ftable().to_string()))?;
+            .ok_or_else(|| Ciboulette2PgError::UnknownTable(rel_data.ftable().to_string()))?;
         let rtype_alias = self
             .aliases()
             .get_by_left(rel_data.ftable())
-            .ok_or_else(|| Ciboulette2SqlError::UnknownTable(rel_data.ftable().to_string()))?;
+            .ok_or_else(|| Ciboulette2PgError::UnknownTable(rel_data.ftable().to_string()))?;
         let ltable_type = ciboulette_store_builder.get_type(ltype_alias)?.clone();
         let rtable_type = ciboulette_store_builder.get_type(rtype_alias)?.clone();
         ciboulette_store_builder.add_many_to_many_rel_no_reverse_direct_only(

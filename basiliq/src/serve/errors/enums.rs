@@ -6,7 +6,7 @@ macro_rules! error_id {
 		///
 		/// Every error in the 10000-19999 are client errors like: bad request, bad content type, utf8 errors and so on
 		/// Every error in the 20000-29999 are JSON:API (Ciboulette) errors
-		/// Every error in the 30000-39999 are Ciboulette2Postgres errors
+		/// Every error in the 30000-39999 are Ciboulette2Pg errors
 		/// Every error in the 50000-59999 are server errors (IO, etc)
 		#[derive(Copy, Debug, Clone)]
 		pub enum BasiliqErrorId
@@ -71,20 +71,20 @@ error_id!(
     { CibouletteWrongPathType,										"E20009" },
     { CibouletteUnknownError,										"E29999" },
 
-    { Ciboulette2PostgresMissingRelationship,						"E30000" },
-    { Ciboulette2PostgresRequiredSingleRelationship,				"E30001" },
-    { Ciboulette2PostgresUnknownTable,								"E30002" },
-    { Ciboulette2PostgresEmptyRelValueError,						"E30003" },
-    { Ciboulette2PostgresNullCharIdent,								"E30004" },
-    { Ciboulette2PostgresUpdatingMainObject,						"E30005" },
-    { Ciboulette2PostgresManyRelationshipDirectWrite,				"E30006" },
-    { Ciboulette2PostgresMultiIdsForSingleRelationships,			"E30007" },
-    { Ciboulette2PostgresMissingRelationForSorting,					"E30008" },
-    { Ciboulette2PostgresNonAsciiCharInIdent,						"E30009" },
-    { Ciboulette2PostgresProvidedIdOnInserts,						"E30010" },
-    { Ciboulette2PostgresMissingAttributes,							"E30011" },
-    { Ciboulette2PostgresSortingByMultiRel,							"E30012" },
-    { Ciboulette2PostgresUnknownError,								"E30013" },
+    { Ciboulette2PgMissingRelationship,								"E30000" },
+    { Ciboulette2PgRequiredSingleRelationship,						"E30001" },
+    { Ciboulette2PgUnknownTable,									"E30002" },
+    { Ciboulette2PgEmptyRelValueError,								"E30003" },
+    { Ciboulette2PgNullCharIdent,									"E30004" },
+    { Ciboulette2PgUpdatingMainObject,								"E30005" },
+    { Ciboulette2PgManyRelationshipDirectWrite,						"E30006" },
+    { Ciboulette2PgMultiIdsForSingleRelationships,					"E30007" },
+    { Ciboulette2PgMissingRelationForSorting,						"E30008" },
+    { Ciboulette2PgNonAsciiCharInIdent,								"E30009" },
+    { Ciboulette2PgProvidedIdOnInserts,								"E30010" },
+    { Ciboulette2PgMissingAttributes,								"E30011" },
+    { Ciboulette2PgSortingByMultiRel,								"E30012" },
+    { Ciboulette2PgUnknownError,									"E30013" },
 
     { Io,															"E50000" },
     { BufReaderInto,												"E50001" },

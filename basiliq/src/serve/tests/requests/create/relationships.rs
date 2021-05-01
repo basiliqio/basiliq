@@ -129,7 +129,7 @@ async fn multi_rel_m2m(pool: sqlx::PgPool) {
     assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     handle_errors(
         resp,
-        BasiliqErrorId::Ciboulette2PostgresManyRelationshipDirectWrite,
+        BasiliqErrorId::Ciboulette2PgManyRelationshipDirectWrite,
     )
     .await;
 }
@@ -198,7 +198,7 @@ async fn multi_rel_m2o(pool: sqlx::PgPool) {
     assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     handle_errors(
         resp,
-        BasiliqErrorId::Ciboulette2PostgresManyRelationshipDirectWrite,
+        BasiliqErrorId::Ciboulette2PgManyRelationshipDirectWrite,
     )
     .await;
 }
@@ -267,7 +267,7 @@ async fn multi_rel_m2o_through_m2m(pool: sqlx::PgPool) {
     assert_eq!(resp.status(), StatusCode::FORBIDDEN);
     handle_errors(
         resp,
-        BasiliqErrorId::Ciboulette2PostgresManyRelationshipDirectWrite,
+        BasiliqErrorId::Ciboulette2PgManyRelationshipDirectWrite,
     )
     .await;
 }

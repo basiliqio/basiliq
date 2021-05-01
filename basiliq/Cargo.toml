@@ -32,10 +32,10 @@ serde_urlencoded = "0.7"
 buf_redux = { version = "0.8" }
 num_cpus = "1.13.0"
 
-[dependencies.ciboulette2postgres]
-git = "https://github.com/basiliqio/ciboulette2postgres.git"
+[dependencies.ciboulette2pg]
+git = "https://github.com/basiliqio/ciboulette2pg.git"
 branch = "main"
-package = "ciboulette2postgres"
+package = "ciboulette2pg"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]

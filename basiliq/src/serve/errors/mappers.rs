@@ -15,8 +15,8 @@ pub fn convert_error_to_body(
         BasiliqServerError::CibouletteError(err) => {
             super::ciboulette_errors::handle_ciboulette_error(err)
         }
-        BasiliqServerError::Ciboulette2PostgresError(err) => {
-            super::ciboulette2postgres_errors::handle_ciboulette2postgres_error(err)
+        BasiliqServerError::Ciboulette2PgError(err) => {
+            super::ciboulette2pg_errors::handle_ciboulette2pg_error(err)
         }
         BasiliqServerError::DatabaseError(err) => super::database_errors::handle_db_error(err),
     };

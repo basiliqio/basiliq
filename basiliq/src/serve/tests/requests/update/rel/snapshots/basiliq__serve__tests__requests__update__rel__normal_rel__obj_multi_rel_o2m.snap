@@ -7,7 +7,7 @@ expression: res
   "errors": {
     "id": "[error id]",
     "status": 403,
-    "title": "Ciboulette2PostgresManyRelationshipDirectWrite",
+    "title": "Ciboulette2PgManyRelationshipDirectWrite",
     "detail": "Directly inserting/updating one-to-many or many-to-many relationships is forbidden"
   }
 }
