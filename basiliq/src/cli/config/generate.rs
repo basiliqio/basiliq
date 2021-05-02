@@ -1,14 +1,18 @@
 use super::*;
 use getset::CopyGetters;
 
+/// The `generate` CLI subcommand configuration
 #[derive(Clone, Debug, Getters, CopyGetters)]
 pub struct BasiliqCliGenerateConfig {
+    /// The path of the configuration
     #[getset(get = "pub")]
     path: std::path::PathBuf,
+    /// `true` to overwrite if there is an existing file
     #[getset(get_copy = "pub")]
     overwrite: bool,
 }
 
+/// Handle the CLI for the `generate` subcommand
 pub async fn handle_cli(
     connect_option: BasiliqDbConnectionOption,
     cli_matches: &ArgMatches<'_>,

@@ -1,5 +1,6 @@
 use super::*;
 
+/// Handle a `POST` request to create a new resource in the database
 pub fn handle_request<'request>(
     state: &'request Arc<BasiliqServerState>,
     req: &'request CibouletteCreateRequest<'request>,

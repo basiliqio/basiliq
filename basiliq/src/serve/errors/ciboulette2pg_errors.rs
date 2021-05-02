@@ -16,6 +16,10 @@ macro_rules! cib2postgres_err {
     };
 }
 
+/// Convert [Ciboulette2PgError](Ciboulette2PgError) to an HTTP response
+///
+/// The HTTP response will be made of the [status code](hyper::StatusCode) and
+/// the [ciboulette error object](CibouletteErrorObj)
 pub fn handle_ciboulette2pg_error<'a>(
     err: Ciboulette2PgError,
 ) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {

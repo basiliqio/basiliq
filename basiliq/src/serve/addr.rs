@@ -1,5 +1,6 @@
 use super::*;
 
+/// Extract the first bindable ip from the host parameter provided by the CLI or by default
 pub async fn get_bind_address(
     dns_resolver: &trust_dns_resolver::TokioAsyncResolver,
     server_cfg: &BasiliqCliServerConfig,

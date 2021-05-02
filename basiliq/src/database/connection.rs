@@ -2,6 +2,7 @@ use super::*;
 use sqlx::ConnectOptions;
 use tracing::info;
 
+/// Open a single connection to the database provided the connection option
 pub async fn get_single_connection(
     opt: &BasiliqDbConnectionOption,
 ) -> Result<sqlx::PgConnection, sqlx::Error> {

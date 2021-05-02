@@ -1,5 +1,6 @@
 use super::*;
 
+/// Handle a `DELETE` request to delete a resource in the database
 pub fn handle_request<'request>(
     state: &'request Arc<BasiliqServerState>,
     req: &'request CibouletteDeleteRequest<'request>,

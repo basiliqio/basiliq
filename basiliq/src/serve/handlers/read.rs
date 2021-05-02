@@ -1,4 +1,6 @@
 use super::*;
+
+/// Handle a `GET` request to fetch resource(s) from the database
 pub fn handle_request<'request>(
     state: &'request Arc<BasiliqServerState>,
     req: &'request CibouletteReadRequest<'request>,

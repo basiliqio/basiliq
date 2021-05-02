@@ -1,6 +1,7 @@
 use super::*;
 use ciboulette::CibouletteIntention;
 
+/// The `JSON:API` content type
 pub const JSON_API_CONTENT_TYPE: &str = "application/vnd.api+json";
 
 fn check_content_type(req: &Request<Body>) -> Result<(), BasiliqServerError> {

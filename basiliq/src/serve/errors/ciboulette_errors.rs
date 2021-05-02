@@ -16,6 +16,10 @@ macro_rules! cib_err {
     };
 }
 
+/// Convert [CibouletteError](CibouletteError) to an HTTP response
+///
+/// The HTTP response will be made of the [status code](hyper::StatusCode) and
+/// the [ciboulette error object](CibouletteErrorObj)
 pub fn handle_ciboulette_error<'a>(
     err: CibouletteError,
 ) -> (hyper::StatusCode, CibouletteErrorObj<'a>) {

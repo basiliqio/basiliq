@@ -14,4 +14,4 @@ use hyper::{Body, Response};
 use obj::BasiliqServerError;
 use std::borrow::Cow;
 
-pub use mappers::convert_error_to_body;
+pub(super) use mappers::convert_error_to_body;

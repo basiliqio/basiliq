@@ -1,14 +1,18 @@
 use super::*;
 use getset::CopyGetters;
 
+/// Configuration concerning the `check` subcommand
 #[derive(Clone, Debug, Getters, CopyGetters)]
 pub struct BasiliqCliCheckConfig {
+    /// The path of the configuration file to check
     #[getset(get = "pub")]
     path: std::path::PathBuf,
+    /// `true` if should scan the database or just check the configuration file on its own
     #[getset(get_copy = "pub")]
     scan: bool,
 }
 
+/// Handle the CLI for the `check` subcommand
 pub async fn handle_cli(
     connect_option: BasiliqDbConnectionOption,
     cli_matches: &ArgMatches<'_>,

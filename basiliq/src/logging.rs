@@ -1,5 +1,8 @@
 use tracing_subscriber::prelude::*;
 
+/// Init the logging interface by [tracing](tracing)
+///
+/// By default, if the RUST_LOG variable is not set. The informations, warnings and errors will be outputed
 pub fn init_logging() {
     let env_log = std::env::var("RUST_LOG")
         .ok()

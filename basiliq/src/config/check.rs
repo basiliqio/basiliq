@@ -7,6 +7,7 @@ use std::fs::File;
 use std::path::PathBuf;
 use tracing::{error, info};
 
+/// Read and deserialize a configuration providing a file path
 pub fn read_config_from_file(path: PathBuf) -> Result<BasiliqStoreConfig, BasiliqError> {
     let file = match File::open(path) {
         Ok(x) => x,
@@ -25,6 +26,9 @@ pub fn read_config_from_file(path: PathBuf) -> Result<BasiliqStoreConfig, Basili
     Ok(read_config)
 }
 
+/// Create a [BasiliqStoreBuilder](BasiliqStoreBuilder) from a single connection to the database
+///
+/// A configuration must be provided in that case
 pub async fn create_store_builder_single_conn(
     mut conn: sqlx::PgConnection,
     read_config: BasiliqStoreConfig,
@@ -35,6 +39,10 @@ pub async fn create_store_builder_single_conn(
     Ok(builder)
 }
 
+/// Create a [BasiliqStoreBuilder](BasiliqStoreBuilder) from a pool of connections to the database
+///
+/// A configuration might be provided, in which case the configuration provided will be merged with the scanned
+/// configuration
 pub async fn create_store_builder_pool(
     pool: &sqlx::PgPool,
     config_path: Option<PathBuf>,
@@ -51,6 +59,7 @@ pub async fn create_store_builder_pool(
     Ok(builder)
 }
 
+/// Check the configuration on it's own or against the database
 pub async fn check_config(
     param: &BasiliqCliResult,
     opt: &BasiliqCliCheckConfig,

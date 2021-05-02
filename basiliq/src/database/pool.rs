@@ -1,6 +1,7 @@
 use super::*;
 use tracing::info;
 
+/// Open a connection pool to the database provided the connection option
 pub async fn get_connection_pool(
     opt: &BasiliqDbConnectionOption,
 ) -> Result<sqlx::PgPool, sqlx::Error> {

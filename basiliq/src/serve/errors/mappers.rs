@@ -1,5 +1,6 @@
 use super::*;
 
+/// Convert a [server error](BasiliqServerError) to a valid HTTP Response
 pub fn convert_error_to_body(
     err: BasiliqServerError,
 ) -> Result<Response<Body>, BasiliqServerError> {

@@ -1,5 +1,6 @@
 use ciboulette::CibouletteResponseStatus;
 
+/// Convert a [CibouletteResponseStatus](CibouletteResponseStatus) to an [hyper status code](hyper::StatusCode)
 pub fn convert_status_code(ciboulette_status_code: CibouletteResponseStatus) -> hyper::StatusCode {
     match ciboulette_status_code {
         CibouletteResponseStatus::Ok => hyper::StatusCode::OK,

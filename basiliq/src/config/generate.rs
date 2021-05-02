@@ -4,6 +4,7 @@ use basiliq_store::{BasiliqDbScannedTable, BasiliqStoreBuilder};
 use std::fs::OpenOptions;
 use tracing::{error, info};
 
+/// Scan the database and write the generated configuration to file
 pub async fn gen_config(
     param: &BasiliqCliResult,
     opt: &BasiliqCliGenerateConfig,

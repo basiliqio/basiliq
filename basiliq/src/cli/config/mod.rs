@@ -3,6 +3,7 @@ use super::*;
 pub mod check;
 pub mod generate;
 
+/// Handle the CLI for command relative to the configuration management
 pub async fn handle_cli(
     connect_option: BasiliqDbConnectionOption,
     cli_matches: &ArgMatches<'_>,

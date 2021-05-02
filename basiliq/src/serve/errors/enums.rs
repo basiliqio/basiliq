@@ -18,6 +18,7 @@ macro_rules! error_id {
 
 		impl BasiliqErrorId
 		{
+			/// The title on an error
 			pub fn title(&self) -> &str
 			{
 				match self
@@ -30,6 +31,7 @@ macro_rules! error_id {
 				}
 			}
 
+			/// The id of an error
 			pub fn id(&self) -> &str
 			{
 				match self

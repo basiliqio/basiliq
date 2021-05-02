@@ -8,35 +8,42 @@ pub mod config;
 pub mod database_connection;
 pub mod serve;
 
-#[macro_export]
-macro_rules! print_usage {
-    ($cli:ident) => {
-        println!("{}", $cli.usage());
-        None
-    };
-}
-
+/// Type of CLI requests
 #[derive(Clone, Debug)]
 pub enum BasiliqCliIntention {
+    /// Generate configuration
     GenConfig(config::generate::BasiliqCliGenerateConfig),
+    /// Check an existing configuration, on its own or against an existing database
     CheckConfig(config::check::BasiliqCliCheckConfig),
+    /// Start the server
     Serve(serve::BasiliqCliServerConfig),
 }
 
+/// The result of CLI parsing
 #[derive(Clone, Debug, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqCliResult {
+    /// Structure holding informations to connect to the database and to maintain one or multiple connection to it
     database_connection_infos: BasiliqDbConnectionOption,
+    /// The type of command that was expected by the CLI arguments
     intention: BasiliqCliIntention,
 }
 
+/// A collections of options for the database
+///
+/// To connect to the database and to maintain one or multiple database connection
 #[derive(Clone, Debug, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqDbConnectionOption {
+    /// The connection options
     connection_option: PgConnectOptions,
+    /// The max number of connection to have in the database pool
     pool_max_connections: Option<usize>,
 }
 
+/// Parse the CLI and return the result if any.
+///
+/// If `None` is returned, the parent function should return
 pub async fn handle_cli<'a>() -> Option<BasiliqCliResult> {
     let yaml = clap::load_yaml!("clap/base.yml");
     let clap_app = clap::App::from_yaml(yaml).version(VERSION);

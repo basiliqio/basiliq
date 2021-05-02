@@ -1,5 +1,6 @@
 use super::*;
 
+/// Handle a `PATCH` request to update a resource from the database
 pub fn handle_request<'request>(
     state: &'request Arc<BasiliqServerState>,
     req: &'request CibouletteUpdateRequest<'request>,

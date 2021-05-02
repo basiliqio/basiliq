@@ -20,6 +20,7 @@ macro_rules! fill_database_url_option_number {
     };
 }
 
+/// Extract different CLI options to build a `Postgres` database connection string
 pub fn gen_database_url(cli_matches: &ArgMatches) -> PgConnectOptions {
     let env_database_url = std::env::var("DATABASE_URL")
         .ok()
@@ -50,6 +51,7 @@ pub fn gen_database_url(cli_matches: &ArgMatches) -> PgConnectOptions {
     base_database_url
 }
 
+/// Generate an option structure concerning the database connection options
 pub fn gen_db_connection_options(cli_matches: &ArgMatches) -> BasiliqDbConnectionOption {
     let connection_option = gen_database_url(cli_matches);
     let pool_max_connections = cli_matches
