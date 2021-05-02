@@ -95,8 +95,10 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreResourceConfig> for BasiliqStoreRes
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipsThroughConfig {
+    /// The target table through which the relationship is made
     #[serde(flatten)]
     pub(crate) target: BasiliqStoreTableIdentifier,
+    /// The field in the target table through which the relationship is made
     pub(crate) field: ArcStr,
 }
 
@@ -106,11 +108,14 @@ pub struct BasiliqStoreRelationshipsThroughConfig {
 )]
 #[getset(get = "pub")]
 pub struct BasiliqStoreRelationshipsConfig {
+    /// The target table of this relationship
     pub(crate) target: BasiliqStoreTableIdentifier,
+    /// In case of Many-to-Many relationship, the bucket informations
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) through: Option<BasiliqStoreRelationshipsThroughConfig>,
     #[getset(get_mut = "pub")]
     pub(crate) enabled: bool,
+    /// The field in the target table beeing referenced by that relationship
     pub(crate) field: ArcStr,
 }
 

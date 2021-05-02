@@ -8,6 +8,9 @@
 //!
 //! The [BasiliqStore](BasiliqStore) is built by scanning the database for metadatas and then merging configuration
 //! provided by the user.
+
+#![warn(clippy::all)]
+
 mod postgres_metadata;
 mod store;
 use arcstr::ArcStr;

@@ -94,7 +94,7 @@ kaniko_master:
     entrypoint: [""]
   script:
     - |-
-      cat <<EOF > /kaniko/.docker/config.json \
+      cat <<EOF > /kaniko/.docker/config.json
       {
         "auth": {
           "$CI_REGISTRY": {
@@ -147,7 +147,7 @@ kaniko_tag:
     entrypoint: [""]
   script:
     - |-
-      cat <<EOF > /kaniko/.docker/config.json \
+      cat <<EOF > /kaniko/.docker/config.json
       {
         "auth": {
           "$CI_REGISTRY": {

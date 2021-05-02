@@ -1,3 +1,5 @@
+#![warn(clippy::all)]
+
 mod cli;
 mod config;
 mod database;
