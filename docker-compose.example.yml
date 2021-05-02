@@ -1,0 +1,19 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres
+    command: ["postgres", "-c", "log_statement=all"]
+    restart: always
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+  basiliq:
+    image: basiliqio/basiliq:latest
+    command: ["serve", "-P", "4444", "-H", "0.0.0.0", "--dynamic-config"]
+    restart: always
+    ports:
+      - 127.0.0.1:4444:4444
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres/postgres

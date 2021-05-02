@@ -9,10 +9,10 @@ use tracing::{error, info};
 
 /// Read and deserialize a configuration providing a file path
 pub fn read_config_from_file(path: PathBuf) -> Result<BasiliqStoreConfig, BasiliqError> {
-    let file = match File::open(path) {
+    let file = match File::open(path.clone()) {
         Ok(x) => x,
         Err(err) => {
-            error!("Failed to read configuration: {}", err);
+            error!("Failed to read configuration: {:#?}: {}", path, err);
             return Err(BasiliqError::from(err));
         }
     };

@@ -89,21 +89,25 @@ subcommands:
             args:
               - output:
                   short: o
+                  long: output
                   help: output file
                   takes_value: true
               - overwrite:
                   short: w
+                  long: overwrite
                   help: overwrite file
                   takes_value: false
         - check:
             about: Check that the configuration is valid
             args:
-              - output:
+              - input:
                   short: i
+                  long: input
                   help: input file
                   takes_value: true
               - no_scan:
                   short: n
+                  long: no-scan
                   help: don't scan the database to check against it's schema
                   takes_value: false
   - serve:
