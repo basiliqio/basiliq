@@ -1,6 +1,7 @@
 use super::*;
 
 impl BasiliqStoreBuilder {
+    /// Generate the configuration for the current [BasiliqStoreBuilder](BasiliqStoreBuilder)
     pub(crate) fn gen_config(&self) -> BasiliqStoreConfig {
         let mut resources: BTreeMap<String, BasiliqStoreResourceConfig> = BTreeMap::new();
 
@@ -73,17 +74,20 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreBuilder {
                     ) {
                         match x {
                             EitherOrBoth::Both((k1, _v1), (k2, _v2)) => {
+                                // Rename to the new alias name
                                 new_rel
                                     .remove(k1.as_str())
                                     .and_then(|x| new_rel.insert(k2.clone(), x));
                             }
                             EitherOrBoth::Left((_, v1)) => {
+                                // It's an error to have a resource we don't know about in the auto-generated configuration
                                 return Err(BasiliqStoreConfigError::UnkownResource(
                                     BasiliqStoreConfigErrorSource::BaseConfig,
                                     v1.ltable().clone(),
                                 ));
                             }
                             EitherOrBoth::Right((_, v2)) => {
+                                // It's an error to have a resource we don't know about in the provided configuration
                                 return Err(BasiliqStoreConfigError::UnkownResource(
                                     BasiliqStoreConfigErrorSource::ProvidedConfig,
                                     v2.target().clone(),

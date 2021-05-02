@@ -1,6 +1,7 @@
 use super::*;
 
 impl BasiliqStoreBuilder {
+    /// Postgres type to [MessyJson](MessyJson)
     fn type_to_messy_json(
         col_settings: &BasiliqDbScannerColumn,
         type_: &BasiliqDbScannerTypeRaw,
@@ -77,6 +78,7 @@ impl BasiliqStoreBuilder {
         }
     }
 
+    /// Create a new id type from a `Postgres` type
     fn type_to_id(col_settings: &BasiliqDbScannerColumn) -> Option<CibouletteIdType> {
         match col_settings.type_() {
             BasiliqDbScannedType::Simple(type_) => match type_.category() {
@@ -136,6 +138,8 @@ impl BasiliqStoreBuilder {
         }
     }
 
+    /// Build a table builder from a table, knowning its primary key column's id
+    /// and a list of its foreign keys
     pub fn build_object(
         table: Arc<BasiliqDbScannedTable>,
         pkey: i16,

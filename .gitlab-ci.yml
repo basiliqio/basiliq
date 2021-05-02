@@ -135,7 +135,7 @@ kaniko_tag:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --destination $CI_REGISTRY_IMAGE/basiliq:$CI_COMMIT_TAG --build-arg DEPLOY_USERNAME=$DEPLOY_USERNAME --build-arg DEPLOY_PASSWORD=$DEPLOY_PASSWORD
 
-copy_image_to_heroku:
+deploy_heroku:
   stage: deploy
   needs:
    - kaniko_heroku

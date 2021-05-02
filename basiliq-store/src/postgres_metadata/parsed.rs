@@ -3,6 +3,7 @@ use getset::Getters;
 use log::warn;
 use std::sync::Arc;
 
+/// A scanned database from the database
 #[derive(Debug, Clone, Getters, PartialEq, Eq)]
 #[getset(get = "pub")]
 pub struct BasiliqDbScannedTable {
@@ -15,6 +16,7 @@ pub struct BasiliqDbScannedTable {
     columns_by_id: HashMap<i16, Arc<BasiliqDbScannerColumn>>,
 }
 
+/// A scanned column from the database
 #[derive(Debug, Clone, Getters, PartialEq, Eq)]
 #[getset(get = "pub")]
 pub struct BasiliqDbScannerColumn {
@@ -22,13 +24,18 @@ pub struct BasiliqDbScannerColumn {
     type_: BasiliqDbScannedType,
 }
 
+/// The type of scanned type
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum BasiliqDbScannedType {
+    /// A normal, simple type
     Simple(raw::BasiliqDbScannerTypeRaw),
+    /// A nested type, that wraps another types
     Nested(raw::BasiliqDbScannerTypeRaw, Box<BasiliqDbScannedType>),
 }
 
 impl BasiliqDbScannedTable {
+    /// Create a new [BasiliqDbScannedTable](BasiliqDbScannedTable) from parts
+    // TODO Clean this functions, breaking it into multiple functions
     pub fn new(
         schemas: Vec<raw::BasiliqDbScannerSchemaRaw>,
         tables: Vec<raw::BasiliqDbScannerTableRaw>,
@@ -130,6 +137,7 @@ impl BasiliqDbScannedTable {
         res
     }
 
+    /// Scan the database using a single connection, returning a list of [BasiliqDbScannedTable](BasiliqDbScannedTable)
     pub async fn scan_db<'a, I>(conn: I) -> Result<Vec<Arc<Self>>, sqlx::Error>
     where
         I: sqlx::Acquire<'a, Database = sqlx::Postgres, Connection = &'a mut sqlx::PgConnection>,
@@ -153,6 +161,8 @@ impl BasiliqDbScannedTable {
         ))
     }
 
+    /// Scan the database using a connection pool, returning a list of [BasiliqDbScannedTable](BasiliqDbScannedTable).
+    /// It'll try to query the database as concurently as possible
     pub async fn scan_db_pool(pool: sqlx::PgPool) -> Result<Vec<Arc<Self>>, sqlx::Error> {
         let (schemas, tables, columns, types, primary_keys, foreign_keys) = tokio::try_join!(
             raw::read_schemas(&pool),

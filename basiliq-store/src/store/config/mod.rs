@@ -28,43 +28,6 @@ pub use mergeable::BasiliqStoreConfigMergeable;
 pub struct BasiliqStoreConfig {
     pub(crate) resources: BTreeMap<String, BasiliqStoreResourceConfig>,
 }
-
-// impl BasiliqStoreConfigMergeable<BasiliqStoreConfig> for BasiliqStoreConfig {
-//     fn basiliq_config_merge(&mut self, other: &Self) -> Result<(), BasiliqStoreConfigError> {
-//         let mut new_resources: BTreeMap<String, BasiliqStoreResourceConfig> =
-//             self.resources.clone();
-
-//         for x in self
-//             .resources()
-//             .iter()
-//             .merge_join_by(other.resources().iter(), |(_k1, v1), (_k2, v2)| {
-//                 v1.target().cmp(v2.target())
-//             })
-//         {
-//             match x {
-//                 EitherOrBoth::Both((k1, v1), (k2, v2)) => {
-//                     let mut new = v1.clone();
-//                     new.basiliq_config_merge(v2)?;
-//                     if k1 != k2 {
-//                         new_resources.remove(k1);
-//                         new_resources.insert(k2.clone(), new);
-//                     } else if let Some(x) = new_resources.get_mut(k1) {
-// 						*x = new
-// 					}
-//                 }
-//                 EitherOrBoth::Left((k1, _v1)) => {
-//                     new_resources.remove(k1); // FIXME Should fails
-//                 }
-//                 EitherOrBoth::Right((k2, v2)) => {
-//                     new_resources.insert(k2.clone(), v2.clone()); // FIXME Should fails
-//                 }
-//             }
-//         }
-//         self.resources = new_resources;
-//         Ok(())
-//     }
-// }
-
 /// The configuration of a store resource
 #[derive(
     Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Getters, MutGetters,
@@ -167,6 +130,7 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreRelationshipsConfig>
 }
 
 impl BasiliqStoreConfig {
+    /// Check that every resource identifier are unique
     fn check_uniq(&self) -> Result<(), BasiliqStoreConfigError> {
         let mut name_set: BTreeSet<&BasiliqStoreTableIdentifier> = BTreeSet::new();
 
@@ -179,6 +143,8 @@ impl BasiliqStoreConfig {
         }
         Ok(())
     }
+
+    /// Perform logic checks on the store configuration
     pub fn check(&self) -> Result<(), BasiliqStoreConfigError> {
         self.check_uniq()
     }

@@ -14,9 +14,12 @@ pub enum BasiliqStoreConfigError {
     UnkownResource(BasiliqStoreConfigErrorSource, BasiliqStoreTableIdentifier),
 }
 
+/// The source of configuration error
 #[derive(Debug, Clone, Copy)]
 pub enum BasiliqStoreConfigErrorSource {
+    /// The configuration that was built by scanning the database
     BaseConfig,
+    /// The configuration that was provided
     ProvidedConfig,
 }
 

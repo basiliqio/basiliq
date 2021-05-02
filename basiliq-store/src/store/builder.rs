@@ -8,20 +8,29 @@ use ciboulette2pg::{
     Ciboulette2PgTableStore,
 };
 use std::convert::TryFrom;
+
+/// Builder for Basiliq Store
 #[derive(Debug, Clone, Getters, MutGetters)]
 #[getset(get = "pub", get_mut = "pub(crate)")]
 pub struct BasiliqStoreBuilder {
+    /// A map of the available table by their identifier
     pub(crate) tables: BTreeMap<BasiliqStoreTableIdentifier, BasiliqStoreTable>,
+    /// A double map, between table identifier and their resource alias
     pub(crate) aliases: BiBTreeMap<BasiliqStoreTableIdentifier, String>,
+    /// The store configuration
     pub(crate) config: BasiliqStoreConfig,
 }
 
 impl BasiliqStoreBuilder {
+    /// Consume this builder and build the [BasiliqStore](BasiliqStore)
+    ///
+    /// This will create the relationships between the tables
     pub fn build(self) -> Result<BasiliqStore, Ciboulette2PgError> {
         let mut ciboulette_store_builder = CibouletteStoreBuilder::default();
         let mut ciboulette_table_store = Ciboulette2PgTableStore::default();
         let mut already_built_rel: BTreeSet<(ArcStr, ArcStr, ArcStr)> = BTreeSet::new();
 
+        // Populate the CibouletteStoreBuilder
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             ciboulette_store_builder.add_type(
                 alias.as_str(),
@@ -32,6 +41,7 @@ impl BasiliqStoreBuilder {
         self.insert_one_to_many(&mut ciboulette_store_builder, &mut already_built_rel)?;
         self.insert_many_to_many(&mut ciboulette_store_builder)?;
         let ciboulette_store = ciboulette_store_builder.build()?;
+        // Populate the Ciboulette2PgTableStore
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             ciboulette_table_store.add_table(
                 ArcStr::from(alias),
@@ -55,6 +65,7 @@ impl BasiliqStoreBuilder {
         })
     }
 
+    /// Insert into the [CibouletteStoreBuilder](CibouletteStoreBuilder) the Many-to-Many relationships
     fn insert_many_to_many(
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
@@ -78,6 +89,7 @@ impl BasiliqStoreBuilder {
         Ok(())
     }
 
+    /// Insert into the [CibouletteStoreBuilder](CibouletteStoreBuilder) the One-to-Many and Many-to-One relationships
     fn insert_one_to_many(
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
@@ -193,16 +205,23 @@ impl BasiliqStoreBuilder {
     }
 }
 
+/// Builder for a [BasiliqStoreTable](BasiliqStoreTable)
 #[derive(Debug, Clone, Getters, PartialEq, Eq)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreTableBuilder {
+    /// The scanned table from Postgres
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
+    /// The type of identifier for that table
     pub(crate) id_type: CibouletteIdType,
+    /// The identifier name of the table. (Its primary key)
+    /// TODO Support more than 1 primary key
     pub(crate) id_name: String,
+    /// The properties of the tables
     pub(crate) properties: MessyJsonObject,
 }
 
 impl BasiliqStoreTableBuilder {
+    /// Build into a [BasiliqStoreTable](BasiliqStoreTable) provided a list of relationships to inserts, consuming the builder object
     pub fn build<I>(self, relationships: I) -> BasiliqStoreTable
     where
         I: IntoIterator<Item = (String, BasiliqStoreRelationshipData)>,
@@ -220,17 +239,24 @@ impl BasiliqStoreTableBuilder {
     }
 }
 
+/// A Postgres table
 #[derive(Debug, Clone, Getters, PartialEq)]
 #[getset(get = "pub")]
 pub struct BasiliqStoreTable {
+    /// Metadata scanned about the table
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
+    /// The type of id
     pub(crate) id_type: CibouletteIdType,
+    /// The name of the main identifier (primary key)
     pub(crate) id_name: ArcStr,
+    /// A relationship map
     pub(crate) relationships: BTreeMap<ArcStr, BasiliqStoreRelationshipData>,
+    /// A list of attributes for that table
     pub(crate) properties: MessyJsonObject,
 }
 
 impl BasiliqStoreBuilder {
+    /// Check if the provided table is part of postgres system schema
     pub fn check_schema(table: &BasiliqDbScannedTable) -> Option<&BasiliqDbScannedTable> {
         match POSTGRES_SYSTEM_SCHEMA.contains(&table.schema().name().as_str())
 		// If in a system schema
@@ -240,10 +266,12 @@ impl BasiliqStoreBuilder {
 		}
     }
 
+    /// Get a table by its identifier
     pub fn get_table(&self, ident: &BasiliqStoreTableIdentifier) -> Option<&BasiliqStoreTable> {
         self.tables().get(ident)
     }
 
+    /// Get a table by its alias
     pub fn get_table_by_alias(&self, alias: &str) -> Option<&BasiliqStoreTable> {
         self.aliases()
             .get_by_right(alias)

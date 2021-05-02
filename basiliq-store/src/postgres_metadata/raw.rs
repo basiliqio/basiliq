@@ -1,6 +1,7 @@
 use getset::{CopyGetters, Getters};
 use serde::{Deserialize, Serialize};
 
+/// A scanned `Postgres` schema
 #[derive(
     Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
 )]
@@ -15,6 +16,7 @@ pub struct BasiliqDbScannerSchemaRaw {
     usage: bool,
 }
 
+/// A scanned `Postgres` role
 #[derive(
     Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow,
 )]
@@ -25,6 +27,7 @@ pub struct BasiliqDbScannerRoleRaw {
     name: String,
 }
 
+/// A scanned `Postgres` table type
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::Type)]
 #[repr(i8)]
 pub enum BasiliqDbScannerTableType {
@@ -37,6 +40,7 @@ pub enum BasiliqDbScannerTableType {
     View = 118,         // v
 }
 
+/// A scanned `Postgres` table
 #[derive(
     Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
 )]
@@ -65,6 +69,7 @@ pub struct BasiliqDbScannerTableRaw {
     delete_perm: bool,
 }
 
+/// A scanned `Postgres` column
 #[derive(
     Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow,
 )]
@@ -93,6 +98,7 @@ pub struct BasiliqDbScannerColumnRaw {
     reference_perm: bool,
 }
 
+/// A scanned `Postgres` type type
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::Type)]
 #[repr(i8)]
 pub enum BasiliqDbScannerTypeType {
@@ -104,6 +110,7 @@ pub enum BasiliqDbScannerTypeType {
     Range = 114,    // r
 }
 
+/// A scanned `Postgres` type category
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::Type)]
 #[repr(i8)]
 pub enum BasiliqDbScannerTypeCategory {
@@ -124,6 +131,7 @@ pub enum BasiliqDbScannerTypeCategory {
     Unknown = 88,        // X
 }
 
+/// A scanned `Postgres` type
 #[derive(
     Getters, CopyGetters, Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow,
 )]
@@ -150,6 +158,7 @@ pub struct BasiliqDbScannerTypeRaw {
     dimensions: i32,
 }
 
+/// A scanned `Postgres` primary key
 #[derive(
     Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
 )]
@@ -168,6 +177,7 @@ pub struct BasiliqDbScannerPrimaryKeyRaw {
     columns: Vec<i16>,
 }
 
+/// A scanned `Postgres` foreign key
 #[derive(
     Getters, CopyGetters, Clone, Debug, Serialize, Deserialize, PartialEq, Eq, sqlx::FromRow,
 )]
@@ -194,6 +204,7 @@ pub struct BasiliqDbScannerForeignKeyRaw {
     fcolumns: Option<Vec<i16>>,
 }
 
+/// Read the database schemas
 pub async fn read_schemas<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerSchemaRaw>, sqlx::Error>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
@@ -205,6 +216,7 @@ where
     )
 }
 
+/// Read the database tables
 pub async fn read_tables<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerTableRaw>, sqlx::Error>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
@@ -216,6 +228,7 @@ where
     )
 }
 
+/// Read the database roles
 #[allow(dead_code)]
 pub async fn read_roles<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerRoleRaw>, sqlx::Error>
 where
@@ -228,6 +241,7 @@ where
     )
 }
 
+/// Read the database columns
 pub async fn read_columns<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerColumnRaw>, sqlx::Error>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
@@ -239,6 +253,7 @@ where
     )
 }
 
+/// Read the database types
 pub async fn read_types<'a, E>(db_conn: E) -> Result<Vec<BasiliqDbScannerTypeRaw>, sqlx::Error>
 where
     E: sqlx::Executor<'a, Database = sqlx::Postgres>,
@@ -250,6 +265,7 @@ where
     )
 }
 
+/// Read the database primary keys
 pub async fn read_primary_keys<'a, E>(
     db_conn: E,
 ) -> Result<Vec<BasiliqDbScannerPrimaryKeyRaw>, sqlx::Error>
@@ -262,6 +278,7 @@ where
             .await?,
     )
 }
+/// Read the database foreign keys
 pub async fn read_foreign_keys<'a, E>(
     db_conn: E,
 ) -> Result<Vec<BasiliqDbScannerForeignKeyRaw>, sqlx::Error>
