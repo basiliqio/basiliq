@@ -14,7 +14,7 @@
 mod postgres_metadata;
 mod store;
 use arcstr::ArcStr;
-
+pub use messy_json;
 #[cfg(test)]
 mod tests;
 

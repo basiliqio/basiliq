@@ -12,6 +12,7 @@ pub mod addr;
 pub mod errors;
 pub mod handlers;
 pub mod server;
+pub mod signals;
 pub mod status_code;
 
 #[cfg(test)]
@@ -111,7 +112,6 @@ pub async fn serve(
     let make_svc = hyper::service::make_service_fn(|_socket: &AddrStream| {
         // Get a reference to the server state
         let state = state.clone();
-
         async move {
             Ok::<_, BasiliqServerError>(hyper::service::service_fn(move |req| {
                 // Call the main service
@@ -119,9 +119,12 @@ pub async fn serve(
             }))
         }
     });
+
+    info!("Starting server...");
     Server::bind(&socket_addr)
         .http2_only(false)
         .serve(make_svc)
+        .with_graceful_shutdown(signals::wait_for_term_signal())
         .await?;
     Ok(())
 }

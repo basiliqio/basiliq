@@ -121,6 +121,7 @@ dependencies = [
  "ciboulette",
  "ciboulette2pg",
  "clap",
+ "futures",
  "getset",
  "hyper",
  "insta",
