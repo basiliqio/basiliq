@@ -3,13 +3,9 @@ authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
 edition = "2018"
 name = "basiliq"
 version = "0.1.0"
-
-# [[bin]]
-# name = "basiliq"
-# test = false
-# bench = false
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "REST API server exposing a Postgres database using JSON:API"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/basiliqio/basiliq"
 [features]
 better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
 
