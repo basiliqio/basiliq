@@ -335,9 +335,9 @@ dependencies = [
 
 [[package]]
 name = "ciboulette2pg"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b09c07f7be91004df0297c8096d6953ceaa6d0f323e92d41584791840ceab106"
+checksum = "18db21707643973df404d0b2ed823a22a02c3dab30415e12e35a44da73b87ded"
 dependencies = [
  "arcstr",
  "bigdecimal",

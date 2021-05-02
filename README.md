@@ -28,7 +28,7 @@ See the [documentation](https://docs.rs/basiliq)
 
 ## What is Basiliq
 
-Basiliq is a **very-very alpha** REST API data-centric server. It aims at reducing the time (sometimes wasted) invested in writing CRUD operations. It respects the established [JSON:API](https://jsonapi.org/format/)
+Basiliq is a **very alpha** REST API data-centric server. It aims at reducing the time (sometimes wasted) invested in writing CRUD operations. It respects the established [JSON:API](https://jsonapi.org/format/)
 specifications. Written in [Rust](https://www.rust-lang.org/fr), it tries to conciliate performance with stability.
 
 ## Quickstart
