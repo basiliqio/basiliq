@@ -1,0 +1,94 @@
+---
+source: src/basiliq_store/tests/config.rs
+expression: builder.config()
+
+---
+{
+  "resources": {
+    "court_metrage": {
+      "target": {
+        "schema": "public",
+        "table": "movies"
+      },
+      "enabled": true,
+      "relationships": {
+        "public__movies_staff": {
+          "target": {
+            "schema": "public",
+            "table": "movies_staff"
+          },
+          "enabled": true,
+          "field": "movies"
+        },
+        "public__peoples": {
+          "target": {
+            "schema": "public",
+            "table": "peoples"
+          },
+          "through": {
+            "schema": "public",
+            "table": "movies_staff",
+            "field": "person"
+          },
+          "enabled": true,
+          "field": "id"
+        }
+      }
+    },
+    "employee": {
+      "target": {
+        "schema": "public",
+        "table": "peoples"
+      },
+      "enabled": true,
+      "relationships": {
+        "public__movies": {
+          "target": {
+            "schema": "public",
+            "table": "movies"
+          },
+          "through": {
+            "schema": "public",
+            "table": "movies_staff",
+            "field": "movies"
+          },
+          "enabled": true,
+          "field": "id"
+        },
+        "public__movies_staff": {
+          "target": {
+            "schema": "public",
+            "table": "movies_staff"
+          },
+          "enabled": true,
+          "field": "person"
+        }
+      }
+    },
+    "movies_staff": {
+      "target": {
+        "schema": "public",
+        "table": "movies_staff"
+      },
+      "enabled": false,
+      "relationships": {
+        "public__movies": {
+          "target": {
+            "schema": "public",
+            "table": "movies"
+          },
+          "enabled": true,
+          "field": "id"
+        },
+        "public__peoples": {
+          "target": {
+            "schema": "public",
+            "table": "peoples"
+          },
+          "enabled": true,
+          "field": "id"
+        }
+      }
+    }
+  }
+}

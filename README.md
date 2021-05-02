@@ -83,6 +83,10 @@ By modifying the configuration one could change how those endpoints are exposed.
 <details>
 <summary>Creating request</summary>
 
+Notice the lack of id in the request.
+
+Also, in the response, the fields that were not included are set to their default
+
 ```http
 POST /public__peoples HTTP/1.1
 Host: demo.basiliq.io
@@ -94,7 +98,6 @@ Content-Length: 174
 {
     "data": {
         "type": "public__peoples",
-		# Notice the lack of id
         "attributes": {
             "first-name": "Somebody",
             "last-name": "Once_told_me_the_world",
@@ -118,7 +121,7 @@ Date: Sun, 02 May 2021 20:20:52 GMT
         "type": "public__peoples",
         "id": "d14e1928-9cae-441c-945d-144ebe6c94c8",
         "attributes": {
-            "age": null,                               # The fields that were not included are set to their default
+            "age": null,
             "first-name": "Somebody",
             "gender": "F",
             "last-name": "Once_told_me_the_world",
@@ -190,6 +193,10 @@ Date: Sun, 02 May 2021 20:13:47 GMT
 <details>
 <summary>Fetching requests including relationships and sparsing fields</summary>
 
+You can find the attributes of the objects in the `relationships` key of each main resource in the `included` key below.
+
+Notice that the comments object have only ids, because all of their fields have been un-selected via the `fields[public__comments]=` query parameter.
+
 ```http
 GET /public__peoples?include=public__articles,public__comments&fields[public__comments]= HTTP/1.1
 Host: demo.basiliq.io:80
@@ -221,7 +228,7 @@ date: Sun, 02 May 2021 20:08:12 GMT
                     "data": [
                         {
                             "type": "public__articles",
-                            "id": "fdf715dd-8772-498c-8196-6f4ccb64edef" # You can find the attributes of those items in the `included` key below
+                            "id": "fdf715dd-8772-498c-8196-6f4ccb64edef"
                         },
                         {
                             "type": "public__articles",
@@ -233,8 +240,8 @@ date: Sun, 02 May 2021 20:08:12 GMT
                     "data": [
                         {
                             "type": "public__comments",
-                            "id": "59f58abd-c9db-4074-9c34-ac33e9c838ce" # In this request none of the attributes of the comments resource are selected
-                        },                                               # so we get only the `id`s
+                            "id": "59f58abd-c9db-4074-9c34-ac33e9c838ce"
+                        },
                         {
                             "type": "public__comments",
                             "id": "c2add83b-6f58-45a2-bf62-3ebc05c46192"
@@ -325,6 +332,8 @@ date: Sun, 02 May 2021 20:08:12 GMT
 <details>
 <summary>Updating request</summary>
 
+Notice that attributes that were not included in the `PATCH` request are not nulled.
+
 ```http
 PATCH /public__peoples/777cc565-c66b-4942-ab44-8fc5f194b804 HTTP/1.1
 Host: demo.basiliq.io
@@ -360,7 +369,7 @@ Date: Sun, 02 May 2021 20:24:50 GMT
         "attributes": {
             "age": 34,
             "first-name": "NotTheOriginalFirstName",
-            "gender": "F",                              # Attributes that were not included but existed before are not nulled
+            "gender": "F",
             "last-name": "NotTheOriginalLastName",
             "twitter": "@randomhandle"
         }
@@ -394,11 +403,10 @@ Date: Sun, 02 May 2021 20:25:54 GMT
 ```
 </details>
 
-## Usage
 
-### The configuration
+## The configuration
 
-#### Generation 
+### Generation 
 Typically, one would first need to create a configuration, however this is
 not mandatory to run _basiliq_.
 
@@ -410,7 +418,7 @@ basiliq config generate
 
 It would generate a file called `basiliq_config.yaml` in the current working directory.
 
-#### What's in there
+### What's in there
 
 This file would look like the following :
 
@@ -442,7 +450,7 @@ resources:                 # The list of resources
 [...]
 ```
 
-#### Checking the config
+### Checking the config
 
 After having generated the configuration, one might need to ensure its correct.
 
@@ -452,20 +460,3 @@ One could do that with the following command:
 basiliq config check --input basiliq_config.yaml 
 ```
 
-## Serving
-
-### Without config
-
-You can start the server without configuration using the following command:
-
-```sh
-basiliq serve --dynamic-config
-```
-
-### With a config
-
-Or you can star the server with a configuration
-
-```sh
-basiliq serve basiliq_config.yaml
-```
