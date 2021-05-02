@@ -133,24 +133,3 @@ impl BasiliqStoreConfigMergeable<BasiliqStoreRelationshipsConfig>
         Ok(())
     }
 }
-
-impl BasiliqStoreConfig {
-    /// Check that every resource identifier are unique
-    fn check_uniq(&self) -> Result<(), BasiliqStoreConfigError> {
-        let mut name_set: BTreeSet<&BasiliqStoreTableIdentifier> = BTreeSet::new();
-
-        for resource in self.resources.values() {
-            if !name_set.insert(resource.target()) {
-                return Err(BasiliqStoreConfigError::DuplicateTable(
-                    resource.target().clone(),
-                ));
-            }
-        }
-        Ok(())
-    }
-
-    /// Perform logic checks on the store configuration
-    pub fn check(&self) -> Result<(), BasiliqStoreConfigError> {
-        self.check_uniq()
-    }
-}

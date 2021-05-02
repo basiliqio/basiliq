@@ -267,11 +267,13 @@ impl BasiliqStoreBuilder {
     }
 
     /// Get a table by its identifier
+    #[allow(dead_code)]
     pub fn get_table(&self, ident: &BasiliqStoreTableIdentifier) -> Option<&BasiliqStoreTable> {
         self.tables().get(ident)
     }
 
     /// Get a table by its alias
+    #[allow(dead_code)]
     pub fn get_table_by_alias(&self, alias: &str) -> Option<&BasiliqStoreTable> {
         self.aliases()
             .get_by_right(alias)
