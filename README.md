@@ -31,7 +31,7 @@ All in all, a tasty API.
 	- [How to query](#how-to-query)
 	- [Example requests](#example-requests)
 - [The configuration](#the-configuration)
-	- [Generation](#generation)
+	- [Generating](#generating)
 	- [What's in there](#whats-in-there)
 	- [Checking the configuration](#checking-the-configuration)
 - [Testing](#testing)
@@ -39,9 +39,9 @@ All in all, a tasty API.
 
 ## What is Basiliq
 
-Basiliq is a **very alpha** REST API that abstracts the need to write CRUD methods by exposing a standardized API to interact with a [Postgres](https://www.postgresql.org/) database
+Basiliq is a **very alpha** REST API that replaces the need to write CRUD methods by exposing a standardized API to interact with a [Postgres](https://www.postgresql.org/) database
 
-It respects the established [JSON:API](https://jsonapi.org/format/)
+It follows the established [JSON:API](https://jsonapi.org/format/)
 specifications. Written in [Rust](https://www.rust-lang.org/fr), it tries to conciliate performance with stability.
 
 ## Quickstart
@@ -57,7 +57,7 @@ For instance:
 # For a very simple example
 curl 'http://demo.basiliq.io/public__peoples'
 
-# For a more complexe example
+# For a more complex example
 curl 'http://demo.basiliq.io/public__peoples?include=public__articles,public__comments&fields\[public__comments\]='
 
 ```
@@ -86,9 +86,9 @@ docker-compose -f docker-compose.example.yml down
 
 In the future, there should be a way to generate an [OpenApi](https://swagger.io/specification/) document to view exactly how the _API_ is accessible.
 
-The _API_ response respects the [JSON:API specifications](https://jsonapi.org/format/).
+The _API_ response follows the [JSON:API specifications](https://jsonapi.org/format/).
 
-By default, the endpoint are exposed in the format `schema__table`
+By default, the endpoints are exposed in the format `schema__table`
 (i.e. for a table `peoples` in the `public` schema, the endpoint would be `public__table`).
 
 By modifying the configuration one could change how those endpoints are exposed.
@@ -100,7 +100,7 @@ By modifying the configuration one could change how those endpoints are exposed.
 
 Notice the lack of id in the request.
 
-Also, in the response, the fields that were not included are set to their default
+Also, in the response, the fields that were not specified are set to their default
 
 ```http
 POST /public__peoples HTTP/1.1
@@ -210,7 +210,7 @@ Date: Sun, 02 May 2021 20:13:47 GMT
 
 You can find the attributes of the objects in the `relationships` key of each main resource in the `included` key below.
 
-Notice that the comments object have only ids, because all of their fields have been un-selected via the `fields[public__comments]=` query parameter.
+Notice that the comments object have only `id`s, because none of their fields was selected via the `fields[public__comments]=` query parameter.
 
 ```http
 GET /public__peoples?include=public__articles,public__comments&fields[public__comments]= HTTP/1.1
@@ -421,7 +421,8 @@ Date: Sun, 02 May 2021 20:25:54 GMT
 
 ## The configuration
 
-### Generation 
+### Generating
+
 Typically, one would first need to create a configuration, however this is
 not mandatory to run _basiliq_.
 
@@ -451,15 +452,15 @@ resources:                 # The list of resources
           schema: public   # The schema this relationship's resource is bound to in the database
           table: comments  # The name of the table bound to this relationship's resource
         enabled: true      # `true` if this relationship is enabled
-        field: article     # The field on which this relationship is bound
+        field: article     # The field to which this relationship is bound
       public__peoples:
         target:
           schema: public
           table: peoples
-        through:           # For Many-to-Many relationships identify the bucket table
+        through:           # Identifies the bucket table for Many-to-Many relationships 
           schema: public   # The schema of the bucket resource
           table: comments  # The table of the bucket resource
-          field: author    # The field on which that this relationship's resource is bound to the bucket resource
+          field: author    # The field linking the relationship's resource and the bucket resource
         enabled: true
         field: id
 [...]
@@ -467,7 +468,7 @@ resources:                 # The list of resources
 
 ### Checking the configuration
 
-After having generated the configuration, one might need to ensure its correct.
+After having generated the configuration, one might need to ensure it's correct after having modified it.
 
 One could do that with the following command:
 
