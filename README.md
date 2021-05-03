@@ -1,6 +1,6 @@
 <h1 align="center"> Basiliq </h1>
 
-<h4 align="center"><b>Exposing a <em>Postgres</em> via a REST API that respects <a href="https://jsonapi.org/format/">JSON:API</a>.
+<h4 align="center"><b>Exposing a <em>Postgres</em> database via a REST API that follows the <a href="https://jsonapi.org/format/">JSON:API</a> specs.
 <br>
 All in all, a tasty API.
 </b>
