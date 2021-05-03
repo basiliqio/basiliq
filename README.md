@@ -22,7 +22,18 @@ All in all, a tasty API.
   <img src="https://docs.rs/basiliq/badge.svg">
 </a>
 
-See the [documentation](https://docs.rs/basiliq)
+- [What is Basiliq](#what-is-basiliq)
+- [Quickstart](#quickstart)
+	- [Ready to use example](#ready-to-use-example)
+	- [Running locally](#running-locally)
+- [Understanding the API](#understanding-the-api)
+	- [How to query](#how-to-query)
+	- [Example requests](#example-requests)
+- [The configuration](#the-configuration)
+	- [Generation](#generation)
+	- [What's in there](#whats-in-there)
+	- [Checking the config](#checking-the-config)
+- [Testing](#testing)
 
 <img align="right" width="50%" src="assets/logos/LOGO_Basiliq_large.svg"></div>
 
@@ -35,7 +46,7 @@ specifications. Written in [Rust](https://www.rust-lang.org/fr), it tries to con
 
 ### Ready to use example
 
-Or if you're really in a hurry, you could try out the API already deployed on [Heroku](https://www.heroku.com/).
+You could try out the API already deployed on [Heroku](https://www.heroku.com/).
 
 For instance:
 
@@ -49,6 +60,7 @@ curl 'http://demo.basiliq.io/public__peoples?include=public__articles,public__co
 
 ```
 ### Running locally
+
 One can install _basiliq_ through docker. An example `docker-compose` script is available at the root of the repository. To start it:
 
 ```sh
@@ -69,6 +81,7 @@ docker-compose -f docker-compose.example.yml down
 ## Understanding the API
 
 ### How to query
+
 In the future, there should be a way to generate an [OpenApi](https://swagger.io/specification/) document to view exactly how the _API_ is accessible.
 
 The _API_ response respects the [JSON:API specifications](https://jsonapi.org/format/).
@@ -460,3 +473,22 @@ One could do that with the following command:
 basiliq config check --input basiliq_config.yaml 
 ```
 
+## Testing
+
+To test this crate, you need to start a `Postgres` database and export the `DATABASE_URL` environment variable.
+
+You can use the provided `docker-compose` plan
+
+```sh
+# To start the test database
+docker-compose -f docker-compose.testing.yml up -d
+
+# Don't forget to set the environment variable
+export DATABASE_URL="postgres://postgres:postgres@localhost/postgres"
+
+# Run the tests
+cargo test
+
+# To stop the test database
+docker-compose -f docker-compose.testing.yml down -v
+```
