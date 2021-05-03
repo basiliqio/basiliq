@@ -21,6 +21,7 @@ All in all, a tasty API.
 <a href="https://docs.rs/basiliq" alt="Docs.rs">
   <img src="https://docs.rs/basiliq/badge.svg">
 </a>
+<img align="right" width="50%" src="assets/logos/LOGO_Basiliq_large.svg"></div>
 
 - [What is Basiliq](#what-is-basiliq)
 - [Quickstart](#quickstart)
@@ -32,14 +33,15 @@ All in all, a tasty API.
 - [The configuration](#the-configuration)
 	- [Generation](#generation)
 	- [What's in there](#whats-in-there)
-	- [Checking the config](#checking-the-config)
+	- [Checking the configuration](#checking-the-configuration)
 - [Testing](#testing)
 
-<img align="right" width="50%" src="assets/logos/LOGO_Basiliq_large.svg"></div>
 
 ## What is Basiliq
 
-Basiliq is a **very alpha** REST API data-centric server. It aims at reducing the time (sometimes wasted) invested in writing CRUD operations. It respects the established [JSON:API](https://jsonapi.org/format/)
+Basiliq is a **very alpha** REST API that abstracts the need to write CRUD methods by exposing a standardized API to interact with a [Postgres](https://www.postgresql.org/) database
+
+It respects the established [JSON:API](https://jsonapi.org/format/)
 specifications. Written in [Rust](https://www.rust-lang.org/fr), it tries to conciliate performance with stability.
 
 ## Quickstart
@@ -463,7 +465,7 @@ resources:                 # The list of resources
 [...]
 ```
 
-### Checking the config
+### Checking the configuration
 
 After having generated the configuration, one might need to ensure its correct.
 
