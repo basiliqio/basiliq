@@ -2,7 +2,7 @@
 authors = ["Francis Le Roy <francis.leroy@protonmail.ch>"]
 edition = "2018"
 name = "basiliq"
-version = "0.1.0"
+version = "0.1.1"
 description = "REST API server exposing a Postgres database using JSON:API"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/basiliqio/basiliq"
