@@ -36,8 +36,14 @@ build_debug:
 build_release:
   stage: build
   image: ekidd/rust-musl-builder
+  except:
+    variables:
+      - $CI_COMMIT_TAG
   needs:
    - basic_checks
+  only:
+    refs:
+      - main
   artifacts:
     paths:
       - target/x86_64-unknown-linux-musl/release/basiliq
