@@ -71,6 +71,7 @@ pub async fn handle_request(
             exec_query(state, &read_req, query, params).await
         }
         CibouletteIntention::Update => {
+            println!("HERE");
             let update_req = ciboulette::CibouletteUpdateRequest::try_from(req)?;
             let (query, params) = update::handle_request(&state, &update_req)?;
             exec_query(state, &update_req, query, params).await

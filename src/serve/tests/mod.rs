@@ -81,14 +81,8 @@ pub fn check_uuid<'store, 'b>(
     if path.to_string().as_str() == ".errors.id" {
         return "[error id]";
     }
-    assert_eq!(
-        value
-            .as_str()
-            .unwrap()
-            .chars()
-            .filter(|&c| c == '-')
-            .count(),
-        4
-    );
+    for part in value.as_str().unwrap().split(',') {
+        assert_eq!(part.chars().filter(|&c| c == '-').count(), 4);
+    }
     "[uuid]"
 }

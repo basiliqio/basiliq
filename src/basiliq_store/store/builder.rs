@@ -1,7 +1,7 @@
 use super::*;
 use ciboulette::{
-    CibouletteRelationshipManyToManyOptionBuilder, CibouletteRelationshipOneToManyOptionBuilder,
-    CibouletteStoreBuilder,
+    CibouletteIdTypeSelector, CibouletteRelationshipManyToManyOptionBuilder,
+    CibouletteRelationshipOneToManyOptionBuilder, CibouletteStoreBuilder,
 };
 use ciboulette2pg::{
     Ciboulette2PgError, Ciboulette2PgId, Ciboulette2PgSafeIdent, Ciboulette2PgTable,
@@ -28,13 +28,16 @@ impl BasiliqStoreBuilder {
     pub fn build(self) -> Result<BasiliqStore, Ciboulette2PgError> {
         let mut ciboulette_store_builder = CibouletteStoreBuilder::default();
         let mut ciboulette_table_store = Ciboulette2PgTableStore::default();
-        let mut already_built_rel: BTreeSet<(ArcStr, ArcStr, ArcStr)> = BTreeSet::new();
+        let mut already_built_rel: BTreeSet<(ArcStr, ArcStr, ArcStr, ArcStr)> = BTreeSet::new();
 
         // Populate the CibouletteStoreBuilder
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             ciboulette_store_builder.add_type(
                 alias.as_str(),
-                *table.id_type(),
+                match table.id_type().len() {
+                    1 => CibouletteIdTypeSelector::Single(table.id_type().first().unwrap().clone()),
+                    _ => CibouletteIdTypeSelector::Multi(table.id_type().clone()),
+                },
                 table.properties().clone(),
             )?;
         }
@@ -43,13 +46,14 @@ impl BasiliqStoreBuilder {
         let ciboulette_store = ciboulette_store_builder.build()?;
         // Populate the Ciboulette2PgTableStore
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
+            let mut id_list = Vec::with_capacity(table.id_type().len());
+            for id in table.id_type() {
+                id_list.push(Ciboulette2PgId::try_from(id.clone())?);
+            }
             ciboulette_table_store.add_table(
                 ArcStr::from(alias),
                 Arc::new(Ciboulette2PgTable::new(
-                    Ciboulette2PgId::new_from_ciboulette_id_type(
-                        *table.id_type(),
-                        table.id_name(),
-                    )?,
+                    id_list,
                     Some(Ciboulette2PgSafeIdent::try_from(ArcStr::from(
                         table.table().schema().name(),
                     ))?),
@@ -93,47 +97,51 @@ impl BasiliqStoreBuilder {
     fn insert_one_to_many(
         &self,
         ciboulette_store_builder: &mut CibouletteStoreBuilder,
-        already_built_rel: &mut BTreeSet<(ArcStr, ArcStr, ArcStr)>,
+        already_built_rel: &mut BTreeSet<(ArcStr, ArcStr, ArcStr, ArcStr)>,
     ) -> Result<(), Ciboulette2PgError> {
         for (table, alias) in self.tables().values().zip(self.aliases().right_values()) {
             for (rel_alias, v) in table.relationships() {
-                let (one_type, alias_one, many_type, alias_many, many_table_key) = match v.type_() {
-                    BasiliqStoreRelationshipType::OneToMany(_) => {
-                        let many_alias =
-                            self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
-                                Ciboulette2PgError::UnknownTable(v.ftable().to_string())
-                            })?;
-                        let many_type = ciboulette_store_builder.get_type(&many_alias)?.clone();
-                        let one_type = ciboulette_store_builder.get_type(alias)?.clone();
-                        let one_name = one_type.name().clone();
-                        (
-                            one_type,
-                            one_name,
-                            many_type,
-                            rel_alias.clone(),
-                            v.ffield_name().clone(),
-                        )
-                    }
-                    BasiliqStoreRelationshipType::ManyToOne(_) => {
-                        let one_alias =
-                            self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
-                                Ciboulette2PgError::UnknownTable(v.ftable().to_string())
-                            })?;
-                        let one_type = ciboulette_store_builder.get_type(&one_alias)?.clone();
-                        let many_type = ciboulette_store_builder.get_type(alias)?.clone();
-                        let many_name = many_type.name().clone();
-                        (
-                            one_type,
-                            rel_alias.clone(),
-                            many_type,
-                            many_name,
-                            v.lfield_name().clone(),
-                        )
-                    }
-                    BasiliqStoreRelationshipType::ManyToMany(_) => continue,
-                };
+                let (one_type, alias_one, one_table_key, many_type, alias_many, many_table_key) =
+                    match v.type_() {
+                        BasiliqStoreRelationshipType::OneToMany(_) => {
+                            let many_alias =
+                                self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                                    Ciboulette2PgError::UnknownTable(v.ftable().to_string())
+                                })?;
+                            let many_type = ciboulette_store_builder.get_type(&many_alias)?.clone();
+                            let one_type = ciboulette_store_builder.get_type(alias)?.clone();
+                            let one_name = one_type.name().clone();
+                            (
+                                one_type,
+                                one_name,
+                                v.lfield_name().clone(),
+                                many_type,
+                                rel_alias.clone(),
+                                v.ffield_name().clone(),
+                            )
+                        }
+                        BasiliqStoreRelationshipType::ManyToOne(_) => {
+                            let one_alias =
+                                self.aliases().get_by_left(v.ftable()).ok_or_else(|| {
+                                    Ciboulette2PgError::UnknownTable(v.ftable().to_string())
+                                })?;
+                            let one_type = ciboulette_store_builder.get_type(&one_alias)?.clone();
+                            let many_type = ciboulette_store_builder.get_type(alias)?.clone();
+                            let many_name = many_type.name().clone();
+                            (
+                                one_type,
+                                rel_alias.clone(),
+                                v.ffield_name().clone(),
+                                many_type,
+                                many_name,
+                                v.lfield_name().clone(),
+                            )
+                        }
+                        BasiliqStoreRelationshipType::ManyToMany(_) => continue,
+                    };
                 if !already_built_rel.insert((
                     one_type.name().clone(),
+                    one_table_key.clone(),
                     many_table_key.clone(),
                     many_type.name().clone(),
                 )) {
@@ -144,6 +152,7 @@ impl BasiliqStoreBuilder {
                     ciboulette_store_builder.add_one_to_many_rel_no_reverse(
                         CibouletteRelationshipOneToManyOptionBuilder::new(
                             one_type,
+                            one_table_key.clone(),
                             many_type,
                             many_table_key,
                             v.optional(),
@@ -155,6 +164,7 @@ impl BasiliqStoreBuilder {
                     ciboulette_store_builder.add_one_to_many_rel(
                         CibouletteRelationshipOneToManyOptionBuilder::new(
                             one_type,
+                            one_table_key.clone(),
                             many_type,
                             many_table_key,
                             v.optional(),
@@ -212,10 +222,7 @@ pub struct BasiliqStoreTableBuilder {
     /// The scanned table from Postgres
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
     /// The type of identifier for that table
-    pub(crate) id_type: CibouletteIdType,
-    /// The identifier name of the table. (Its primary key)
-    /// TODO Support more than 1 primary key
-    pub(crate) id_name: String,
+    pub(crate) id_type: Vec<CibouletteIdType>,
     /// The properties of the tables
     pub(crate) properties: MessyJsonObject,
 }
@@ -229,7 +236,6 @@ impl BasiliqStoreTableBuilder {
         BasiliqStoreTable {
             table: self.table,
             id_type: self.id_type,
-            id_name: ArcStr::from(self.id_name),
             properties: self.properties,
             relationships: relationships
                 .into_iter()
@@ -246,9 +252,7 @@ pub struct BasiliqStoreTable {
     /// Metadata scanned about the table
     pub(crate) table: Arc<postgres_metadata::parsed::BasiliqDbScannedTable>,
     /// The type of id
-    pub(crate) id_type: CibouletteIdType,
-    /// The name of the main identifier (primary key)
-    pub(crate) id_name: ArcStr,
+    pub(crate) id_type: Vec<CibouletteIdType>,
     /// A relationship map
     pub(crate) relationships: BTreeMap<ArcStr, BasiliqStoreRelationshipData>,
     /// A list of attributes for that table
@@ -312,10 +316,8 @@ impl BasiliqStoreBuilder {
         for table in raw_tables.iter() {
             if let Some((table_builder, fkey)) = Self::check_schema(&table)
                 .map(|table| (table, Self::build_fkeys_raw(&table)))
-                .and_then(|(table, fkeys)| Self::build_pkeys(&table).map(|x| (x, fkeys)))
-                .and_then(|(pkey, fkey)| {
-                    Self::build_object(table.clone(), pkey, &fkey).map(|x| (x, fkey))
-                })
+                .map(|(table, fkeys)| (Self::build_pkeys(&table), fkeys))
+                .map(|(pkey, fkey)| (Self::build_object(table.clone(), pkey, &fkey), fkey))
             {
                 let nfkey = extract_relationships_fields_name(fkey, &table_builder);
                 table_builder_store

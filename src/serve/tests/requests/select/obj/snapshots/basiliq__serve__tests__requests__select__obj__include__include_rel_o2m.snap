@@ -1,5 +1,5 @@
 ---
-source: basiliq/src/serve/tests/requests/select/obj/include.rs
+source: src/serve/tests/requests/select/obj/include.rs
 expression: res
 
 ---
@@ -22,11 +22,11 @@ expression: res
         "data": [
           {
             "type": "public__people-article",
-            "id": "f77b0017-1dfd-4ea1-b036-b228289f89e0"
+            "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f,fdf715dd-8772-498c-8196-6f4ccb64edef"
           },
           {
             "type": "public__people-article",
-            "id": "f0523b1e-30df-418d-83dc-876e4c78cfa9"
+            "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f,2dbf5d1a-b029-4456-af6b-339c75b1089c"
           }
         ]
       }
@@ -35,11 +35,11 @@ expression: res
   "included": [
     {
       "type": "public__people-article",
-      "id": "f0523b1e-30df-418d-83dc-876e4c78cfa9"
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f,2dbf5d1a-b029-4456-af6b-339c75b1089c"
     },
     {
       "type": "public__people-article",
-      "id": "f77b0017-1dfd-4ea1-b036-b228289f89e0"
+      "id": "1649b1e9-8a5f-4f52-b331-c07ce3bccc6f,fdf715dd-8772-498c-8196-6f4ccb64edef"
     }
   ]
 }

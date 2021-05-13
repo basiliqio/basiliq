@@ -44,7 +44,10 @@ async fn simple_table_with_default_name(pool: sqlx::PgPool) {
     );
     assert_eq!(table.properties().has_field("id"), false);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Text), true);
+    assert_eq!(
+        matches!(table.id_type().first().unwrap(), CibouletteIdType::Text(_)),
+        true
+    );
 }
 
 #[basiliq_test]
@@ -71,5 +74,8 @@ async fn simple_table_with_no_field(pool: sqlx::PgPool) {
     assert_eq!(table == table_by_alias, true);
     assert_eq!(table.properties().properties().is_empty(), true);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Text), true);
+    assert_eq!(
+        matches!(table.id_type().first().unwrap(), CibouletteIdType::Text(_)),
+        true
+    );
 }
