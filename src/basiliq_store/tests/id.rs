@@ -26,7 +26,13 @@ async fn simple_table_serial_id(pool: sqlx::PgPool) {
     assert_eq!(table.properties().has_field("last_name"), true);
     assert_eq!(table.properties().has_field("id"), false);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Number), true);
+    assert_eq!(
+        matches!(
+            table.id_type().first().unwrap(),
+            CibouletteIdType::Number(_)
+        ),
+        true
+    );
 }
 
 #[basiliq_test]
@@ -55,7 +61,13 @@ async fn simple_table_big_serial_id(pool: sqlx::PgPool) {
     assert_eq!(table.properties().has_field("last_name"), true);
     assert_eq!(table.properties().has_field("id"), false);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Number), true);
+    assert_eq!(
+        matches!(
+            table.id_type().first().unwrap(),
+            CibouletteIdType::Number(_)
+        ),
+        true
+    );
 }
 
 #[basiliq_test]
@@ -84,7 +96,10 @@ async fn simple_table_uuid_id(pool: sqlx::PgPool) {
     assert_eq!(table.properties().has_field("last_name"), true);
     assert_eq!(table.properties().has_field("id"), false);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Uuid), true);
+    assert_eq!(
+        matches!(table.id_type().first().unwrap(), CibouletteIdType::Uuid(_)),
+        true
+    );
 }
 
 #[basiliq_test]
@@ -113,7 +128,10 @@ async fn simple_table_text_id(pool: sqlx::PgPool) {
     assert_eq!(table.properties().has_field("last_name"), true);
     assert_eq!(table.properties().has_field("id"), false);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Text), true);
+    assert_eq!(
+        matches!(table.id_type().first().unwrap(), CibouletteIdType::Text(_)),
+        true
+    );
 }
 
 #[basiliq_test]
@@ -142,5 +160,8 @@ async fn simple_table_varchar_id(pool: sqlx::PgPool) {
     assert_eq!(table.properties().has_field("last_name"), true);
     assert_eq!(table.properties().has_field("id"), false);
     assert_eq!(table.relationships().len(), 0);
-    assert_eq!(matches!(table.id_type(), CibouletteIdType::Text), true);
+    assert_eq!(
+        matches!(table.id_type().first().unwrap(), CibouletteIdType::Text(_)),
+        true
+    );
 }

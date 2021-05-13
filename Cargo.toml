@@ -37,16 +37,16 @@ url = "2.2.0"
 uuid = "0.8"
 
 [dependencies.ciboulette2pg]
-# git = "https://github.com/basiliqio/ciboulette2pg.git"
-# branch = "main"
+git = "https://github.com/basiliqio/ciboulette2pg.git"
+branch = "main"
 package = "ciboulette2pg"
 version = "0.1"
 
 [dependencies.ciboulette]
 features = ["sqlx_postgres"]
 version = "0.1"
-# branch = "main"
-# git = "https://github.com/basiliqio/ciboulette.git"
+branch = "main"
+git = "https://github.com/basiliqio/ciboulette.git"
 package = "ciboulette"
 
 [dependencies.messy_json]
@@ -57,7 +57,15 @@ version = "0.2"
 [dependencies.lazy_static]
 version = "1.4"
 
+[dev-dependencies.basiliq_db_test_proc_macro]
+git = "https://github.com/basiliqio/basiliq_db_test_utils.git"
+branch = "main"
+package = "basiliq_db_test_proc_macro"
+
+[dev-dependencies.basiliq_db_test_utils]
+git = "https://github.com/basiliqio/basiliq_db_test_utils.git"
+branch = "main"
+package = "basiliq_db_test_utils"
+
 [dev-dependencies]
-basiliq_db_test_proc_macro = {git = "https://github.com/basiliqio/basiliq_db_test_utils.git", branch = "main", package = "basiliq_db_test_proc_macro"}
-basiliq_db_test_utils = {git = "https://github.com/basiliqio/basiliq_db_test_utils.git", branch = "main", package = "basiliq_db_test_utils"}
 insta = {version = "1.7", features = ["redactions"]}

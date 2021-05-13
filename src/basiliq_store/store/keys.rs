@@ -15,10 +15,10 @@ fn check_len_is_1<'a, T>(table_name: &str, arr: &'a [T]) -> Option<&'a T> {
 
 impl BasiliqStoreBuilder {
     /// Extract the column index of the primary key
-    pub fn build_pkeys(table: &BasiliqDbScannedTable) -> Option<i16> {
+    pub fn build_pkeys(table: &BasiliqDbScannedTable) -> BTreeSet<i16> {
         check_len_is_1(table.table().name().as_str(), table.pkeys().as_slice())
-            .and_then(|x| check_len_is_1(table.table().name().as_str(), x.columns().as_slice()))
-            .copied()
+            .map(|x| x.columns().iter().copied().collect())
+            .unwrap_or_default()
     }
 
     /// Extract the column indexes of the foreign keys

@@ -101,7 +101,7 @@ crate::run_test_request!(
             "relationships": json!({
                 "public__people-article": json!({
                     "data": json!({
-                        "id": PEOPLE_ARTICLE_ID[2],
+                        "id": format!("{},{}", PEOPLES_IDS[0], ARTICLES_IDS[0]),
                         "type": "public__people-article"
                     })
                 })

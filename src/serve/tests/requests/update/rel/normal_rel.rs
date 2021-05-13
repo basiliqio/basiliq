@@ -54,7 +54,7 @@ crate::run_test_request!(
     json!({
         "data": json!({
             "type": "public__people-article",
-            "id": PEOPLE_ARTICLE_ID[1]
+            "id": format!("{},{}", PEOPLES_IDS[0], ARTICLES_IDS[0])
         })
     })
 );

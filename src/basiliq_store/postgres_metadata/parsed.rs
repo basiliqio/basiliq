@@ -1,6 +1,6 @@
 use super::*;
 use getset::Getters;
-use std::sync::Arc;
+use std::{collections::BTreeMap, sync::Arc};
 use tracing::warn;
 
 /// A scanned database from the database
@@ -12,8 +12,8 @@ pub struct BasiliqDbScannedTable {
     pkeys: Vec<raw::BasiliqDbScannerPrimaryKeyRaw>,
     fkeys_child: Vec<raw::BasiliqDbScannerForeignKeyRaw>,
     fkeys_parent: Vec<raw::BasiliqDbScannerForeignKeyRaw>,
-    columns_by_name: HashMap<String, Arc<BasiliqDbScannerColumn>>,
-    columns_by_id: HashMap<i16, Arc<BasiliqDbScannerColumn>>,
+    columns_by_name: BTreeMap<String, Arc<BasiliqDbScannerColumn>>,
+    columns_by_id: BTreeMap<i16, Arc<BasiliqDbScannerColumn>>,
 }
 
 /// A scanned column from the database
@@ -44,28 +44,28 @@ impl BasiliqDbScannedTable {
         primary_keys: Vec<raw::BasiliqDbScannerPrimaryKeyRaw>,
         foreign_keys: Vec<raw::BasiliqDbScannerForeignKeyRaw>,
     ) -> Vec<Arc<Self>> {
-        let types_map: HashMap<u32, raw::BasiliqDbScannerTypeRaw> =
+        let types_map: BTreeMap<u32, raw::BasiliqDbScannerTypeRaw> =
             types.into_iter().map(|x| (x.id(), x)).collect();
-        let columns_grouped: HashMap<u32, Vec<raw::BasiliqDbScannerColumnRaw>> = columns
+        let columns_grouped: BTreeMap<u32, Vec<raw::BasiliqDbScannerColumnRaw>> = columns
             .into_iter()
             .map(|x| (x.table(), x))
             .into_group_map_by(|x| x.0)
             .into_iter()
             .map(|(key, vals)| (key, vals.into_iter().map(|(_key, vals)| vals).collect()))
             .collect();
-        let parsed_columns: HashMap<u32, Vec<BasiliqDbScannerColumn>> =
+        let parsed_columns: BTreeMap<u32, Vec<BasiliqDbScannerColumn>> =
             BasiliqDbScannerColumn::new(&types_map, columns_grouped);
         let mut res: Vec<Arc<BasiliqDbScannedTable>> = Vec::with_capacity(tables.len());
-        let schemas_map: HashMap<u32, raw::BasiliqDbScannerSchemaRaw> =
+        let schemas_map: BTreeMap<u32, raw::BasiliqDbScannerSchemaRaw> =
             schemas.into_iter().map(|x| (x.id(), x)).collect();
-        let primary_keys_map: HashMap<u32, Vec<raw::BasiliqDbScannerPrimaryKeyRaw>> = primary_keys
+        let primary_keys_map: BTreeMap<u32, Vec<raw::BasiliqDbScannerPrimaryKeyRaw>> = primary_keys
             .into_iter()
             .map(|x| (x.table(), x))
             .into_group_map_by(|x| x.0)
             .into_iter()
             .map(|(key, vals)| (key, vals.into_iter().map(|(_key, vals)| vals).collect()))
             .collect();
-        let foreign_keys_map_child: HashMap<u32, Vec<raw::BasiliqDbScannerForeignKeyRaw>> =
+        let foreign_keys_map_child: BTreeMap<u32, Vec<raw::BasiliqDbScannerForeignKeyRaw>> =
             foreign_keys
                 .clone()
                 .into_iter()
@@ -74,7 +74,7 @@ impl BasiliqDbScannedTable {
                 .into_iter()
                 .map(|(key, vals)| (key, vals.into_iter().map(|(_key, vals)| vals).collect()))
                 .collect();
-        let foreign_keys_map_parent: HashMap<u32, Vec<raw::BasiliqDbScannerForeignKeyRaw>> =
+        let foreign_keys_map_parent: BTreeMap<u32, Vec<raw::BasiliqDbScannerForeignKeyRaw>> =
             foreign_keys
                 .into_iter()
                 .map(|x| (x.ftable_id(), x))
@@ -94,12 +94,12 @@ impl BasiliqDbScannedTable {
                         continue;
                     }
                 };
-            let columns_by_name: HashMap<String, Arc<BasiliqDbScannerColumn>> = columns_store
+            let columns_by_name: BTreeMap<String, Arc<BasiliqDbScannerColumn>> = columns_store
                 .clone()
                 .into_iter()
                 .map(|x| (x.column().name().clone(), x))
                 .collect();
-            let columns_by_id: HashMap<i16, Arc<BasiliqDbScannerColumn>> = columns_store
+            let columns_by_id: BTreeMap<i16, Arc<BasiliqDbScannerColumn>> = columns_store
                 .clone()
                 .into_iter()
                 .map(|x| (x.column().column_number(), x))
@@ -186,7 +186,7 @@ impl BasiliqDbScannedTable {
 impl BasiliqDbScannedType {
     pub fn new(
         type_: raw::BasiliqDbScannerTypeRaw,
-        list_available: &HashMap<u32, raw::BasiliqDbScannerTypeRaw>,
+        list_available: &BTreeMap<u32, raw::BasiliqDbScannerTypeRaw>,
     ) -> Self {
         match type_.child_type() {
             Some(child_id) => {
@@ -209,10 +209,10 @@ impl BasiliqDbScannedType {
 
 impl BasiliqDbScannerColumn {
     pub fn new(
-        types: &HashMap<u32, raw::BasiliqDbScannerTypeRaw>,
-        columns: HashMap<u32, Vec<raw::BasiliqDbScannerColumnRaw>>,
-    ) -> HashMap<u32, Vec<Self>> {
-        let mut res: HashMap<u32, Vec<Self>> = HashMap::with_capacity(columns.len());
+        types: &BTreeMap<u32, raw::BasiliqDbScannerTypeRaw>,
+        columns: BTreeMap<u32, Vec<raw::BasiliqDbScannerColumnRaw>>,
+    ) -> BTreeMap<u32, Vec<Self>> {
+        let mut res: BTreeMap<u32, Vec<Self>> = BTreeMap::new();
         for (key, cols) in columns.into_iter() {
             let mut col_list: Vec<Self> = Vec::with_capacity(cols.len());
             for col in cols.into_iter() {

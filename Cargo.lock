@@ -313,9 +313,8 @@ dependencies = [
 
 [[package]]
 name = "ciboulette"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0af2551761d788fb2aea78ae6465bfc42a99a0619a2c645f162b5603a20ad3f"
+version = "0.1.4"
+source = "git+https://github.com/basiliqio/ciboulette.git?branch=main#0b8d5953f56e4bfc21565cc0a6a3e2ab2e11d644"
 dependencies = [
  "arcstr",
  "getset",
@@ -336,8 +335,7 @@ dependencies = [
 [[package]]
 name = "ciboulette2pg"
 version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "003253506ba3e5b9bfa2d752c7b3e996f756e96c05e0438f7f69264e7559dffb"
+source = "git+https://github.com/basiliqio/ciboulette2pg.git?branch=main#8371f029eb3ce2a764e7c34da6c94f110bd40e04"
 dependencies = [
  "arcstr",
  "bigdecimal",

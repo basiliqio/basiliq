@@ -96,17 +96,37 @@ impl BasiliqStoreBuilder {
                     );
                     None
                 }
-                BasiliqDbScannerTypeCategory::Enum => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::Geo => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::NetworkAddress => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::Pseudo => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::Range => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::DateTime => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::Numeric => Some(CibouletteIdType::Number),
-                BasiliqDbScannerTypeCategory::String => Some(CibouletteIdType::Text),
-                BasiliqDbScannerTypeCategory::Timespan => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::Enum => Some(CibouletteIdType::Text(ArcStr::from(
+                    col_settings.column().name(),
+                ))),
+                BasiliqDbScannerTypeCategory::Geo => Some(CibouletteIdType::Text(ArcStr::from(
+                    col_settings.column().name(),
+                ))),
+                BasiliqDbScannerTypeCategory::NetworkAddress => Some(CibouletteIdType::Text(
+                    ArcStr::from(col_settings.column().name()),
+                )),
+                BasiliqDbScannerTypeCategory::Pseudo => Some(CibouletteIdType::Text(ArcStr::from(
+                    col_settings.column().name(),
+                ))),
+                BasiliqDbScannerTypeCategory::Range => Some(CibouletteIdType::Text(ArcStr::from(
+                    col_settings.column().name(),
+                ))),
+                BasiliqDbScannerTypeCategory::DateTime => Some(CibouletteIdType::Text(
+                    ArcStr::from(col_settings.column().name()),
+                )),
+                BasiliqDbScannerTypeCategory::Numeric => Some(CibouletteIdType::Number(
+                    ArcStr::from(col_settings.column().name()),
+                )),
+                BasiliqDbScannerTypeCategory::String => Some(CibouletteIdType::Text(ArcStr::from(
+                    col_settings.column().name(),
+                ))),
+                BasiliqDbScannerTypeCategory::Timespan => Some(CibouletteIdType::Text(
+                    ArcStr::from(col_settings.column().name()),
+                )),
                 BasiliqDbScannerTypeCategory::UserDefined => match type_.name().as_str() {
-                    "uuid" => Some(CibouletteIdType::Uuid),
+                    "uuid" => Some(CibouletteIdType::Uuid(ArcStr::from(
+                        col_settings.column().name(),
+                    ))),
                     _ => {
                         trace!(
 								">> Found an user-defined for type {}. Unsupported for an ID, skipping..",
@@ -122,7 +142,9 @@ impl BasiliqStoreBuilder {
                     );
                     None
                 }
-                BasiliqDbScannerTypeCategory::BitString => Some(CibouletteIdType::Text),
+                BasiliqDbScannerTypeCategory::BitString => Some(CibouletteIdType::Text(
+                    ArcStr::from(col_settings.column().name()),
+                )),
                 BasiliqDbScannerTypeCategory::Boolean => {
                     trace!(
                         ">> Found an unknown for type {}. Unsupported for an ID, skipping..",
@@ -142,22 +164,23 @@ impl BasiliqStoreBuilder {
     /// and a list of its foreign keys
     pub fn build_object(
         table: Arc<BasiliqDbScannedTable>,
-        pkey: i16,
+        pkey: BTreeSet<i16>,
         fkeys: &BTreeMap<i16, (BasiliqStoreTableIdentifier, i16)>,
-    ) -> Option<BasiliqStoreTableBuilder> {
+    ) -> BasiliqStoreTableBuilder {
         let mut obj_properties: BTreeMap<String, MessyJson> = BTreeMap::new();
-        let mut pkey_type: Option<(CibouletteIdType, String)> = None;
+        let mut pkey_type: Vec<CibouletteIdType> = Vec::new();
+
         trace!(
             "Scanning table {} in schema {}",
             table.table().name(),
             table.schema().name()
         );
-
         for (id, col_settings) in table.columns_by_id() {
-            if pkey == *id {
+            if pkey.contains(id) {
                 // If the primary key
-                pkey_type = Self::type_to_id(col_settings)
-                    .map(|x| (x, col_settings.column().name().clone()));
+                if let Some(x) = Self::type_to_id(col_settings) {
+                    pkey_type.push(x)
+                }
                 continue;
             }
             if fkeys.contains_key(id) {
@@ -181,24 +204,16 @@ impl BasiliqStoreBuilder {
                 obj_properties.insert(col_settings.column().name().clone(), obj);
             }
         }
-        pkey_type
-            .map(|x| {
-                (
-                    x,
-                    MessyJsonObject::from(MessyJsonObjectInner::new(
-                        obj_properties
-                            .into_iter()
-                            .map(|(k, v)| (ArcStr::from(k), v))
-                            .collect(),
-                        false,
-                    )),
-                )
-            })
-            .map(|(id, properties)| BasiliqStoreTableBuilder {
-                table,
-                properties,
-                id_type: id.0,
-                id_name: id.1,
-            })
+        BasiliqStoreTableBuilder {
+            table,
+            properties: MessyJsonObject::from(MessyJsonObjectInner::new(
+                obj_properties
+                    .into_iter()
+                    .map(|(k, v)| (ArcStr::from(k), v))
+                    .collect(),
+                false,
+            )),
+            id_type: pkey_type,
+        }
     }
 }
