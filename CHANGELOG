@@ -1,0 +1,8 @@
+## [0.1.2] - 2021-05-13
+### Added
+- Support multiple `id`s when building table and when parsing requests. The `id` are comma separated
+- Added 'one' key for O2M/M2O relationships
+
+## [0.1.0] - 2021-05-03
+### Added
+- 🎉 first release!

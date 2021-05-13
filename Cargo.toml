@@ -5,7 +5,7 @@ edition = "2018"
 license = "MIT OR Apache-2.0"
 name = "basiliq"
 repository = "https://github.com/basiliqio/basiliq"
-version = "0.1.1"
+version = "0.1.2"
 [features]
 better_cli = ["clap/suggestions", "clap/wrap_help", "clap/color"]
 
