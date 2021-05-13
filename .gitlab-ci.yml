@@ -172,4 +172,5 @@ deploy_heroku:
       - main
   image: buddy/heroku-cli
   script:
+    - heroku pg:backups:restore 'https://github.com/basiliqio/basiliq_db_test_utils/raw/main/basiliq_test_db.dump' DATABASE_URL
     - heroku container:release -a basiliq-demo web
